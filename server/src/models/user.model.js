@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const appError = require("../utils/appError");
 
-const emailRegex =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const userSchema = new mongoose.Schema(
   {
     /** Core identity fields  */
@@ -71,7 +69,7 @@ const userSchema = new mongoose.Schema(
     /** Auth  */
     githubId: {
       type: String,
-      default: null,
+      default: undefined, // uset undefined so that we can get github as undefined as null raise the duplicate error
       unique: true,
       sparse: true,
     },
