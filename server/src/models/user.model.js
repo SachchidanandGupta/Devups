@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const appError = require("../utils/appError");
 
 const emailRegex =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -89,14 +90,9 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("passwordHash") || !this.passwordHash) return next(); // when a user login via github this.password would be undefined and return an err
-  try {
-    this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
-    next();
-  } catch (err) {
-    next(err);
-  }
+userSchema.pre("save", async function () {
+  if (!this.isModified("passwordHash") || !this.passwordHash) return ; // when a user login via github this.password would be undefined and return an err
+   this.passwordHash = await bcrypt.hash(this.passwordHash,10);
 });
 
 userSchema.methods.comparePassword = async function (password) {

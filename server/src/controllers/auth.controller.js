@@ -2,7 +2,11 @@ const userModel = require("../models/user.model");
 
 const jwt = require("jsonwebtoken");
 
-async function registerUser(req, res) {
+const asyncHandler = require("../utils/asyncHandler");
+
+const appError = require("../utils/appError");
+
+const registerUser = asyncHandler(async function (req, res) {
   const { username, email, password } = req.body;
 
   const isUserExists = await userModel.findOne({
@@ -10,107 +14,106 @@ async function registerUser(req, res) {
   });
 
   if (isUserExists) {
-    return res.status(409).json({
-      message: "User already exists.",
-      status: "failed",
-    });
+    throw new appError("User already exists.",409);
   }
   const user = await userModel.create({
     username,
     email,
-    passwordHash:password,
+    passwordHash: password,
   });
   const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET,
     { expiresIn: "1d" },
   );
-  res.cookie("token",token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
   res.status(201).json({
-    message:"user registered successfully",
-    status:"success",
-    user:{
-        id:user._id,
-        email:user.email,
-        username:user.username
-    }
-  })
-}
+    message: "user registered successfully",
+    status: "success",
+    user: {
+      id: user._id,
+      email: user.email,
+      username: user.username,
+    },
+  });
+})
 
-async function loginUser(req,res){
-  const {email,username,password} = req.body;
 
-  const user = await userModel.findOne({
-    $or:[
-      {username},{email}
-    ]
-  }).select("+passwordHash");
+const loginUser = asyncHandler(async function (req, res) {
+  const { email, username, password } = req.body;
 
-  if(!user){
-    return res.status(401).json({
-      message:"Invalid credentials",
-      status:"failed"
+  const user = await userModel
+    .findOne({
+      $or: [{ username }, { email }],
     })
+    .select("+passwordHash");
+
+  if (!user) {
+    throw new appError("Invalid credentials",401);
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
-  if(!isPasswordCorrect){
-    return res.status(401).json({
-      message:"Invalid credentials"
-    })
+  if (!isPasswordCorrect) {
+    throw new appError("Invalid credentials.",401)
   }
 
-  const token = jwt.sign({
-    id:user._id,
-    email:user.email
-  },process.env.JWT_SECRET,{expiresIn:"1d"});
+  const token = jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" },
+  );
 
-  res.cookie("token",token,{
-    httpOnly:true,
-    secure:process.env.NODE_ENV === "production",
-     sameSite: "strict",    
-  maxAge: 24 * 60 * 60 * 1000
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 24 * 60 * 60 * 1000,
   });
   res.status(200).json({
-    message:"User logged in ",
-    user:{
-      username:user.username,
-      email:user.email,
-      id:user._id
-    }
-  })
-}
+    message: "User logged in ",
+    user: {
+      username: user.username,
+      email: user.email,
+      id: user._id,
+    },
+  });
+})
 
-async function getMeUser(req,res) {
- const user = await userModel.findById(req.user.id);
- if(!user){
-  return res.status(404).json({
-    message:"user not founded"
-  })
- }
+
+const getMeUser = asyncHandler(async function (req, res) {
+  const user = await userModel.findById(req.user.id);
+  if (!user) {
+    throw new appError("User not found",404)
+  }
   return res.status(200).json({
-    message:"user data fetched successfully",
-    user
-  })
+    message: "user data fetched successfully",
+    user,
+  });
+})
 
-}
-
-async function logOutUser(req,res){
+const logOutUser = asyncHandler(async function (req, res) {
   const token = req.cookies.token;
-  if(!token){
-    return res.status(401).json({
-      message:"Token not provided,unauthorizes access"
-    })
+  if (!token) {
+    throw new appError("Token not provided,unauthorizes access",401);
   }
 
   res.clearCookie("token");
   return res.status(200).json({
-    message:"User logged out successfully"
-  })
-}
+    message: "User logged out successfully",
+  });
+})
+
 module.exports = {
   registerUser,
   loginUser,
   getMeUser,
-  logOutUser
+  logOutUser,
 };
