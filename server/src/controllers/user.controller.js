@@ -5,7 +5,7 @@ const userModel = require("../models/user.model");
 const getProfile = asyncHandler(async function (req, res) {
   const username = req.params.username;
   const user = await userModel
-    .findOne({ username })
+    .findOne({ _id:username })
     .select("-passwordHash -githubId -isEmailVerified -role");
   if (!user) {
     throw new appError("user not found", 404);
