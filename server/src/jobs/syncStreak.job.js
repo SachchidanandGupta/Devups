@@ -3,12 +3,11 @@ const userModel = require("../models/user.model");
 const { awardXP } = require("../services/xp.service");
 
 function isSameDate(date1, date2) {
-    return (
-
-        date1.getFullYear() === date2.getFullYear() &&
-          date1.getMonth() === date2.getMonth() &&
-          date1.getDate() === date2.getDate()
-    )
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 }
 
 function isYesterdaySolved(date) {
@@ -44,25 +43,23 @@ function startStreakSync() {
             await awardXP(user._id, "streak", "daily_streak", {
               streak: newStreak,
             });
-          }else if(isYesterdaySolved(lastSolvedDate)){
+          } else if (isYesterdaySolved(lastSolvedDate)) {
             continue;
-          }else{
-            if(user.streak !== 0){
-                user.streak = 0;
-                await user.save();
+          } else {
+            if (user.streak !== 0) {
+              user.streak = 0;
+              await user.save();
             }
-
           }
           processedUser++;
         }
         page++;
-    }
-    console.log("number of processed user", processedUser);
+      }
+      console.log("number of processed user", processedUser);
     } catch (err) {
       console.log("Failed to sync streak", err);
     }
   });
 }
 
-
-module.exports = { startStreakSync }
+module.exports = { startStreakSync };

@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    leetcodeSolved:{
+      easy:{type:Number,default:0},
+      medium:{type:Number,default:0},
+      hard:{type:Number,default:0}
+    },
     githubUsername: {
       type: String,
       default: null,
