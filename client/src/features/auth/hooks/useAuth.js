@@ -6,11 +6,11 @@ import {
 } from "../api/auth.api";
 import useAuthStore from "../store/authStore";
 
-const useAuth = () => {
-  const login = async (username, email, password) => {
+  const useAuth = () => {
+  const login = async (identifier, password) => {
     useAuthStore.getState().setLoading(true);
     try {
-      const data = await loginUser(username, email, password);
+      const data = await loginUser(identifier, password);
       useAuthStore.getState().setUser(data.user);
       useAuthStore.getState().setAuthenticated(true);
     } catch (err) {
@@ -69,3 +69,5 @@ const useAuth = () => {
     fetchMe,
   };
 };
+export default useAuth;
+

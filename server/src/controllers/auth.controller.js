@@ -45,11 +45,10 @@ const registerUser = asyncHandler(async function (req, res) {
 
 
 const loginUser = asyncHandler(async function (req, res) {
-  const { email, username, password } = req.body;
-
+  const { identifier, password } = req.body;
   const user = await userModel
     .findOne({
-      $or: [{ username }, { email }],
+      $or: [{ username: identifier }, { email: identifier }],
     })
     .select("+passwordHash");
 
@@ -59,7 +58,7 @@ const loginUser = asyncHandler(async function (req, res) {
 
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new appError("Invalid credentials.",401)
+    throw new appError("Invalid credentials",401)
   }
 
   const token = jwt.sign(
