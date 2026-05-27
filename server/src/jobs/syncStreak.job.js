@@ -55,7 +55,6 @@ function startStreakSync() {
         }
         page++;
       }
-      console.log("number of processed user", processedUser);
     } catch (err) {
       console.log("Failed to sync streak", err);
     }
