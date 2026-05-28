@@ -2,10 +2,12 @@ import React from 'react';
 import XPbar from '../components/XPbar';
 import StreakCard from '../components/StreakCard';
 import StatsCard from '../components/StatsCard';
-
+import useAuthStore from '../../auth/store/authStore';
+import useAuth from '../../auth/hooks/useAuth';
 const Dashboard = () => {
+  const user = useAuthStore((state) => state.user)
   return (
-    <div className="min-h-screen bg-[#0A0C10] p-4 sm:p-8 lg:p-12 font-sans selection:bg-cyan-500/30">
+    <div className=" p-4 sm:p-8 lg:p-12 font-sans selection:bg-cyan-500/30 ">
       
       <div className="max-w-6xl mx-auto space-y-8 lg:space-y-12">
         
@@ -15,7 +17,7 @@ const Dashboard = () => {
               Command Center
             </h1>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest">
-              Welcome back, Developer
+              Welcome back, {user?.username || "developer"}
             </p>
           </div>
           

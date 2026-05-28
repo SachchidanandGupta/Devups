@@ -39,7 +39,7 @@ const XPbar = () => {
 
         <div className="w-full bg-zinc-900 rounded-full h-3 overflow-hidden border border-zinc-800/50">
           <div 
-            className="bg-gradient-to-r from-blue-600 to-cyan-400 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+            className=" bg-gradient-to-r from-blue-600 to-cyan-400 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(6,182,212,0.5)]"
             style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>

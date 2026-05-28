@@ -1,22 +1,30 @@
-import {createBrowserRouter} from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
-import Login from "./features/auth/pages/Login";    
+import Login from "./features/auth/pages/Login";
 import Register from "./features/auth/pages/Register";
 import ProtectedRoutes from "./shared/components/ProtectedRoutes";
 import Dashboard from "./features/dashboard/pages/Dashboard";
+import Layout from "./shared/components/Layout";
+import Navbar from "./shared/components/Navbar";
 
- export const router = createBrowserRouter([
-    {   
-        path: "/",
-        element: <ProtectedRoutes><Dashboard/></ProtectedRoutes>
-    },
-    {   
-        path: "/login",
-        element: <Login />
-    },
-    {   
-        path: "/register",
-        element: <Register />
-    }
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <ProtectedRoutes>
+        <Layout>
+          <Dashboard />
+        </Layout>
+      </ProtectedRoutes>
+    ),
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  }
+  
 ]);
-
