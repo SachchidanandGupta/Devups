@@ -8,7 +8,7 @@ import useAuthStore from "../store/authStore";
 
   const useAuth = () => {
   const login = async (identifier, password) => {
-    useAuthStore.getState().setLoading(true);
+    useAuthStore.getState().setIsLoading(true);
     try {
       const data = await loginUser(identifier, password);
       useAuthStore.getState().setUser(data.user);
@@ -18,12 +18,12 @@ import useAuthStore from "../store/authStore";
         .getState()
         .setError(err.response?.data?.message || err.message);
     } finally {
-      useAuthStore.getState().setLoading(false);
+      useAuthStore.getState().setIsLoading(false);
     }
   };
 
   const register = async(username,email,password) =>{
-    useAuthStore.getState().setLoading(true);
+    useAuthStore.getState().setIsLoading(true);
     try{
         const data = await registerUser(username,email,password);
         useAuthStore.getState().setUser(data.user);
@@ -32,11 +32,11 @@ import useAuthStore from "../store/authStore";
     }catch(error){
         useAuthStore.getState().setError(error.response?.data?.message || error.message);
     }finally{
-        useAuthStore.getState().setLoading(false);
+        useAuthStore.getState().setIsLoading(false);
     }
   };
   const fetchMe = async ()=>{
-    useAuthStore.getState().setLoading(true);
+    useAuthStore.getState().setIsLoading(true);
     try{
         const data = await getMeUser();
         useAuthStore.getState().setUser(data.user);
@@ -45,13 +45,13 @@ import useAuthStore from "../store/authStore";
       }catch(error){
         useAuthStore.getState().setError(error.response?.data?.message|| error.message)
       }finally{
-        useAuthStore.getState().setLoading(false)
+        useAuthStore.getState().setIsLoading(false)
         useAuthStore.getState().setInitialized(true);
     }
   }
 
   const logout = async()=>{
-    useAuthStore.getState().setLoading(true);
+    useAuthStore.getState().setIsLoading(true);
     try{
         const data = await logOutUser();
         useAuthStore.getState().logout();
@@ -59,7 +59,7 @@ import useAuthStore from "../store/authStore";
     }catch(error){
         useAuthStore.getState().setError(error.response?.data?.message|| error.message);
     }finally{
-        useAuthStore.getState().setLoading(false);
+        useAuthStore.getState().setIsLoading(false);
     }
   }
 

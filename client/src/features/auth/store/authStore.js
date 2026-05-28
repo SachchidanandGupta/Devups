@@ -11,7 +11,7 @@ const useAuthStore = create((set) => ({
 
   setUser: (userData) => set({ user: userData }),
   setAuthenticated: (bool) => set({ isAuthenticated: bool }),
-  setLoading:(bool) => set({isLoading:bool}),
+  setIsLoading:(bool) => set({isLoading:bool}),
   setError:(message)=>set({error:message}),
   setInitialized:(bool)=>set({isInitialized:bool}),
   logout: () => set({ user: null, error: null, isAuthenticated: false })
