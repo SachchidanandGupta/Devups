@@ -23,17 +23,22 @@ const useSocket = () => {
       socketInstance.emit("join_room", user._id)
     })
 
-    socketInstance.on("xp:updated", ({  newXP }) => {
-      useAuthStore.getState().setUser({
-        ...useAuthStore.getState().user,
-        xp: newXP,
-      })
+    
+    socketInstance.on("xp:updated", ({  xp, level, amount, source }) => {
+        useAuthStore.getState().setUser({
+            ...useAuthStore.getState().user,
+            xp,
+            level
+        })
     })
-
+    
     socketInstance.on("leaderboard:refresh", () => {})
-
+    
     socketInstance.on("friend:activity", () => {})
-
+    
+    socketInstance.on("disconnect", () => {
+      console.log("Socket disconnected")
+    })
     initialized.current = true
 
     return () => {
