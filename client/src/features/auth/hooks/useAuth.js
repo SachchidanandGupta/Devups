@@ -41,11 +41,12 @@ import useAuthStore from "../store/authStore";
         const data = await getMeUser();
         useAuthStore.getState().setUser(data.user);
         useAuthStore.getState().setAuthenticated(true);
-
-    }catch(error){
+        
+      }catch(error){
         useAuthStore.getState().setError(error.response?.data?.message|| error.message)
-    }finally{
+      }finally{
         useAuthStore.getState().setLoading(false)
+        useAuthStore.getState().setInitialized(true);
     }
   }
 
