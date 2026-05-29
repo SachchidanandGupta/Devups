@@ -7,6 +7,7 @@ import Dashboard from "./features/dashboard/pages/Dashboard";
 import Layout from "./shared/components/Layout";
 import Navbar from "./shared/components/Navbar";
 import Leaderboard from "./features/leaderboard/pages/Leaderboard";
+import Friends from "./features/friends/pages/Friends";
 
 export const router = createBrowserRouter([
   {
@@ -37,4 +38,14 @@ export const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
   },
+  {
+    path:"/friends",
+    element:(
+      <ProtectedRoutes>
+        <Layout>
+            <Friends/>
+        </Layout>
+      </ProtectedRoutes>
+    )
+  }
 ]);

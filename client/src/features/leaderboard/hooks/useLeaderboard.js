@@ -42,7 +42,7 @@ const useLeaderboard = () => {
         fetchGlobal();
         fetchFriends();
     })
-    return socket.off("leaderboard:refresh");
+    return () => socket.off("leaderboard:refresh");
   }, []);
   return {
     fetchFriends,

@@ -36,7 +36,7 @@ const useFriend = () => {
     }  
   }
 
-  const friends = async() =>{
+  const fetchFriends = async() =>{
      useFriendStore.getState().setIsLoading(true);
       try{
         const data = await getFriends();
@@ -89,7 +89,7 @@ const useFriend = () => {
 
   return {
     request,
-    friends,
+    fetchFriends,
     removeFriend,
     block,
     response

@@ -8,6 +8,7 @@ const Dashboard = () => {
   const user = useAuthStore((state) => state.user)
   return (
     <div className=" p-4 sm:p-8 lg:p-12 font-sans selection:bg-cyan-500/30 ">
+      
      
       <div className="max-w-6xl mx-auto space-y-8 lg:space-y-12">
         
