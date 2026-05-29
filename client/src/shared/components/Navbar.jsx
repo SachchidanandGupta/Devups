@@ -13,7 +13,7 @@ import useAuth from "../../features/auth/hooks/useAuth";
 const navItems = [
   { name: "Home", path: "/", icon: IoHomeOutline },
   { name: "Friends", path: "/friends", icon: LiaUserFriendsSolid },
-  { name: "Ranking", path: "/ranking", icon: PiRanking },
+  { name: "Leaderboard", path: "/leaderboard", icon: PiRanking },
   { name: "Contest", path: "/contest", icon: GoTrophy },
 ];
 

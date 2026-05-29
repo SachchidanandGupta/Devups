@@ -37,6 +37,7 @@ const useLeaderboard = () => {
   };
    useEffect(() => {
     const socket = getSocket();
+    if(!socket) return;
     socket.on("leaderboard:refresh",()=>{
         fetchGlobal();
         fetchFriends();

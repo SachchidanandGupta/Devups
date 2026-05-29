@@ -6,6 +6,7 @@ import ProtectedRoutes from "./shared/components/ProtectedRoutes";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import Layout from "./shared/components/Layout";
 import Navbar from "./shared/components/Navbar";
+import Leaderboard from "./features/leaderboard/pages/Leaderboard";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,15 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
-  }
-  
+  },
+  {
+    path: "/leaderboard",
+    element: (
+      <ProtectedRoutes>
+        <Layout>
+          <Leaderboard />
+        </Layout>
+      </ProtectedRoutes>
+    ),
+  },
 ]);
