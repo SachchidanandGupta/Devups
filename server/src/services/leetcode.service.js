@@ -21,6 +21,15 @@ const getUserCalenderQuery = `query getUserCalendar($username: String!) {
   }
 }`;
 
+const getLeetCodeContestQuery = `query {
+  
+  upcomingContests {
+    title
+    startTime
+    duration
+  }
+}`;
+
 async function getUserSolved(username) {
   try {
     const { data } = await axios.post(
@@ -84,7 +93,37 @@ async function getUserCalender(username) {
   }
 }
 
+async function getLeetCodeContest() {
+  try {
+    const { data } = await axios.post(
+      LEETCODE_API,
+      {
+        query: getLeetCodeContestQuery,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+        },
+      },
+    );
+    if (!data.data.upcomingContests) {
+      throw new Error("No contest data returned");
+    }
+    return data.data.upcomingContests.map((contest) => ({
+      platform: "leetcode",
+      title: contest.title,
+      startTime: new Date(contest.startTime * 1000), // unix timestamp → Date
+      duration: contest.duration,
+    }));
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserCalender,
   getUserSolved,
+  getLeetCodeContest
 };
