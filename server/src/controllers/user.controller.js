@@ -1,11 +1,12 @@
 const appError = require("../utils/appError");
 const asyncHandler = require("../utils/asyncHandler");
 const userModel = require("../models/user.model");
+const { getGithubHeatmap } = require("../services/github.service");
 
 const getProfile = asyncHandler(async function (req, res) {
-  const username = req.params.username;
+  const userId = req.params.userId;
   const user = await userModel
-    .findOne({ _id:username })
+    .findOne({ _id: userId })
     .select("-passwordHash -githubId -isEmailVerified -role");
   if (!user) {
     throw new appError("user not found", 404);
@@ -34,7 +35,10 @@ const updateProfile = asyncHandler(async function (req, res) {
     throw new appError("No valid fields provided to update", 400);
   }
   const updatedUser = await userModel
-    .findByIdAndUpdate(req.user.id, updates, { new: true, runValidators: true })
+    .findByIdAndUpdate(req.user.id, updates, {
+      returnDocument: "after",
+      runValidators: true,
+    })
     .select("-passwordHash -githubId -isEmailVerified -role");
   if (!updatedUser) {
     throw new appError("user not founded", 404);
@@ -59,8 +63,24 @@ const deleteProfile = asyncHandler(async function (req, res) {
   });
 });
 
+const getHeatmap = asyncHandler(async function (req, res) {
+  const userId = req.params.userId;
+  const user = await userModel.findById(userId).select("githubUsername");
+  if (!user) {
+    throw new appError("User not found", 404);
+  }
+  if (!user.githubUsername) {
+    throw new appError("No GitHub account linked", 400);
+  }
+  const heatmap = await getGithubHeatmap(user.githubUsername);
+  return res.status(200).json({
+    status: "success",
+    heatmap,
+  });
+});
 module.exports = {
   getProfile,
   updateProfile,
   deleteProfile,
+  getHeatmap
 };
