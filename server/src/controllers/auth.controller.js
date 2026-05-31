@@ -104,7 +104,12 @@ const logOutUser = asyncHandler(async function (req, res) {
     throw new appError("Token not provided,unauthorizes access",401);
   }
 
-  res.clearCookie("token");
+  res.clearCookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path:"/login",
+  });
   return res.status(200).json({
     message: "User logged out successfully",
   });

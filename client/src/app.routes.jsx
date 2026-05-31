@@ -8,6 +8,7 @@ import Layout from "./shared/components/Layout";
 import Navbar from "./shared/components/Navbar";
 import Leaderboard from "./features/leaderboard/pages/Leaderboard";
 import Friends from "./features/friends/pages/Friends";
+import Contest from "./features/contest/pages/Contest";
 
 export const router = createBrowserRouter([
   {
@@ -39,13 +40,23 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path:"/friends",
-    element:(
+    path: "/friends",
+    element: (
       <ProtectedRoutes>
         <Layout>
-            <Friends/>
+          <Friends />
         </Layout>
       </ProtectedRoutes>
-    )
-  }
+    ),
+  },
+  {
+    path: "/contest",
+    element: (
+      <ProtectedRoutes>
+        <Layout>
+          <Contest />
+        </Layout>
+      </ProtectedRoutes>
+    ),
+  },
 ]);
