@@ -40,7 +40,7 @@ const useFriend = () => {
      useFriendStore.getState().setIsLoading(true);
       try{
         const data = await getFriends();
-        useFriendStore.getState().setFriends(data.friendList);
+        useFriendStore.getState().setFriends(data.friendList || []);
       }catch (err) {
       useFriendStore
         .getState()
@@ -82,7 +82,7 @@ const useFriend = () => {
     const socket = getSocket();
     if(!socket) return
     socket.on("friend:activity",()=>{
-          friends()
+          fetchFriends();
     })
     return ()=> socket.off("friend:activity");
   },[])

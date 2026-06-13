@@ -12,7 +12,7 @@ const Friends = () => {
     response 
   } = useFriend();
   
-  const {friends} = useFriendStore((state) => state.friends);
+  const friends = useFriendStore((state) => state.friends);
   const isLoading = useFriendStore((state) => state.isLoading);
 
   useEffect(() => {

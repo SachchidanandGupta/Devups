@@ -1,1 +1,77 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap");
+
+@theme {
+  /* Colors */
+  --color-black: #000000;
+  --color-surface: #0d0d0d;
+  --color-surface-2: #111111;
+  --color-border: #1e1e1e;
+  --color-border-bright: #333333;
+
+  --color-accent: #00ff88;
+  --color-accent-dim: #00ff8820;
+  --color-accent-muted: #00ff8850;
+
+  --color-danger: #ff3333;
+  --color-danger-dim: #ff333320;
+  --color-warning: #ffaa00;
+  --color-warning-dim: #ffaa0020;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #888888;
+  --color-text-muted: #444444;
+
+  /* Typography */
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-sans: "JetBrains Mono", "Courier New", monospace;
+
+  /* Spacing and radius */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    background-color: #000000;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #000000;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333333;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00ff88;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: #00ff8830;
+    color: #00ff88;
+  }
+}

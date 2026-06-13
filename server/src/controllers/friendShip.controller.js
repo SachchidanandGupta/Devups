@@ -175,7 +175,7 @@ const getFriends = asyncHandler(async function (req, res) {
     message:"friendList fetched successfully.",
     status:"success",
     count : friends.length,
-    friendList:{friends}
+    friendList:friends
   })
 });
 module.exports = {
