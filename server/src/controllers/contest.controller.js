@@ -18,15 +18,15 @@ const getContest = asyncHandler(async function (req, res) {
     getLeetCodeContest(),
     getCodeforcesContest(),
   ]);
+
   const codeForcesContest = codeContest
     .filter((contest) => contest.phase === "BEFORE")
     .map((contest) => ({
       platform: "CodeForces",
-      title: contest.title,
-      startTime: new Date(contest.startTime * 1000),
-      duration: contest.duration,
+      title: contest.name,
+      startTime: new Date(contest.startTimeSeconds * 1000), 
+      duration: Math.floor(contest.durationSeconds / 60), 
     }));
-
   const contestData = [...leetContest, ...codeForcesContest].sort(
     (a, b) => a.startTime - b.startTime,
   );
@@ -94,7 +94,7 @@ const completeFriendContest = asyncHandler(async function (req, res) {
   }
 
   const topScore = contest.scores.reduce((max, score) => {
-      return  score.xpEarned > max.xpEarned ? score : max;
+    return score.xpEarned > max.xpEarned ? score : max;
   }, contest.scores[0]);
 
   const updateContest = await contestModel

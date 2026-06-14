@@ -1,5 +1,4 @@
 import React from "react";
-import { FiCalendar, FiClock } from "react-icons/fi";
 
 const ContestCard = ({ contest }) => {
   const { 
@@ -9,8 +8,7 @@ const ContestCard = ({ contest }) => {
     duration 
   } = contest || {};
 
-  
-  
+  // Preserve existing formatting logic
   const formattedStartTime = startTime ? new Date(startTime).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
@@ -20,7 +18,6 @@ const ContestCard = ({ contest }) => {
     hour12: true,
   }).replace(",", " •") : "TBA";
 
- 
   const formatDuration = (val) => {
     if (!val) return "Unknown";
     const num = Number(val);
@@ -34,49 +31,51 @@ const ContestCard = ({ contest }) => {
     return `${minutes} Mins`;
   };
 
+  // Derive live status
+  const now = new Date();
+  const start = new Date(startTime);
+  const diffMins = (start - now) / 60000;
+  const liveStatus = diffMins < 0 ? "LIVE_NOW" : diffMins < 60 ? "STARTING_SOON" : null;
 
+  // Determine platform badge styles
   const normalizedPlatform = platform.toLowerCase();
-  let badgeStyles = "bg-zinc-800 text-slate-400 border border-zinc-700"; 
-  
+  let badgeStyles = "border-border text-text-muted"; 
   if (normalizedPlatform.includes("leetcode")) {
-    badgeStyles = "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 drop-shadow-[0_0_8px_rgba(6,182,212,0.3)]";
+    badgeStyles = "border-accent text-accent";
   } else if (normalizedPlatform.includes("codeforces")) {
-    badgeStyles = "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 drop-shadow-[0_0_8px_rgba(250,204,21,0.3)]";
+    badgeStyles = "border-warning text-warning";
   }
 
   return (
-    <div className="flex flex-col justify-between bg-zinc-900/40 p-5 sm:p-6 rounded-2xl border border-zinc-800/60 hover:bg-zinc-900 hover:border-zinc-700/80 transition-all duration-300 group h-full">
+    <div className="flex justify-between items-center gap-4 border-b border-border py-3 px-4 hover:bg-surface-2 font-mono transition-colors">
       
-      <div className="flex justify-between items-start mb-4">
-        <span className={`text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase ${badgeStyles}`}>
+      {/* LEFT: Title & Status */}
+      <div className="flex flex-col gap-1 w-[40%] min-w-0">
+        {liveStatus && (
+          <span className="text-accent text-xs animate-pulse font-bold">
+            {liveStatus}
+          </span>
+        )}
+        <span className="text-text-primary text-sm uppercase truncate">
+          {title}
+        </span>
+      </div>
+
+      {/* MIDDLE: Schedule Info */}
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <span className="text-text-muted text-xs truncate">
+          START: {formattedStartTime}
+        </span>
+        <span className="text-text-muted text-xs truncate">
+          DURATION: {formatDuration(duration)}
+        </span>
+      </div>
+
+      {/* RIGHT: Platform Badge */}
+      <div className="shrink-0 flex justify-end">
+        <span className={`border text-xs px-2 py-1 uppercase tracking-widest ${badgeStyles}`}>
           {platform}
         </span>
-        
-        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] mt-1.5 opacity-70 group-hover:opacity-100 transition-opacity"></div>
-      </div>
-
-      <div className="mb-6">
-        <h3 className="text-lg sm:text-xl font-bold text-slate-200 group-hover:text-white transition-colors line-clamp-2">
-          {title}
-        </h3>
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mt-auto border-t border-zinc-800/60 pt-4">
-        
-        <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
-          <FiCalendar className="text-slate-500" size={16} />
-          <span className="text-sm font-semibold tracking-wide">
-            {formattedStartTime}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
-          <FiClock className="text-slate-500" size={16} />
-          <span className="text-sm font-semibold tracking-wide">
-            {formatDuration(duration)}
-          </span>
-        </div>
-
       </div>
       
     </div>

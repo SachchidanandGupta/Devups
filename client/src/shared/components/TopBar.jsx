@@ -32,7 +32,7 @@ const TopBar = ({ pageField, searchBar }) => {
           <input
             type="text"
             placeholder="SEARCH_TERMINAL..."
-            className=" text-sm bg-surface-2 pl-2 pr-6 py-2 border border-border-bright"
+            className=" text-sm bg-surface-2 pl-2 pr-6 py-2 border border-border-bright focus:outline-none focus:border-accent"
           />
         ) : (
           ""

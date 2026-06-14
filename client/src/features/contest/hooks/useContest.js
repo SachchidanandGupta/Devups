@@ -12,6 +12,7 @@ const useContest = () => {
     try {
       const data = await getContests();
       useContestStore.getState().setPlatformContests(data.contestData);
+      
     } catch (error) {
       useContestStore
         .getState()
