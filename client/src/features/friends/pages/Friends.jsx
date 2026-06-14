@@ -1,77 +1,79 @@
-import React, { useEffect } from 'react';
-import useFriend from '../hooks/useFriend';
-import useFriendStore from '../store/useFriendStore';
-import FriendCard from '../components/FriendCard'; 
+import React, { useEffect } from "react";
+import useFriend from "../hooks/useFriend";
+import useFriendStore from "../store/useFriendStore";
+import FriendCard from "../components/FriendCard";
+import { FriendSkeleton } from "../../../shared/ui/Skeleton";
 
 const Friends = () => {
-  const { 
-    request, 
-    fetchFriends, 
-    removeFriend, 
-    block, 
-    response 
-  } = useFriend();
-  
+  const { fetchFriends, removeFriend, block } = useFriend();
+
   const friends = useFriendStore((state) => state.friends);
   const isLoading = useFriendStore((state) => state.isLoading);
 
-  useEffect(() => {
-    fetchFriends();
-  }, []);
+useEffect(() => {
+  fetchFriends();
+}, []);
 
   const handleUnfriend = async (id) => {
-    await removeFriend(id);
-    await fetchFriends(); 
+    const prev = useFriendStore.getState().friends;
+    useFriendStore.getState().setFriends(prev.filter((f) => f._id !== id));
+    try {
+      await removeFriend(id);
+    } catch (err) {
+      useFriendStore.getState().setFriends(prev);
+    }
   };
 
   const handleBlock = async (id) => {
-    await block(id);
-    await fetchFriends();
+    const prev = useFriendStore.getState().friends;
+    useFriendStore.getState().setFriends(prev.filter((f) => f._id !== id));
+    try {
+      await block(id);
+    } catch (err) {
+      useFriendStore.getState().setFriends(prev);
+    }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col font-sans">
+    <div className="w-full p-2 pt-4 flex flex-col font-mono">
       
-      {/* Header */}
-      <div className="mb-8 border-b border-zinc-800/60 pb-6">
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
-          Friends
+      <div className="border-b border-border pb-2 mb-7">
+        <h2 className="text-accent font-bold text-xl">
+          FRIENDS
         </h2>
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">
-          Your Network
+        <p className="text-text-muted text-xs uppercase mt-1">
+          YOUR_NETWORK
         </p>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col gap-4">
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-10 h-10 border-4 border-zinc-800 border-t-cyan-500 rounded-full animate-spin"></div>
-            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-4 animate-pulse">
-              Loading Network...
-            </p>
-          </div>
-        ) : friends && friends.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-zinc-900/30 rounded-2xl border border-zinc-800/50 border-dashed">
-            <span className="text-4xl drop-shadow-[0_0_8px_rgba(255,255,255,0.1)] mb-3">📭</span>
-            <p className="text-slate-400 font-semibold">
-              You haven't added any friends yet.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {friends?.map((friend) => (
-              <FriendCard 
-                key={friend._id || friend.id} 
-                friend={friend} 
-                onBlock={handleBlock}       
-                onUnfriend={handleUnfriend} 
-              />
-            ))}
-          </div>
-        )}
+      <div className="flex justify-between px-4 py-2 border-b border-border text-text-muted text-xs uppercase">
+        <div className="flex-1">DEVELOPER_IDENTITY</div>
+        <div className="flex-1 flex gap-8">
+          <div className="w-16">LEVEL</div>
+          <div className="w-24">XP</div>
+        </div>
+        <div className="flex-1 text-right">ACTIONS</div>
       </div>
 
+      <div className="flex flex-col">
+        {isLoading ? (
+          <FriendSkeleton />
+        ) : !friends || friends.length === 0 ? (
+          <div className="text-text-muted text-sm text-center py-20">
+            NO_FRIENDS_FOUND
+          </div>
+        ) : (
+          friends.map((friend) => (
+            <FriendCard
+              key={friend._id || friend.id}
+              friend={friend}
+              onUnfriend={handleUnfriend}
+              onBlock={handleBlock}
+            />
+          ))
+        )}
+      </div>
+      
     </div>
   );
 };
