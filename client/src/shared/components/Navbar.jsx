@@ -73,7 +73,7 @@ const SideNavbar = () => {
         })}
       </div>
 
-      <div className="pb-2 border-border bg-black">
+      <div className="pb-2 border-t border-border bg-black">
         <div className="flex items-center gap-3 bg-black p-2 rounded-none">
           <button
             onClick={handleLogout}

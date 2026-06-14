@@ -29,7 +29,7 @@ const Leaderboard = () => {
 
   return (
     <div className="flex flex-col">
-      <TopBar pageField="LEADERBOARD" searchBar={true} user={currentUser} />
+      <TopBar pageField="LEADERBOARD" searchBar={true}  />
       <div className=" w-full p-6 pt-4 flex flex-col font-mono">
         <div className="flex bg-black  w-full border-b border-border mb-7 ">
           <button
@@ -53,7 +53,7 @@ const Leaderboard = () => {
             Friends
           </button>
         </div>
-        <div className="flex items-center justify-between py-4 px-4 bg-surface-2 border-b border-border text-text-secondary text-sm font-mono uppercase tracking-widest">
+        <div className="flex items-center justify-between py-4 px-4 mb-4 bg-surface-2 border-b border-border text-text-secondary text-sm font-mono uppercase tracking-widest">
           <div className="flex flex-1 items-center min-w-0 pr-4">
             <div className="w-16 shrink-0">RANK</div>
             <div>DEVELOPER_IDENTITY</div>
@@ -87,6 +87,7 @@ const Leaderboard = () => {
             ))
           )}
         </div>
+        
       </div>
     </div>
   );
