@@ -24,8 +24,8 @@ const getContest = asyncHandler(async function (req, res) {
     .map((contest) => ({
       platform: "CodeForces",
       title: contest.name,
-      startTime: new Date(contest.startTimeSeconds * 1000), 
-      duration: Math.floor(contest.durationSeconds / 60), 
+      startTime: new Date(contest.startTimeSeconds * 1000),
+      duration: Math.floor(contest.durationSeconds / 60),
     }));
   const contestData = [...leetContest, ...codeForcesContest].sort(
     (a, b) => a.startTime - b.startTime,
@@ -44,7 +44,7 @@ const createContest = asyncHandler(async function (req, res) {
     throw new appError("startTime can't past than endTime", 400);
   }
 
-  const createContest = await contestModel.create({
+  const newContest = await contestModel.create({
     creator: creatorID,
     participants: [creatorID, ...participantIds],
     startTime,
@@ -54,21 +54,38 @@ const createContest = asyncHandler(async function (req, res) {
   return res.status(201).json({
     message: "Contest created successfully.",
     status: "success",
-    createContest,
+    newContest,
   });
 });
 
 const getFriendContest = asyncHandler(async function (req, res) {
   const userID = req.user.id;
-  const friendContest = await contestModel
-    .find({
+  const { type } = req.query;
+  let query = {
+    $or: [{ creator: userID }, { participants: userID }],
+  };
+  if (type === "incoming") {
+    query = {
+      participants: userID,
+      creator: { $ne: userID },
+      status: "pending",
+    };
+  } else if (type === "active") {
+    query = {
       $or: [{ creator: userID }, { participants: userID }],
-    })
-    .populate([
-      { path: "creator", select: "username avatar level" },
-      { path: "participants", select: "username avatar level" },
-      { path: "winner", select: "username avatar level" },
-    ]);
+      status: "active",
+    };
+  } else if (type === "completed") {
+    query = {
+      $or: [{ creator: userID }, { participants: userID }],
+      status: "completed",
+    };
+  }
+  const friendContest = await contestModel.find(query).populate([
+    { path: "creator", select: "username avatar level" },
+    { path: "participants", select: "username avatar level" },
+    { path: "winner", select: "username avatar level" },
+  ]);
 
   res.status(200).json({
     message: "friends contest fetched",

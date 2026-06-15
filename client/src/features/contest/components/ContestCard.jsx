@@ -1,84 +1,105 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const ContestCard = ({ contest }) => {
-  const { 
-    platform = "Unknown", 
-    title = "Upcoming Contest", 
-    startTime, 
-    duration 
-  } = contest || {};
+  const { duration, title, platform, startTime } = contest || {};
+  const [timeLeft, setTimeLeft] = useState("");
 
-  // Preserve existing formatting logic
-  const formattedStartTime = startTime ? new Date(startTime).toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).replace(",", " •") : "TBA";
+  useEffect(() => {
+    const calc = () => {
+      const diff = new Date(startTime) - new Date();
+      if (diff <= 0) {
+        setTimeLeft("LIVE_NOW");
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setTimeLeft(`${h}h ${m}m ${s}s`);
+    };
+    calc();
+    const interval = setInterval(calc, 1000);
+    return () => clearInterval(interval);
+  }, [startTime]);
 
-  const formatDuration = (val) => {
-    if (!val) return "Unknown";
-    const num = Number(val);
-    if (isNaN(num)) return val; 
-
-    const hours = Math.floor(num / 60);
-    const minutes = num % 60;
-    
-    if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
-    if (hours > 0) return `${hours} Hour${hours > 1 ? 's' : ''}`;
-    return `${minutes} Mins`;
+  function truncateFromEnd(str, maxLength) {
+    if (str.length <= maxLength) return str;
+    return str.slice(0, maxLength - 3) + "...";
+  }
+  const formatDuration = (mins) => {
+    if (!mins) return "N/A";
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
   };
 
-  // Derive live status
-  const now = new Date();
-  const start = new Date(startTime);
-  const diffMins = (start - now) / 60000;
-  const liveStatus = diffMins < 0 ? "LIVE_NOW" : diffMins < 60 ? "STARTING_SOON" : null;
+  const normalizedPlatform = platform?.toLowerCase() || "";
+  const platformBadge = normalizedPlatform.includes("leetcode")
+    ? "border-accent text-accent h-8 w-22 "
+    : normalizedPlatform.includes("codeforces")
+      ? "border-warning text-warning h-8 w-22"
+      : "border-border text-text-muted";
 
-  // Determine platform badge styles
-  const normalizedPlatform = platform.toLowerCase();
-  let badgeStyles = "border-border text-text-muted"; 
-  if (normalizedPlatform.includes("leetcode")) {
-    badgeStyles = "border-accent text-accent";
-  } else if (normalizedPlatform.includes("codeforces")) {
-    badgeStyles = "border-warning text-warning";
-  }
+  const contestUrl = normalizedPlatform.includes("leetcode")
+    ? "https://leetcode.com/contest/"
+    : normalizedPlatform.includes("codeforces")
+      ? "https://codeforces.com/contests"
+      : null;
 
   return (
-    <div className="flex justify-between items-center gap-4 border-b border-border py-3 px-4 hover:bg-surface-2 font-mono transition-colors">
-      
-      {/* LEFT: Title & Status */}
-      <div className="flex flex-col gap-1 w-[40%] min-w-0">
-        {liveStatus && (
-          <span className="text-accent text-xs animate-pulse font-bold">
-            {liveStatus}
-          </span>
-        )}
-        <span className="text-text-primary text-sm uppercase truncate">
-          {title}
-        </span>
+    <div className="flex items-center px-4 py-3 border border-border hover:bg-surface-2 transition-colors font-mono">
+  
+  <div className="w-24 shrink-0">
+    {timeLeft === "LIVE_NOW" ? (
+      <div className="h-8 w-20 text-xs text-accent border border-accent flex items-center justify-center">
+        LIVE
       </div>
+    ) : (
+      <div className="h-8 w-20 text-xs text-text-secondary border border-border flex items-center justify-center">
+        UPCOMING
+      </div>
+    )}
+  </div>
 
-      {/* MIDDLE: Schedule Info */}
-      <div className="flex flex-col gap-1 flex-1 min-w-0">
-        <span className="text-text-muted text-xs truncate">
-          START: {formattedStartTime}
-        </span>
-        <span className="text-text-muted text-xs truncate">
-          DURATION: {formatDuration(duration)}
-        </span>
-      </div>
+  <div className="flex-1 min-w-0 pr-4">
+    <span className="text-text-primary text-sm uppercase font-bold truncate block">
+      {truncateFromEnd(title,36)}
+    </span>
+    
+  </div>
 
-      {/* RIGHT: Platform Badge */}
-      <div className="shrink-0 flex justify-end">
-        <span className={`border text-xs px-2 py-1 uppercase tracking-widest ${badgeStyles}`}>
-          {platform}
-        </span>
-      </div>
-      
+  <div className="flex items-center shrink-0">
+    
+    <span className="w-32 shrink-0 text-accent text-sm truncate pr-2">
+      {timeLeft === "LIVE_NOW" ? "LIVE_NOW" : timeLeft}
+    </span>
+
+    <span className="w-32 shrink-0 text-text-secondary text-sm">
+      {formatDuration(duration)}
+    </span>
+
+    <div className="w-32 shrink-0 flex  justify-center">
+      <span className={`border text-xs flex items-center justify-center uppercase tracking-widest ${platformBadge}`}>
+        {platform}
+      </span>
     </div>
+
+    <div className="w-24 shrink-0 flex justify-end">
+      {contestUrl && (
+        <a
+          href={contestUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="border border-text-primary text-text-primary text-xs font-bold flex justify-center items-center h-8 w-20 hover:border-accent hover:bg-accent hover:text-text-secondary transition-colors"
+        >
+          OPEN →
+        </a>
+      )}
+    </div>
+
+  </div>
+</div>
   );
 };
 

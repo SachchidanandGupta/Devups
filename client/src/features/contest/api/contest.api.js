@@ -13,8 +13,10 @@ export async function createContest(participantIds, startTime, endTime){
     return response.data;
 }
 
-export async function getFriendContests(){
-    const response = await axiosInstance.get("/contest/friends");
+export async function getFriendContests(type){
+    const url = type ? `/contest/friends?type=${type}` : "/contest/friends";
+    const response = await axiosInstance.get(url);
+    
     return response.data
 }
 

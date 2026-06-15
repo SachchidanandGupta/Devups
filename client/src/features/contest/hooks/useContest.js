@@ -12,7 +12,6 @@ const useContest = () => {
     try {
       const data = await getContests();
       useContestStore.getState().setPlatformContests(data.contestData);
-      
     } catch (error) {
       useContestStore
         .getState()
@@ -22,53 +21,61 @@ const useContest = () => {
     }
   };
 
-  const friendContest = async() =>{
+  const friendContest = async () => {
     useContestStore.getState().setIsLoading(true);
-    try{
-        const data = await getFriendContests();
-        useContestStore.getState().setFriendContests(data.friendContest);
-    }catch(error){
-        useContestStore.getState().setError(error.response?.data?.message || error.message);
-    }finally{
-        useContestStore.getState().setIsLoading(false);
+    try {
+      const [incoming, active, completed] = await Promise.all([
+         getFriendContests("incoming"),
+         getFriendContests("active"),
+         getFriendContests("completed"),
+      ]);
+      useContestStore.getState().setIncomingContests(incoming.friendContest || []);
+      useContestStore.getState().setActiveContests(active.friendContest || []);
+      useContestStore.getState().setCompletedContests(completed.friendContest || []);
+    } catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useContestStore.getState().setIsLoading(false);
     }
-  }
+  };
 
-  const initiateContest = async(participantIds, startTime, endTime) =>{
+  const initiateContest = async (participantIds, startTime, endTime) => {
     useContestStore.getState().setIsLoading(true);
-    try{
-        await createContest(participantIds, startTime, endTime);
-        await friendContest();
-    }catch(error){
-        useContestStore.getState().setError(error.response?.data?.message || error.message);
-    }finally{
-        useContestStore.getState().setIsLoading(false);
+    try {
+      await createContest(participantIds, startTime, endTime);
+      await friendContest();
+    } catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useContestStore.getState().setIsLoading(false);
     }
+  };
 
-
-  }
-
-  const concludeContest = async(contestId) =>{
+  const concludeContest = async (contestId) => {
     useContestStore.getState().setIsLoading(true);
-    try{
+    try {
+      await completeFriendContest(contestId);
 
-       await completeFriendContest(contestId);
-        
-        await friendContest();
-    }catch(error){
-        useContestStore.getState().setError(error.response?.data?.message || error.message);
-    }finally{
-        useContestStore.getState().setIsLoading(false);
+      await friendContest();
+    } catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useContestStore.getState().setIsLoading(false);
     }
-    
-  }
+  };
 
   return {
     contest,
     friendContest,
     initiateContest,
-    concludeContest
-  }
+    concludeContest,
+  };
 };
 
 export default useContest;

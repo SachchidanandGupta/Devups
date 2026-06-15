@@ -114,7 +114,7 @@ async function getLeetCodeContest() {
       platform: "leetcode",
       title: contest.title,
       startTime: new Date(contest.startTime * 1000), // unix timestamp → Date
-      duration: contest.duration,
+      duration: Math.floor(contest.duration / 60),
     }));
   } catch (error) {
     console.error(error.response?.data?.message || error.message);
