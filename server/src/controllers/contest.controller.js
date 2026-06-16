@@ -39,12 +39,14 @@ const getContest = asyncHandler(async function (req, res) {
 
 const createContest = asyncHandler(async function (req, res) {
   const creatorID = req.user.id;
-  const { participantIds, startTime, endTime } = req.body;
+  const { contestName , participantIds, startTime, endTime,target } = req.body;
   if (startTime > endTime) {
     throw new appError("startTime can't past than endTime", 400);
   }
 
   const newContest = await contestModel.create({
+    contestName,
+    target,
     creator: creatorID,
     participants: [creatorID, ...participantIds],
     startTime,

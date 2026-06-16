@@ -40,7 +40,7 @@ const TopBar = ({ pageField, searchBar }) => {
         
         <CiBellOn size={24} className="hover:text-accent font-bold cursor-pointer p-2 h-auto w-auto border-none hover:bg-accent-dim rounded-full  " />
         <Link to="/profile">
-          <div className="relative w-10 h-10 rounded-none overflow-hidden bg-surface-2 border border-accent flex-shrink-0 ">
+          <div className="relative w-10 h-10  overflow-hidden bg-surface-2 border border-accent flex-shrink-0 ">
             {user.profileImage ? (
               <img
                 src={user.profileImage}

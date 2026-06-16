@@ -5,6 +5,7 @@ import ContestCard from "../components/ContestCard";
 import FriendContestCard from "../components/FriendContestCard";
 import TopBar from "../../../shared/components/TopBar";
 import { ContestSkeleton } from "../../../shared/ui/Skeleton";
+import IncomingFriendContest from "../components/IncomingFriendContest";
 const Contest = () => {
   const {
     contest: fetchPlatformContests,
@@ -13,13 +14,14 @@ const Contest = () => {
   } = useContest();
 
   const platformContests = useContestStore((state) => state.platformContests);
-  const friendContests = useContestStore((state) => state.friendContests);
+  const activeContests = useContestStore((state) => state.activeContests);
+  const incomingContests = useContestStore((state)=>state.incomingContests);
   const isLoading = useContestStore((state) => state.isLoading);
   const [utcTime, setUtcTime] = useState("");
 
   useEffect(() => {
     const tick = () => {
-      setUtcTime(new Date().toUTCString().slice(17, 25)); // extracts HH:MM:SS
+      setUtcTime(new Date().toUTCString().slice(17, 25));
     };
     tick();
     const interval = setInterval(tick, 1000);
@@ -37,7 +39,7 @@ const Contest = () => {
   };
 
   const activeList =
-    activeTab === "platform" ? platformContests : friendContests;
+    activeTab === "platform" ? platformContests : activeContests;
 
   return (
     <div>
@@ -57,7 +59,7 @@ const Contest = () => {
                 </span>
                 <span className="text-accent font-mono text-xs  pr-2 flex items-center justify-center ">
                   {" "}
-                  ACTIVE_CONTEST: {activeList.length}{" "}
+                  CONTEST_COUNT: {activeList.length}{" "}
                 </span>
               </div>
             </div>
@@ -86,7 +88,7 @@ const Contest = () => {
           <div className="flex border-b border-border w-full">
             <button
               onClick={() => setActiveTab("platform")}
-              className={`px-4 py-2 rounded-none text-sm font-mono uppercase  cursor-pointer ${
+              className={`px-4 py-2 rounded-none text-sm font-mono uppercase font-bold cursor-pointer ${
                 activeTab === "platform"
                   ? "text-accent border-b-2 border-accent bg-accent-muted/40 "
                   : "text-text-secondary hover:text-text-primary "
@@ -96,7 +98,7 @@ const Contest = () => {
             </button>
             <button
               onClick={() => setActiveTab("friends")}
-              className={`px-4 py-2 rounded-none text-sm font-mono uppercase  cursor-pointer ${
+              className={`px-4 py-2 rounded-none text-sm font-mono uppercase font-bold cursor-pointer ${
                 activeTab === "friends"
                   ? "text-accent border-b-2 border-accent bg-accent-muted/40 "
                   : "text-text-secondary hover:text-text-primary "
@@ -107,12 +109,19 @@ const Contest = () => {
           </div>
         </div>
         {activeTab == "platform" ? (
-          <div className="w-full text-2xl font-mono text-text-secondary">
+          <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2 font-mono text-text-secondary">
             ACTIVE & UPCOMING PLATFORM EVENTS
           </div>
         ) : (
-          <div className="w-full text-2xl font-mono text-text-secondary">
-            ACTIVE & UPCOMING FRIENDS EVENTS
+          <div className="w-full grid grid-cols-3 gap-2">
+            <div className="w-full col-span-2 text-xl flex items-center justify-between pb-1  border-b-2 border-border font-mono text-text-secondary mb-2">
+              <span> ACTIVE_CONTEST [{activeContests.length}]:</span>
+              <span className="text-accent text-xs animate-pulse">● LIVE_FEED</span>
+             
+            </div>
+            <div className="w-full col-span-1 text-xl pb-1  border-b-2 border-border font-mono text-text-secondary mb-2">
+              PENDING_REQUESTS [{incomingContests.length}]:
+            </div>
           </div>
         )}
 
@@ -129,35 +138,56 @@ const Contest = () => {
             </div>
           ) : (
             <div className="flex flex-col ">
-              <div className="flex items-center px-4 py-2 bg-surface-2 border-b border-border text-text-muted text-sm font-mono uppercase tracking-widest">
-                
-                <div className="w-24 shrink-0 font-bold">STATE</div>
+              {activeTab === "platform" ? (
+                <div className="flex items-center px-4 py-2 bg-surface-2 border-b border-border text-text-muted text-sm font-mono uppercase tracking-widest">
+                  <div className="w-24 shrink-0 font-bold">STATE</div>
 
-                
-                <div className="flex-1 min-w-0 pr-4 font-bold ">TITLE</div>
+                  <div className="flex-1 min-w-0 pr-4 font-bold ">TITLE</div>
 
-                <div className="flex items-center shrink-0">
-                  <div className="w-32 text-left font-bold">START_IN</div>
-                  <div className="w-32 text-left font-bold">DURATION</div>
-                  <div className="w-32 text-center font-bold">PLATFORM</div>
-                  <div className="w-24 text-right font-bold">ACTION</div>
+                  <div className="flex items-center shrink-0">
+                    <div className="w-32 text-left font-bold">START_IN</div>
+                    <div className="w-32 text-left font-bold">DURATION</div>
+                    <div className="w-32 text-center font-bold">PLATFORM</div>
+                    <div className="w-24 text-right font-bold">ACTION</div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                ""
+              )}
+
               <div className="flex flex-col gap-2">
                 {activeTab === "platform"
-                  ? platformContests.map((contest, index) => (
+                  && platformContests.map((contest, index) => (
                       <ContestCard
                         key={contest._id || index}
                         contest={contest}
                       />
                     ))
-                  : friendContests.map((contest, index) => (
-                      <FriendContestCard
-                        key={contest._id || index}
-                        contest={contest}
-                        onComplete={handleComplete}
-                      />
-                    ))}
+                  }
+
+                  {activeTab === "friends" && (
+                    <div className="grid grid-cols-3 gap-4">
+                      
+                      <div className="col-span-2 flex flex-col gap-2">
+                        {activeContests.map((contest,index)=>(
+                          <FriendContestCard
+                            key={contest._id || index}
+                            contest={contest}
+                            onComplete={handleComplete}
+                          />
+                        ))}
+                      </div>
+                      <div className="col-span-1 flex flex-col gap-2">
+                        {incomingContests.map((contest,index)=>(
+                          <IncomingFriendContest
+                             key={contest._id || index}
+                             contest={contest}
+                          />
+                        ))}
+                      </div>
+
+                    </div>
+                  )}
               </div>
             </div>
           )}
