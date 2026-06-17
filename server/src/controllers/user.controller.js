@@ -78,9 +78,24 @@ const getHeatmap = asyncHandler(async function (req, res) {
     heatmap,
   });
 });
+
+const searchUser = asyncHandler(async function (req, res) {
+  const q = req.query.q;
+  if (!q || q.trim() === "") throw new appError("Query is empty", 400);
+  const query = q.toLowerCase();
+  const users = await userModel
+    .find({ username: { $regex: query } })
+    .select("username avatar level")
+    .limit(5);
+  return res.status(200).json({
+    status: "success",
+    users,
+  });
+});
 module.exports = {
   getProfile,
   updateProfile,
   deleteProfile,
-  getHeatmap
+  getHeatmap,
+  searchUser
 };

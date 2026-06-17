@@ -4,6 +4,7 @@ import {
   deleteProfile,
   getHeatmap,
   updateProfile,
+  searchUsers
 } from "../api/user.api";
 
 const useUser = () => {
@@ -76,11 +77,25 @@ const useUser = () => {
     }
   }
 
+  const search =  async(q) =>{
+    useUserStore.getState().setIsLoading(true);
+    try{
+       const data =  await searchUsers(q);
+
+       useUserStore.getState().setSearchResult(data.users);
+    }catch(err){
+      useUserStore.getState().setError(err.response?.data?.message || err.message);
+    }finally{
+      useUserStore.getState().setIsLoading(false);
+    }
+  }
+
   return {
     fetchProfile,
     updateUserProfile,
     userHeatMap,
-    deleteUser
+    deleteUser,
+    search
   }
 };
 

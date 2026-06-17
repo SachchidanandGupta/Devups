@@ -32,3 +32,8 @@ export async function deleteProfile(){
     return response.data;
 
 }
+
+export async function searchUsers(q){
+    const response = await axiosInstance.get(`/user/search?q=${q}`);
+    return response.data;
+}

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const userSchema = new mongoose.Schema(
   {
     /** Core identity fields  */
@@ -37,10 +36,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    leetcodeSolved:{
-      easy:{type:Number,default:0},
-      medium:{type:Number,default:0},
-      hard:{type:Number,default:0}
+    leetcodeSolved: {
+      easy: { type: Number, default: 0 },
+      medium: { type: Number, default: 0 },
+      hard: { type: Number, default: 0 },
     },
     githubUsername: {
       type: String,
@@ -94,8 +93,8 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function () {
-  if (!this.isModified("passwordHash") || !this.passwordHash) return ; // when a user login via github this.password would be undefined and return an err
-   this.passwordHash = await bcrypt.hash(this.passwordHash,10);
+  if (!this.isModified("passwordHash") || !this.passwordHash) return; // when a user login via github this.password would be undefined and return an err
+  this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
 });
 
 userSchema.methods.comparePassword = async function (password) {
