@@ -10,7 +10,7 @@ const contestSchema = new mongoose.Schema(
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "An creator for contest is require"],
+      required: true,
     },
     participants: [
       {
@@ -18,14 +18,39 @@ const contestSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    startTime: {
-      type: Date,
-      required: [true, "Start date is required"],
+    invitations: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected"],
+          default: "pending",
+        },
+      },
+    ],
+    problems: [
+      {
+        difficulty: {
+          type: String,
+          enum: ["easy", "medium", "hard"],
+          required: true,
+        },
+        xpReward: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    target: {
+      type: Number,
+      default: 100,
     },
-    endTime: {
-      type: Date,
-      required: [true, "Start date is required"],
-    },
+    startTime: { type: Date, required: true },
+    endTime: { type: Date, required: true },
     status: {
       type: String,
       enum: ["pending", "active", "completed"],
@@ -38,24 +63,25 @@ const contestSchema = new mongoose.Schema(
     },
     scores: [
       {
-        userId: mongoose.Schema.Types.ObjectId,
-        xpEarned: Number,
+        userId: { type: mongoose.Schema.Types.ObjectId },
+        xpEarned: { type: Number },
       },
     ],
-    target: {
-      type: Number,
-      required: true,
-      default: 100,
-    },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
+
+contestSchema.virtual("computedTarget").get(function () {
+  if (this.problems.length) {
+    return this.problems.reduce((sum, p) => sum + p.xpReward, 0);
+  }
+  return this.target;
+});
+
+contestSchema.set("toJSON", { virtuals: true });
 
 contestSchema.index({ creator: 1 });
 contestSchema.index({ participants: 1 });
 contestSchema.index({ status: 1 });
-const contestModel = mongoose.model("Contest", contestSchema);
 
-module.exports = contestModel;
+module.exports = mongoose.model("Contest", contestSchema);

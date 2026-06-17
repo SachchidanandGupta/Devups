@@ -4,6 +4,8 @@ import {
   completeFriendContest,
   createContest,
   getFriendContests,
+  acceptContest,
+  rejectContest,
 } from "../api/contest.api";
 
 const useContest = () => {
@@ -25,13 +27,17 @@ const useContest = () => {
     useContestStore.getState().setIsLoading(true);
     try {
       const [incoming, active, completed] = await Promise.all([
-         getFriendContests("incoming"),
-         getFriendContests("active"),
-         getFriendContests("completed"),
+        getFriendContests("incoming"),
+        getFriendContests("active"),
+        getFriendContests("completed"),
       ]);
-      useContestStore.getState().setIncomingContests(incoming.friendContest || []);
+      useContestStore
+        .getState()
+        .setIncomingContests(incoming.friendContest || []);
       useContestStore.getState().setActiveContests(active.friendContest || []);
-      useContestStore.getState().setCompletedContests(completed.friendContest || []);
+      useContestStore
+        .getState()
+        .setCompletedContests(completed.friendContest || []);
     } catch (error) {
       useContestStore
         .getState()
@@ -70,11 +76,41 @@ const useContest = () => {
     }
   };
 
+  const acceptInvite = async (contestId) => {
+    useContestStore.getState().setIsLoading(true);
+    try {
+      await acceptContest(contestId);
+      await friendContest();
+    } catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useContestStore.getState().setIsLoading(false);
+    }
+  };
+
+  const rejectInvite = async (contestId) => {
+    useContestStore.getState().setIsLoading(true);
+    try {
+       await rejectContest(contestId);
+      await friendContest();
+    } catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useContestStore.getState().setIsLoading(false);
+    }
+  };
+
   return {
     contest,
     friendContest,
     initiateContest,
     concludeContest,
+    acceptInvite,
+    rejectInvite,
   };
 };
 

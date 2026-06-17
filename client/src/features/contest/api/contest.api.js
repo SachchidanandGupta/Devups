@@ -6,9 +6,9 @@ export async function getContests(){
     return response.data;
 }
 
-export async function createContest(participantIds, startTime, endTime){
+export async function createContest( contestName,participantIds, startTime, endTime){
     const response = await axiosInstance.post("/contest/create",{
-        participantIds, startTime, endTime
+      contestName,  participantIds, startTime, endTime
     });
     return response.data;
 }
@@ -23,5 +23,15 @@ export async function getFriendContests(type){
 export async function completeFriendContest(contestId){
     const response = await axiosInstance.put(`/contest/complete/${contestId}`);
     return response.data
+}
+
+export async function acceptContest(contestId){
+    const response = await axiosInstance.put(`/contest/invite/accept/${contestId}`);
+    return response.data;
+}
+
+export async function rejectContest(contestId){
+    const response = await axiosInstance.put(`/contest/invite/reject/${contestId}`);
+    return response.data;
 }
 

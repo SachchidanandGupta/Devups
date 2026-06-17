@@ -213,7 +213,7 @@ const FriendContestCard = ({ contest, onComplete }) => {
         </div>
 
         <div className="flex items-center gap-4 shrink-0 mt-2 sm:mt-0 pt-4 sm:pt-0 border-t border-border sm:border-t-0">
-          {timeRemaining !== "COMPLETED" ? (
+          {timeRemaining !== "COMPLETED"  && timeLeft === "LIVE_NOW" ? (
             <button className="text-accent text-xs sm:text-sm font-bold tracking-widest hover:underline active:scale-95 transition-all cursor-pointer">
               JOIN_NOW ➤
             </button>

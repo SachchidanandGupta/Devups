@@ -11,6 +11,8 @@ const Contest = () => {
     contest: fetchPlatformContests,
     friendContest: fetchFriendContests,
     concludeContest,
+    acceptInvite,
+    rejectInvite
   } = useContest();
 
   const platformContests = useContestStore((state) => state.platformContests);
@@ -18,7 +20,7 @@ const Contest = () => {
   const incomingContests = useContestStore((state)=>state.incomingContests);
   const isLoading = useContestStore((state) => state.isLoading);
   const [utcTime, setUtcTime] = useState("");
-
+//  console.log(incomingContests)
   useEffect(() => {
     const tick = () => {
       setUtcTime(new Date().toUTCString().slice(17, 25));
@@ -38,8 +40,16 @@ const Contest = () => {
     await concludeContest(contestId);
   };
 
+  const handleAcceptInvite = async(contestId) =>{
+    await acceptInvite(contestId);
+  };
+
+  const handleRejectInvite = async(contestId) =>{
+    await rejectInvite(contestId);
+  }
+
   const activeList =
-    activeTab === "platform" ? platformContests : activeContests;
+    activeTab === "platform" ? platformContests : (activeContests.length > 0 ? activeContests : incomingContests) ;
 
   return (
     <div>
@@ -182,6 +192,8 @@ const Contest = () => {
                           <IncomingFriendContest
                              key={contest._id || index}
                              contest={contest}
+                             onAccept = {handleAcceptInvite}
+                             onReject = {handleRejectInvite}
                           />
                         ))}
                       </div>

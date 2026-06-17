@@ -39,16 +39,22 @@ const getContest = asyncHandler(async function (req, res) {
 
 const createContest = asyncHandler(async function (req, res) {
   const creatorID = req.user.id;
-  const { contestName , participantIds, startTime, endTime,target } = req.body;
+  const { contestName, participantIds, startTime, endTime } = req.body;
+
   if (startTime > endTime) {
-    throw new appError("startTime can't past than endTime", 400);
+    throw new appError("startTime can't be after endTime", 400);
   }
+
+  const invitations = participantIds.map((id) => ({
+    userId: id,
+    status: "pending",
+  }));
 
   const newContest = await contestModel.create({
     contestName,
-    target,
     creator: creatorID,
-    participants: [creatorID, ...participantIds],
+    participants: [creatorID],
+    invitations,
     startTime,
     endTime,
   });
@@ -68,9 +74,8 @@ const getFriendContest = asyncHandler(async function (req, res) {
   };
   if (type === "incoming") {
     query = {
-      participants: userID,
-      creator: { $ne: userID },
-      status: "pending",
+      "invitations.userId": userID,
+      "invitations.status": "pending",
     };
   } else if (type === "active") {
     query = {
@@ -131,7 +136,7 @@ const completeFriendContest = asyncHandler(async function (req, res) {
     .populate("winner", "username avatar ");
   const socket = getIo();
   socket.emit("contest:reminder", {
-    contestName: contest.title || "Friend Contest",
+    contestName: contest.contestName || "Friend Contest",
     winner: updateContest.winner.username,
   });
   return res.status(200).json({
@@ -141,9 +146,50 @@ const completeFriendContest = asyncHandler(async function (req, res) {
   });
 });
 
+const acceptContestInvite = asyncHandler(async function (req, res) {
+  const userId = req.user.id;
+  const { contestId } = req.params;
+
+  const contest = await contestModel.findOneAndUpdate(
+    { _id: contestId, "invitations.userId": userId },
+    {
+      $set: { "invitations.$.status": "accepted" , status:"active" },
+      $push: { participants: userId },
+    },
+    { returnDocument: "after", runValidators: true }
+  );
+
+  if (!contest) throw new appError("Contest or invitation not found", 404);
+
+  return res.status(200).json({
+    message: "Contest invitation accepted",
+    status: "success",
+  });
+});
+
+const rejectContestInvite = asyncHandler(async function (req, res) {
+  const userId = req.user.id;
+  const { contestId } = req.params;
+
+  const contest = await contestModel.findOneAndUpdate(
+    { _id: contestId, "invitations.userId": userId },
+    { $set: { "invitations.$.status": "rejected" } },
+    { returnDocument: "after", runValidators: true }
+  );
+
+  if (!contest) throw new appError("Contest or invitation not found", 404);
+
+  return res.status(200).json({
+    message: "Contest invitation rejected",
+    status: "success",
+  });
+});
+
 module.exports = {
   getContest,
   createContest,
   getFriendContest,
   completeFriendContest,
+  acceptContestInvite,
+  rejectContestInvite,
 };
