@@ -5,6 +5,11 @@ export const sendRequest = async(receiverId) =>{
     return response.data;
 }
 
+export const pendingRequests = async() =>{
+    const response = await axiosInstance.get(`/friends/requests`);
+    return response.data;
+}
+
 export const respondRequest =  async(requestId,requestResponse) =>{
    const response = await axiosInstance.put(`/friends/respond/${requestId}`,{
        requestResponse

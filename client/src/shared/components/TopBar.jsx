@@ -7,10 +7,12 @@ import useUserStore from "../../features/user/stores/useUserStore";
 import useUser from "../../features/user/hooks/useUser";
 import useContestStore from "../../features/contest/stores/useContestStore";
 import useFriend from "../../features/friends/hooks/useFriend";
+import useFriendStore from "../../features/friends/store/useFriendStore";
 const TopBar = ({ pageField, searchBar }) => {
   const user = useAuthStore((state) => state.user) || {};
   const searchUsers = useUserStore((state) => state.searchResult) || {};
   const incomingContests = useContestStore((state) => state.incomingContests) || {};
+  const pendingRequests = useFriendStore((state)=>state.pendingRequests) || {};
   const { search } = useUser();
   const { request } = useFriend();
   const [query, setQuery] = useState("");
@@ -130,9 +132,9 @@ const TopBar = ({ pageField, searchBar }) => {
             size={24}
             className="hover:text-accent font-bold cursor-pointer p-2 h-auto w-auto border-none hover:bg-accent-dim rounded-full  "
           />
-          {incomingContests.length > 0 ? (
+          {incomingContests.length + pendingRequests.length > 0 ? (
             <div className="absolute top-0 right-1 h-auto w-auto m-1 text-sm flex justify-between items-center rounded-full  text-accent">
-              {incomingContests.length}
+              {incomingContests?.length + pendingRequests?.length}
             </div>
           ) : (
             ""

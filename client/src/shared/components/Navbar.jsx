@@ -45,7 +45,7 @@ const SideNavbar = () => {
   };
 
   return (
-    <div className="h-screen w-[240px] bg-black border-r border-border flex flex-col font-mono select-none z-50">
+    <div className="h-screen w-60 bg-black border-r border-border flex flex-col font-mono select-none z-50">
       <div className="pl-6 py-2">
         <p className="text-accent font-mono font-bold text-3xl ">DevUps</p>
         <p className="text-text-muted font-mono text-sm">Terminal v1.0.4</p>

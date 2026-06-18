@@ -46,12 +46,23 @@ const sendRequest = asyncHandler(async function (req, res) {
   });
 });
 
+const pendingRequests = asyncHandler(async function (req, res) {
+  const receiverId = req.user.id;
+  
+  const pendings = await friendModel.find({receiver:receiverId ,status:"pending"});
+  return res.status(200).json({
+    message:"pending requests sent successfully.",
+    pendings
+  })
+});
+
 const respondResquest = asyncHandler(async function (req, res) {
   const requestId = req.params.requestId;
   const userId = req.user.id;
   const { requestResponse } = req.body;
   const isFriendShipExists = await friendModel.findOne({
-   requester:requestId, receiver:userId,
+    requester: requestId,
+    receiver: userId,
   });
   if (!isFriendShipExists) {
     throw new appError("friendShip not found", 404);
@@ -172,14 +183,15 @@ const getFriends = asyncHandler(async function (req, res) {
   });
 
   return res.status(200).json({
-    message:"friendList fetched successfully.",
-    status:"success",
-    count : friends.length,
-    friendList:friends
-  })
+    message: "friendList fetched successfully.",
+    status: "success",
+    count: friends.length,
+    friendList: friends,
+  });
 });
 module.exports = {
   sendRequest,
+  pendingRequests,
   respondResquest,
   unFriend,
   getFriends,

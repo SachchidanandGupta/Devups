@@ -10,7 +10,7 @@ const Friends = () => {
 
   const friends = useFriendStore((state) => state.friends);
   const isLoading = useFriendStore((state) => state.isLoading);
-
+  const pendingFriendRequests = useFriendStore((state)=>state.pendingFriendRequests)||[];
   useEffect(() => {
     fetchFriends();
   }, []);
@@ -34,16 +34,16 @@ const Friends = () => {
       useFriendStore.getState().setFriends(prev);
     }
   };
-
+  console.log(isLoading);
   return (
     <div className="flex flex-col">
       <TopBar pageField="FRIEND_TERMINAL" searchBar={true} />
       <div className=" m-2 flex justify-between ">
         <div>
-          <h1 className="text-4xl font-mono font-bold ">FRIENDS( online)</h1>
+          
+          <h1 className="text-4xl font-mono font-bold uppercase ">friends({friends?.length} online)</h1>
           <h1 className="uppercase flex gap-2 items-center text-accent">
-            <div className="bg-accent h-2 w-2"></div>uplink stable //session:
-            active
+            <div className="bg-accent h-2 w-2"></div>uplink stable // session: active
           </h1>
         </div>
         <div className="flex gap-2 items-center">
@@ -51,7 +51,7 @@ const Friends = () => {
             add friends
           </button>
           <button className="uppercase border border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-text-primary">
-            request()
+            request({pendingFriendRequests.length})
           </button>
         </div>
       </div>
