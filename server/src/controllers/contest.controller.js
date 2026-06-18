@@ -5,21 +5,28 @@ const contestModel = require("../models/contest.model");
 const axios = require("axios");
 const appError = require("../utils/appError");
 const { getIo } = require("../config/socket");
+const { emitFriendActivity } = require("../services/socket.service");
 
-async function getCodeforcesContest() {
-  const response = await axios.get(
-    "https://codeforces.com/api/contest.list?gym=false",
-  );
-  return response.data.result;
-}
+// async function getCodeforcesContest() {
+//   const response = await axios.get(
+//     "https://codeforces.com/api/contest.list?gym=false",
+//     {
+//       headers: {
+//         "User-Agent": "Mozilla/5.0",
+//       },
+//     },
+//   );
+
+//   return response.data.result;
+// }
 
 const getContest = asyncHandler(async function (req, res) {
-  const [leetContest, codeContest] = await Promise.all([
+  const [leetContest, codeContest = []] = await Promise.all([
     getLeetCodeContest(),
-    getCodeforcesContest(),
+    // getCodeforcesContest(),
   ]);
 
-  const codeForcesContest = codeContest
+  const codeForcesContest = (codeContest ?? [])
     .filter((contest) => contest.phase === "BEFORE")
     .map((contest) => ({
       platform: "CodeForces",
@@ -58,6 +65,8 @@ const createContest = asyncHandler(async function (req, res) {
     startTime,
     endTime,
   });
+
+  emitFriendActivity(participantIds, { type: "friend_request" });
 
   return res.status(201).json({
     message: "Contest created successfully.",
@@ -153,10 +162,10 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
   const contest = await contestModel.findOneAndUpdate(
     { _id: contestId, "invitations.userId": userId },
     {
-      $set: { "invitations.$.status": "accepted" , status:"active" },
+      $set: { "invitations.$.status": "accepted", status: "active" },
       $push: { participants: userId },
     },
-    { returnDocument: "after", runValidators: true }
+    { returnDocument: "after", runValidators: true },
   );
 
   if (!contest) throw new appError("Contest or invitation not found", 404);
@@ -174,7 +183,7 @@ const rejectContestInvite = asyncHandler(async function (req, res) {
   const contest = await contestModel.findOneAndUpdate(
     { _id: contestId, "invitations.userId": userId },
     { $set: { "invitations.$.status": "rejected" } },
-    { returnDocument: "after", runValidators: true }
+    { returnDocument: "after", runValidators: true },
   );
 
   if (!contest) throw new appError("Contest or invitation not found", 404);

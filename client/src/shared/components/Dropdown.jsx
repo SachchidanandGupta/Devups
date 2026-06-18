@@ -8,7 +8,7 @@ const Dropdown = ({searchUsers,dropdownRef,user}) => {
       ref={dropdownRef}
     >
       <div className="text-accent font-bold text-sm px-2 py-1  border-0 border-border uppercase bg-accent-dim ">
-        Search Output
+        Search Output: users
       </div>
       <div>
         {searchUsers.map((s, index) => (

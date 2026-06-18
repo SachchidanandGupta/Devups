@@ -6,10 +6,13 @@ import useAuthStore from "../../features/auth/store/authStore";
 import useUserStore from "../../features/user/stores/useUserStore";
 import useUser from "../../features/user/hooks/useUser";
 import useContestStore from "../../features/contest/stores/useContestStore";
+import useContest from "../../features/contest/hooks/useContest";
 import useFriend from "../../features/friends/hooks/useFriend";
 import useFriendStore from "../../features/friends/store/useFriendStore";
 import Dropdown from "./Dropdown";
 import Avatar from "./Avatar";
+import BellDropdown from "./BellDropdown";
+import { getSocket } from "../hooks/useSocket";
 const TopBar = ({ pageField, searchBar }) => {
   const user = useAuthStore((state) => state.user) || {};
   const searchUsers = useUserStore((state) => state.searchResult) || [];
@@ -18,10 +21,22 @@ const TopBar = ({ pageField, searchBar }) => {
   const pendingRequests =
     useFriendStore((state) => state.pendingFriendRequests) || [];
   const { search } = useUser();
-  const { request } = useFriend();
+  const { friendContest } = useContest();
+  const { request, requestsPending } = useFriend();
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+    socket.on("friend:activity", () => {
+      requestsPending();
+      friendContest();
+    });
+    return () => socket.off("friend:activity");
+  }, []);
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const bellDropRef = useRef(null);
+  const [isBellOpen, setIsBellOpen] = useState(false);
   useEffect(() => {
     if (!query.trim()) {
       useUserStore.getState().setSearchResult([]);
@@ -42,6 +57,16 @@ const TopBar = ({ pageField, searchBar }) => {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleClickBellOutside(event) {
+      if (bellDropRef.current && !bellDropRef.current.contains(event.target))
+        setIsBellOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickBellOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickBellOutside);
   }, []);
 
   return (
@@ -70,7 +95,10 @@ const TopBar = ({ pageField, searchBar }) => {
         {searchBar ? (
           <div className="relative">
             <input
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setIsBellOpen(false);
+                setQuery(e.target.value);
+              }}
               value={query}
               type="text"
               placeholder="SEARCH_TERMINAL..."
@@ -90,6 +118,10 @@ const TopBar = ({ pageField, searchBar }) => {
         )}
         <div className="relative">
           <CiBellOn
+            onClick={() => {
+              setIsOpen(false);
+              setIsBellOpen(!isBellOpen);
+            }}
             size={24}
             className="hover:text-accent font-bold cursor-pointer p-2 h-auto w-auto border-none hover:bg-accent-dim rounded-full  "
           />
@@ -98,9 +130,16 @@ const TopBar = ({ pageField, searchBar }) => {
           ) : (
             ""
           )}
+          {isBellOpen && (
+            <BellDropdown
+              ref={bellDropRef}
+              contest={incomingContests}
+              requests={pendingRequests}
+            />
+          )}
         </div>
         <Link to="/profile">
-         <Avatar data={user} style={"border-accent"}/>
+          <Avatar data={user} style={"border-accent"} />
         </Link>
       </div>
     </div>

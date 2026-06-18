@@ -8,26 +8,23 @@ import RequestDropdown from "../components/RequestDropdown";
 import { getSocket } from "../../../shared/hooks/useSocket";
 const Friends = () => {
   const { fetchFriends, removeFriend, block, requestsPending, response } =
-    useFriend();
-    
-    useEffect(() => {
-      const socket = getSocket();
-      if (!socket) return;
-      socket.on("friend:activity", () => {
-        fetchFriends();
-        requestsPending();
-        
-      });
-      return () => socket.off("friend:activity");
-    }, []);
-    
-    const friends = useFriendStore((state) => state.friends);
-    const isLoading = useFriendStore((state) => state.isLoading);
-    const pendingFriendRequests =
+  useFriend();
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+    socket.on("friend:activity", () => {
+      fetchFriends();
+      requestsPending();
+    });
+    return () => socket.off("friend:activity");
+  }, []);
+
+  const friends = useFriendStore((state) => state.friends);
+  const isLoading = useFriendStore((state) => state.isLoading);
+  const pendingFriendRequests =
     useFriendStore((state) => state.pendingFriendRequests) || [];
-    
-    
-    const [isOpen, setIsOpen] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     fetchFriends();
     requestsPending();
@@ -78,15 +75,20 @@ const Friends = () => {
             active
           </h1>
         </div>
-        <div className="flex gap-2 items-center relative ">
-          <button className="uppercase border border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-text-primary">
+        <div className=" grid grid-cols-2 gap-2 items-center relative ">
+          <button className="uppercase border col-span-1 border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-text-primary">
             add friends
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="uppercase border  border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent  hover:text-text-primary"
+            className="uppercase border col-span-1  border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent  hover:text-text-primary"
           >
-            request({pendingFriendRequests.length})
+            request
+            {pendingFriendRequests.length > 0 ? (
+              <span>[{pendingFriendRequests.length}]</span>
+            ) : (
+              ""
+            )}
           </button>
 
           {isOpen

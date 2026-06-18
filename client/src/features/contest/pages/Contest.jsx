@@ -12,15 +12,15 @@ const Contest = () => {
     friendContest: fetchFriendContests,
     concludeContest,
     acceptInvite,
-    rejectInvite
+    rejectInvite,
   } = useContest();
 
   const platformContests = useContestStore((state) => state.platformContests);
   const activeContests = useContestStore((state) => state.activeContests);
-  const incomingContests = useContestStore((state)=>state.incomingContests);
+  const incomingContests = useContestStore((state) => state.incomingContests);
   const isLoading = useContestStore((state) => state.isLoading);
   const [utcTime, setUtcTime] = useState("");
-//  console.log(incomingContests)
+  //  console.log(incomingContests)
   useEffect(() => {
     const tick = () => {
       setUtcTime(new Date().toUTCString().slice(17, 25));
@@ -40,16 +40,20 @@ const Contest = () => {
     await concludeContest(contestId);
   };
 
-  const handleAcceptInvite = async(contestId) =>{
+  const handleAcceptInvite = async (contestId) => {
     await acceptInvite(contestId);
   };
 
-  const handleRejectInvite = async(contestId) =>{
+  const handleRejectInvite = async (contestId) => {
     await rejectInvite(contestId);
-  }
+  };
 
   const activeList =
-    activeTab === "platform" ? platformContests : (activeContests.length > 0 ? activeContests : incomingContests) ;
+    activeTab === "platform"
+      ? platformContests
+      : activeContests.length > 0
+        ? activeContests
+        : incomingContests;
 
   return (
     <div>
@@ -115,6 +119,11 @@ const Contest = () => {
               }`}
             >
               Friends
+              {incomingContests.length > 0 ? (
+                <span>[{incomingContests.length}]</span>
+              ) : (
+                ""
+              )}
             </button>
           </div>
         </div>
@@ -126,8 +135,9 @@ const Contest = () => {
           <div className="w-full grid grid-cols-3 gap-2">
             <div className="w-full col-span-2 text-xl flex items-center justify-between pb-1  border-b-2 border-border font-mono text-text-secondary mb-2">
               <span> ACTIVE_CONTEST [{activeContests.length}]:</span>
-              <span className="text-accent text-xs animate-pulse">● LIVE_FEED</span>
-             
+              <span className="text-accent text-xs animate-pulse">
+                ● LIVE_FEED
+              </span>
             </div>
             <div className="w-full col-span-1 text-xl pb-1  border-b-2 border-border font-mono text-text-secondary mb-2">
               PENDING_REQUESTS [{incomingContests.length}]:
@@ -166,40 +176,34 @@ const Contest = () => {
               )}
 
               <div className="flex flex-col gap-2">
-                {activeTab === "platform"
-                  && platformContests.map((contest, index) => (
-                      <ContestCard
-                        key={contest._id || index}
-                        contest={contest}
-                      />
-                    ))
-                  }
+                {activeTab === "platform" &&
+                  platformContests.map((contest, index) => (
+                    <ContestCard key={contest._id || index} contest={contest} />
+                  ))}
 
-                  {activeTab === "friends" && (
-                    <div className="grid grid-cols-3 gap-4">
-                      
-                      <div className="col-span-2 flex flex-col gap-2">
-                        {activeContests.map((contest,index)=>(
-                          <FriendContestCard
-                            key={contest._id || index}
-                            contest={contest}
-                            onComplete={handleComplete}
-                          />
-                        ))}
-                      </div>
-                      <div className="col-span-1 flex flex-col gap-2">
-                        {incomingContests.map((contest,index)=>(
-                          <IncomingFriendContest
-                             key={contest._id || index}
-                             contest={contest}
-                             onAccept = {handleAcceptInvite}
-                             onReject = {handleRejectInvite}
-                          />
-                        ))}
-                      </div>
-
+                {activeTab === "friends" && (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="col-span-2 flex flex-col gap-2">
+                      {activeContests.map((contest, index) => (
+                        <FriendContestCard
+                          key={contest._id || index}
+                          contest={contest}
+                          onComplete={handleComplete}
+                        />
+                      ))}
                     </div>
-                  )}
+                    <div className="col-span-1 flex flex-col gap-2">
+                      {incomingContests.map((contest, index) => (
+                        <IncomingFriendContest
+                          key={contest._id || index}
+                          contest={contest}
+                          onAccept={handleAcceptInvite}
+                          onReject={handleRejectInvite}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
