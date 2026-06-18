@@ -14,7 +14,7 @@ const registerUser = asyncHandler(async function (req, res) {
   });
 
   if (isUserExists) {
-    throw new appError("User already exists.",409);
+    throw new appError("User already exists.", 409);
   }
   const user = await userModel.create({
     username,
@@ -41,8 +41,7 @@ const registerUser = asyncHandler(async function (req, res) {
       username: user.username,
     },
   });
-})
-
+});
 
 const loginUser = asyncHandler(async function (req, res) {
   const { identifier, password } = req.body;
@@ -53,12 +52,12 @@ const loginUser = asyncHandler(async function (req, res) {
     .select("+passwordHash");
 
   if (!user) {
-    throw new appError("Invalid credentials",401);
+    throw new appError("Invalid credentials", 401);
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new appError("Invalid credentials",401)
+    throw new appError("Invalid credentials", 401);
   }
 
   const token = jwt.sign(
@@ -84,36 +83,35 @@ const loginUser = asyncHandler(async function (req, res) {
       id: user._id,
     },
   });
-})
-
+});
 
 const getMeUser = asyncHandler(async function (req, res) {
   const user = await userModel.findById(req.user.id);
   if (!user) {
-    throw new appError("User not found",404)
+    throw new appError("User not found", 404);
   }
   return res.status(200).json({
     message: "user data fetched successfully",
     user,
   });
-})
+});
 
 const logOutUser = asyncHandler(async function (req, res) {
   const token = req.cookies.token;
   if (!token) {
-    throw new appError("Token not provided,unauthorizes access",401);
+    throw new appError("Token not provided,unauthorizes access", 401);
   }
 
   res.clearCookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path:"/login",
+    path: "/login",
   });
   return res.status(200).json({
     message: "User logged out successfully",
   });
-})
+});
 
 module.exports = {
   registerUser,

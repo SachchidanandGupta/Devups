@@ -1,19 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useFriend from "../hooks/useFriend";
 import useFriendStore from "../store/useFriendStore";
 import FriendCard from "../components/FriendCard";
 import TopBar from "../../../shared/components/TopBar";
 import { FriendSkeleton } from "../../../shared/ui/Skeleton";
-
+import RequestDropdown from "../components/RequestDropdown";
+import { getSocket } from "../../../shared/hooks/useSocket";
 const Friends = () => {
-  const { fetchFriends, removeFriend, block } = useFriend();
-
-  const friends = useFriendStore((state) => state.friends);
-  const isLoading = useFriendStore((state) => state.isLoading);
-  const pendingFriendRequests = useFriendStore((state)=>state.pendingFriendRequests)||[];
+  const { fetchFriends, removeFriend, block, requestsPending, response } =
+    useFriend();
+    
+    useEffect(() => {
+      const socket = getSocket();
+      if (!socket) return;
+      socket.on("friend:activity", () => {
+        fetchFriends();
+        requestsPending();
+        
+      });
+      return () => socket.off("friend:activity");
+    }, []);
+    
+    const friends = useFriendStore((state) => state.friends);
+    const isLoading = useFriendStore((state) => state.isLoading);
+    const pendingFriendRequests =
+    useFriendStore((state) => state.pendingFriendRequests) || [];
+    
+    
+    const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     fetchFriends();
+    requestsPending();
   }, []);
+
+  const handleAccept = async (requestId, requestResponse) => {
+    await response(requestId, requestResponse);
+    await fetchFriends();
+    await requestsPending();
+  };
+
+  const handleDecline = async (requestId, requestResponse) => {
+    await response(requestId, requestResponse);
+    await fetchFriends();
+    await requestsPending();
+  };
 
   const handleUnfriend = async (id) => {
     const prev = useFriendStore.getState().friends;
@@ -34,25 +64,40 @@ const Friends = () => {
       useFriendStore.getState().setFriends(prev);
     }
   };
-  console.log(isLoading);
+
   return (
     <div className="flex flex-col">
-      <TopBar pageField="FRIEND_TERMINAL" searchBar={true} />
+      <TopBar pageField="FRIEND_TERMINAL" />
       <div className=" m-2 flex justify-between ">
         <div>
-          
-          <h1 className="text-4xl font-mono font-bold uppercase ">friends({friends?.length} online)</h1>
+          <h1 className="text-4xl font-mono font-bold uppercase ">
+            friends({friends?.length} online)
+          </h1>
           <h1 className="uppercase flex gap-2 items-center text-accent">
-            <div className="bg-accent h-2 w-2"></div>uplink stable // session: active
+            <div className="bg-accent h-2 w-2"></div>uplink stable // session:
+            active
           </h1>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center relative ">
           <button className="uppercase border border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-text-primary">
             add friends
           </button>
-          <button className="uppercase border border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-text-primary">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="uppercase border  border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent  hover:text-text-primary"
+          >
             request({pendingFriendRequests.length})
           </button>
+
+          {isOpen
+            ? pendingFriendRequests.length > 0 && (
+                <RequestDropdown
+                  requests={pendingFriendRequests}
+                  accept={handleAccept}
+                  decline={handleDecline}
+                />
+              )
+            : ""}
         </div>
       </div>
       <div className="w-full p-2 pt-4 flex flex-col font-mono ">

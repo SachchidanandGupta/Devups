@@ -1,4 +1,5 @@
 import React from "react";
+import Avatar from "../../../shared/components/Avatar";
 
 const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
   const { _id, username = "Unknown", avatar, xp = 0, level = 1 } = friend || {};
@@ -9,19 +10,7 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
   return (
     <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-mono transition-colors">
       <div className="flex items-center gap-3 flex-1 overflow-hidden">
-        <div className="w-10 h-10 bg-surface-2 border border-border flex items-center justify-center shrink-0">
-          {avatar ? (
-            <img
-              src={avatar}
-              alt={username}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <span className="text-text-secondary text-sm">
-              {username.charAt(0).toUpperCase()}
-            </span>
-          )}
-        </div>
+        <Avatar data={friend}/>
         <div className="flex flex-col flex-start">
           <span className="text-text-primary text-xl uppercase truncate font-mono ">
             {username}

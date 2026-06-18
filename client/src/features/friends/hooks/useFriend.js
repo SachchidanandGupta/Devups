@@ -27,7 +27,7 @@ const useFriend = () => {
     useFriendStore.getState().setIsLoading(true);
     try {
       const data = await pendingRequests();
-      useFriendStore.getState().setPendingFriendRequests(data.pendings || []);  // ✅
+      useFriendStore.getState().setPendingFriendRequests(data.pendings || []); 
     } catch (err) {
       useFriendStore
         .getState()

@@ -2,7 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const appError = require("../utils/appError");
 const userModel = require("../models/user.model");
 const friendModel = require("../models/friends.model");
-
+const {emitFriendActivity} = require("../services/socket.service")
 const sendRequest = asyncHandler(async function (req, res) {
   const receiverId = req.params.receiverId;
   const senderId = req.user.id;
@@ -39,7 +39,7 @@ const sendRequest = asyncHandler(async function (req, res) {
     receiver: receiverId,
     status: "pending",
   });
-
+  emitFriendActivity(receiverId, { type: "friend_request" });
   return res.status(201).json({
     message: "Friend request sent successfully",
     friendShip,
@@ -49,7 +49,7 @@ const sendRequest = asyncHandler(async function (req, res) {
 const pendingRequests = asyncHandler(async function (req, res) {
   const receiverId = req.user.id;
   
-  const pendings = await friendModel.find({receiver:receiverId ,status:"pending"});
+  const pendings = await friendModel.find({receiver:receiverId ,status:"pending"}).populate("requester","username avatar level");
   return res.status(200).json({
     message:"pending requests sent successfully.",
     pendings
@@ -71,7 +71,7 @@ const respondResquest = asyncHandler(async function (req, res) {
     throw new appError("friend request already resolved", 400);
   }
 
-  if (requestResponse == "accept") {
+  if (requestResponse == "accepted") {
     const acceptedRequest = await friendModel.findByIdAndUpdate(
       isFriendShipExists.id,
       { status: "accepted" },
@@ -84,7 +84,7 @@ const respondResquest = asyncHandler(async function (req, res) {
       message: "friend request accepted",
       status: "success",
     });
-  } else if (requestResponse == "reject") {
+  } else if (requestResponse == "rejected") {
     const declineRequest = await friendModel.findByIdAndUpdate(
       isFriendShipExists.id,
       { status: "rejected" },

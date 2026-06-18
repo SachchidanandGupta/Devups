@@ -8,11 +8,15 @@ import useUser from "../../features/user/hooks/useUser";
 import useContestStore from "../../features/contest/stores/useContestStore";
 import useFriend from "../../features/friends/hooks/useFriend";
 import useFriendStore from "../../features/friends/store/useFriendStore";
+import Dropdown from "./Dropdown";
+import Avatar from "./Avatar";
 const TopBar = ({ pageField, searchBar }) => {
   const user = useAuthStore((state) => state.user) || {};
-  const searchUsers = useUserStore((state) => state.searchResult) || {};
-  const incomingContests = useContestStore((state) => state.incomingContests) || {};
-  const pendingRequests = useFriendStore((state)=>state.pendingRequests) || {};
+  const searchUsers = useUserStore((state) => state.searchResult) || [];
+  const incomingContests =
+    useContestStore((state) => state.incomingContests) || [];
+  const pendingRequests =
+    useFriendStore((state) => state.pendingFriendRequests) || [];
   const { search } = useUser();
   const { request } = useFriend();
   const [query, setQuery] = useState("");
@@ -74,54 +78,11 @@ const TopBar = ({ pageField, searchBar }) => {
             />
 
             {isOpen && searchUsers && (
-              <div className="absolute w-full" ref={dropdownRef}>
-                {searchUsers.map((s, index) => (
-                  <div
-                    className=" flex items-center justify-between gap-2 border bg-surface-2 border-border p-2  "
-                    key={s._id}
-                  >
-                    <div className="flex gap-2">
-                      <div className="relative w-10 h-10  overflow-hidden bg-surface-2 border border-border shrink-0 ">
-                        {s.avatar ? (
-                          <img
-                            src={s.avatar}
-                            alt="User"
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-text-secondary font-bold font-mono text-xl bg-surface-2">
-                            {s.username
-                              ? s.username.charAt(0).toUpperCase()
-                              : "U"}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex flex-col  justify-start">
-                        <span className="text-text-primary text-sm first-letter:uppercase font-bold">
-                          {s.username}
-                        </span>
-                        <span className="text-xs text-accent font-semibold">
-                          lvl:{s.level}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      {String(s._id) != String(user._id) ? (
-                        <button
-                          onClick={() => request(s._id)}
-                          className="bg-accent px-5 py-2 hover:bg-text-primary cursor-pointer hover:text-text-secondary font-semibold"
-                        >
-                          Add
-                        </button>
-                      ) : (
-                        <button className="bg-accent px-5 py-2 hover:bg-text-primary cursor-pointer hover:text-text-secondary font-semibold">
-                          you
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Dropdown
+                dropdownRef={dropdownRef}
+                searchUsers={searchUsers}
+                user={user}
+              />
             )}
           </div>
         ) : (
@@ -133,27 +94,13 @@ const TopBar = ({ pageField, searchBar }) => {
             className="hover:text-accent font-bold cursor-pointer p-2 h-auto w-auto border-none hover:bg-accent-dim rounded-full  "
           />
           {incomingContests.length + pendingRequests.length > 0 ? (
-            <div className="absolute top-0 right-1 h-auto w-auto m-1 text-sm flex justify-between items-center rounded-full  text-accent">
-              {incomingContests?.length + pendingRequests?.length}
-            </div>
+            <div className="absolute top-0 right-0 h-2 w-2 m-1 text-sm   rounded-full bg-accent  text-text-primary"></div>
           ) : (
             ""
           )}
         </div>
         <Link to="/profile">
-          <div className="relative w-10 h-10  overflow-hidden bg-surface-2 border border-accent shrink-0 ">
-            {user.profileImage ? (
-              <img
-                src={user.profileImage}
-                alt="User"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-text-secondary font-bold font-mono text-xl bg-surface-2">
-                {user.username ? user.username.charAt(0).toUpperCase() : "U"}
-              </div>
-            )}
-          </div>
+         <Avatar data={user} style={"border-accent"}/>
         </Link>
       </div>
     </div>
