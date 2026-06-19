@@ -2,7 +2,6 @@ import React from "react";
 
 const IncomingFriendContest = ({ contest, onAccept, onReject }) => {
   const { _id, creator, contestName, endTime } = contest || {};
-  console.log(creator);
   return (
     <div className="border border-border gap-2 p-4 flex flex-col min-w-0">
       <div className="flex items-center justify-start gap-2 min-w-0">

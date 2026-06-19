@@ -22,7 +22,7 @@ const registerUser = asyncHandler(async function (req, res) {
     passwordHash: password,
   });
   const token = jwt.sign(
-    { id: user._id, email: user.email },
+    { id: user._id, username:user.username },
     process.env.JWT_SECRET,
     { expiresIn: "1d" },
   );
@@ -63,7 +63,7 @@ const loginUser = asyncHandler(async function (req, res) {
   const token = jwt.sign(
     {
       id: user._id,
-      email: user.email,
+      username:user.username
     },
     process.env.JWT_SECRET,
     { expiresIn: "1d" },
@@ -79,7 +79,6 @@ const loginUser = asyncHandler(async function (req, res) {
     message: "User logged in ",
     user: {
       username: user.username,
-      email: user.email,
       id: user._id,
     },
   });

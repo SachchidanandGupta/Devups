@@ -1,9 +1,9 @@
 import React from "react";
 import Avatar from "../../../shared/components/Avatar";
 
-const RequestDropdown = ({ requests , accept , decline }) => {
+const RequestDropdown = ({ requests , accept , decline ,ref }) => {
   return (
-    <div className="absolute top-12 w-full mt-1 flex flex-col">
+    <div ref={ref} className="absolute top-12 w-full mt-1 flex flex-col">
       <div className="uppercase text-text-secondary bg-text-muted border text-sm border-border px-2 py-3">
         incoming uplink requests
       </div>

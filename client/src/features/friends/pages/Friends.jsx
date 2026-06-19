@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import useFriend from "../hooks/useFriend";
 import useFriendStore from "../store/useFriendStore";
 import FriendCard from "../components/FriendCard";
@@ -62,6 +62,18 @@ const Friends = () => {
     }
   };
 
+ const dropdownRef = useRef(null);
+
+ useEffect(()=>{
+      function handleClickOutside(event){
+        if(dropdownRef.current && !dropdownRef.current.contains(event.target)  );
+        setIsOpen(false);
+      }
+     document.addEventListener("mousedown",handleClickOutside);
+
+      return ()=> document.removeEventListener("mousedown",handleClickOutside)
+ },[])
+
   return (
     <div className="flex flex-col">
       <TopBar pageField="FRIEND_TERMINAL" />
@@ -76,12 +88,12 @@ const Friends = () => {
           </h1>
         </div>
         <div className=" grid grid-cols-2 gap-2 items-center relative ">
-          <button className="uppercase border col-span-1 border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-text-primary">
+          <button className="uppercase border col-span-1 border-text-secondary text-text-primary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-surface">
             add friends
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="uppercase border col-span-1  border-border text-text-secondary px-4 py-1 font-bold cursor-pointer hover:bg-accent  hover:text-text-primary"
+            className="uppercase border col-span-1  border-text-secondary text-text-primary px-4 py-1 font-bold cursor-pointer hover:bg-text-primary  hover:text-surface"
           >
             request
             {pendingFriendRequests.length > 0 ? (
@@ -94,6 +106,7 @@ const Friends = () => {
           {isOpen
             ? pendingFriendRequests.length > 0 && (
                 <RequestDropdown
+                  ref={dropdownRef}
                   requests={pendingFriendRequests}
                   accept={handleAccept}
                   decline={handleDecline}

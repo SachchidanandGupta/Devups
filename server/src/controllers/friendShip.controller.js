@@ -2,7 +2,11 @@ const asyncHandler = require("../utils/asyncHandler");
 const appError = require("../utils/appError");
 const userModel = require("../models/user.model");
 const friendModel = require("../models/friends.model");
-const {emitFriendActivity} = require("../services/socket.service")
+const { emitFriendActivity } = require("../services/socket.service");
+const {
+  createResponseNotification,
+} = require("../services/responseNotification.service");
+
 const sendRequest = asyncHandler(async function (req, res) {
   const receiverId = req.params.receiverId;
   const senderId = req.user.id;
@@ -48,12 +52,14 @@ const sendRequest = asyncHandler(async function (req, res) {
 
 const pendingRequests = asyncHandler(async function (req, res) {
   const receiverId = req.user.id;
-  
-  const pendings = await friendModel.find({receiver:receiverId ,status:"pending"}).populate("requester","username avatar level");
+
+  const pendings = await friendModel
+    .find({ receiver: receiverId, status: "pending" })
+    .populate("requester", "username avatar level");
   return res.status(200).json({
-    message:"pending requests sent successfully.",
-    pendings
-  })
+    message: "pending requests sent successfully.",
+    pendings,
+  });
 });
 
 const respondResquest = asyncHandler(async function (req, res) {
@@ -80,6 +86,11 @@ const respondResquest = asyncHandler(async function (req, res) {
         runValidators: true,
       },
     );
+    createResponseNotification(
+      requestId,
+      "friend_request_accepted",
+      `${req.user.username} accepted your friend request`,
+    );
     return res.status(200).json({
       message: "friend request accepted",
       status: "success",
@@ -93,7 +104,11 @@ const respondResquest = asyncHandler(async function (req, res) {
         runValidators: true,
       },
     );
-
+    createResponseNotification(
+      requestId,
+      "friend_request_rejected",
+      `${req.user.username} rejected your friend request`,
+    );
     return res.status(200).json({
       message: "friend request rejected",
       status: "success",
@@ -189,6 +204,7 @@ const getFriends = asyncHandler(async function (req, res) {
     friendList: friends,
   });
 });
+
 module.exports = {
   sendRequest,
   pendingRequests,

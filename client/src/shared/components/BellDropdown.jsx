@@ -1,7 +1,7 @@
-import React,{forwardRef} from "react";
+import React from "react";
 import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
-const BellDropdown = forwardRef(({  contest, requests },ref) => {
+const BellDropdown = ({  contest, requests ,ref}) => {
   const navigate = useNavigate();
   return (
     <div ref={ref} className="absolute top-12 w-50 flex flex-col right-0 mt-1 border border-accent-muted ">
@@ -51,6 +51,6 @@ const BellDropdown = forwardRef(({  contest, requests },ref) => {
       )}
     </div>
   );
-})
+};
 
 export default BellDropdown;

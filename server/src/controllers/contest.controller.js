@@ -6,6 +6,10 @@ const axios = require("axios");
 const appError = require("../utils/appError");
 const { getIo } = require("../config/socket");
 const { emitFriendActivity } = require("../services/socket.service");
+const { logActivity } = require("../services/activityLog.service");
+const {
+  createResponseNotification,
+} = require("../services/responseNotification.service");
 
 // async function getCodeforcesContest() {
 //   const response = await axios.get(
@@ -66,7 +70,15 @@ const createContest = asyncHandler(async function (req, res) {
     endTime,
   });
 
-  emitFriendActivity(participantIds, { type: "friend_request" });
+  participantIds.forEach((id) =>
+    emitFriendActivity(id, { type: "contest_invite" }),
+  );
+  logActivity(
+    creatorID,
+    "contest_created",
+    "devups",
+    `${req.user.username} initiated a contest: ${contestName}`,
+  );
 
   return res.status(201).json({
     message: "Contest created successfully.",
@@ -169,7 +181,11 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
   );
 
   if (!contest) throw new appError("Contest or invitation not found", 404);
-
+  createResponseNotification(
+    contest.creator,
+    "contest_invite_accepted",
+    `${req.user.username} accepted your invite to ${contest.contestName}`,
+  );
   return res.status(200).json({
     message: "Contest invitation accepted",
     status: "success",
@@ -187,7 +203,11 @@ const rejectContestInvite = asyncHandler(async function (req, res) {
   );
 
   if (!contest) throw new appError("Contest or invitation not found", 404);
-
+  createResponseNotification(
+    contest.creator,
+    "contest_invite_rejected",
+    `${req.user.username} rejected your invite to ${contest.contestName}`,
+  );
   return res.status(200).json({
     message: "Contest invitation rejected",
     status: "success",
