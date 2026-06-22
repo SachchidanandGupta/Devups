@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import useFriend from "../hooks/useFriend";
 import useFriendStore from "../store/useFriendStore";
 import FriendCard from "../components/FriendCard";
@@ -8,7 +8,7 @@ import RequestDropdown from "../components/RequestDropdown";
 import { getSocket } from "../../../shared/hooks/useSocket";
 const Friends = () => {
   const { fetchFriends, removeFriend, block, requestsPending, response } =
-  useFriend();
+    useFriend();
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
@@ -62,17 +62,18 @@ const Friends = () => {
     }
   };
 
- const dropdownRef = useRef(null);
+  const dropdownRef = useRef(null);
 
- useEffect(()=>{
-      function handleClickOutside(event){
-        if(dropdownRef.current && !dropdownRef.current.contains(event.target)  );
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
-     document.addEventListener("mousedown",handleClickOutside);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
 
-      return ()=> document.removeEventListener("mousedown",handleClickOutside)
- },[])
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -87,12 +88,16 @@ const Friends = () => {
             active
           </h1>
         </div>
-        <div className=" grid grid-cols-2 gap-2 items-center relative ">
+        <div
+          ref={dropdownRef}
+          className=" grid grid-cols-2 gap-2 items-center relative "
+        >
           <button className="uppercase border col-span-1 border-text-secondary text-text-primary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-surface">
             add friends
           </button>
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            ref={dropdownRef}
+            onClick={() => setIsOpen((prev) => !prev)}
             className="uppercase border col-span-1  border-text-secondary text-text-primary px-4 py-1 font-bold cursor-pointer hover:bg-text-primary  hover:text-surface"
           >
             request
@@ -101,18 +106,18 @@ const Friends = () => {
             ) : (
               ""
             )}
+            {console.log(isOpen)}
           </button>
 
-          {isOpen
-            ? pendingFriendRequests.length > 0 && (
-                <RequestDropdown
-                  ref={dropdownRef}
-                  requests={pendingFriendRequests}
-                  accept={handleAccept}
-                  decline={handleDecline}
-                />
-              )
-            : ""}
+          {isOpen ? (
+            <RequestDropdown
+              requests={pendingFriendRequests}
+              accept={handleAccept}
+              decline={handleDecline}
+            />
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <div className="w-full p-2 pt-4 flex flex-col font-mono ">
