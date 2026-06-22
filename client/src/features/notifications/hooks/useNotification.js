@@ -55,3 +55,5 @@ const useNotification = () => {
     clearFriendTerminal,
   };
 };
+
+export default useNotification;

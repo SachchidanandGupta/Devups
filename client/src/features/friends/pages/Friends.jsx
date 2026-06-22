@@ -12,7 +12,8 @@ const Friends = () => {
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
-    socket.on("friend:activity", () => {
+    socket.on("friend:activity", (data) => {
+      console.log("friendRequest",data);
       fetchFriends();
       requestsPending();
     });
@@ -106,7 +107,7 @@ const Friends = () => {
             ) : (
               ""
             )}
-            {console.log(isOpen)}
+            
           </button>
 
           {isOpen ? (

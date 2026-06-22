@@ -1,10 +1,10 @@
 import React from "react";
 import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
-const BellDropdown = ({  contest, requests ,ref}) => {
+const BellDropdown = ({  contest, requests }) => {
   const navigate = useNavigate();
   return (
-    <div ref={ref} className="absolute top-12 w-50 flex flex-col right-0 mt-1 border border-accent-muted ">
+    <div  className="absolute z-10 top-12 w-50 flex flex-col right-0 mt-1 border border-accent-muted ">
       {requests.length > 0 && (
         <div
           onClick={() => navigate("/friends")}
@@ -38,7 +38,7 @@ const BellDropdown = ({  contest, requests ,ref}) => {
           </div>
           {contest.map((s, index) => (
             <div key={s._id || index} className="flex gap-2 flex-start p-2 border-b border-t border-border items-center bg-surface-2">
-              {console.log(s)}
+              
               <div className="flex flex-col">
                 <span className="font-semibold text-sm">{s.contestName}//</span>
                 <span className="text-accent text-xs font-semibold">

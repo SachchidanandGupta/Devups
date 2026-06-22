@@ -12,7 +12,7 @@ const useNotificationStore = create((set) => ({
     set((state) => ({ notifications: [notification, ...state.notifications] })),
   removeNotification: (id) =>
     set((state) => ({
-      notifications: state.notifications.filter((n) => String(n._id) != id),
+      notifications: state.notifications.filter((n) => String(n._id) !== id),
     })),
   clearAll: () => set({ notifications: [], error: null }),
 }));

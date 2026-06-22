@@ -2,6 +2,7 @@ import { getRecentActivity } from "../api/activityLog.api";
 import useActivityLogStore from "../store/useActivityLogStore";
 
 const useActivityLog = () => {
+  
   const fetchActivity = async () => {
     useActivityLogStore.getState().setIsLoading(true);
     try {
@@ -17,7 +18,7 @@ const useActivityLog = () => {
   };
 
   return {
-    fetchActivity,
-  };
+    fetchActivity
+  }
 };
 export default useActivityLog;

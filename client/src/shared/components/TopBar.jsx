@@ -116,7 +116,7 @@ const TopBar = ({ pageField, searchBar }) => {
         ) : (
           ""
         )}
-        <div className="relative">
+        <div className="relative" ref={bellDropRef}>
           <CiBellOn
             onClick={() => {
               setIsOpen(false);

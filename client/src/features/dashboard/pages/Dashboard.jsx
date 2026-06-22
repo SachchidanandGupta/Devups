@@ -4,10 +4,12 @@ import StreakCard from '../components/StreakCard';
 import StatsCard from '../components/StatsCard';
 import useAuthStore from '../../auth/store/authStore';
 import useAuth from '../../auth/hooks/useAuth';
+import ActivityFeedPanel from '../../activityLog/components/ActivityFeedPanel';
 const Dashboard = () => {
   const user = useAuthStore((state) => state.user)
   return (
     <div className=" p-4 sm:p-8 lg:p-12 font-sans selection:bg-cyan-500/30 ">
+      <ActivityFeedPanel/>
      
       <div className="max-w-6xl mx-auto space-y-8 lg:space-y-12">
         
