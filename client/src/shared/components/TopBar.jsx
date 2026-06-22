@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Link } from "react-router";
 import { CiBellOn } from "react-icons/ci";
 import useAuthStore from "../../features/auth/store/authStore";
@@ -23,6 +23,8 @@ const TopBar = ({ pageField, searchBar }) => {
   const { search } = useUser();
   const { friendContest } = useContest();
   const { request, requestsPending } = useFriend();
+  const location = useLocation();
+
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
@@ -72,24 +74,9 @@ const TopBar = ({ pageField, searchBar }) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 mb-7 border-b border-border">
       <div className="flex items-center gap-4 ">
-        <h2 className="text-2xl font-semibold sm:text-2xl font-mono text-accent">
+        <h2 className="text-2xl font-semibold sm:text-2xl font-mono text-accent uppercase">
           {pageField}
         </h2>
-        <Link to="/">
-          <h2 className="text-lg font-base sm:text-sm font-mono text-text-secondary hover:text-accent cursor-pointer">
-            DASHBOARD
-          </h2>
-        </Link>
-        <Link to="/activity">
-          <h2 className="text-lg font-base sm:text-sm font-mono text-text-secondary hover:text-accent cursor-pointer">
-            ACTIVITY
-          </h2>
-        </Link>
-        <Link to="/settings">
-          <h2 className="text-lg font-base sm:text-sm font-mono text-text-secondary hover:text-accent cursor-pointer">
-            SETTINGS
-          </h2>
-        </Link>
       </div>
       <div className="flex items-center gap-4">
         {searchBar ? (
@@ -102,7 +89,7 @@ const TopBar = ({ pageField, searchBar }) => {
               value={query}
               type="text"
               placeholder="SEARCH_TERMINAL..."
-              className=" text-sm bg-surface-2 pl-2 pr-6 py-2 border border-border-bright focus:outline-none focus:border-accent"
+              className=" text-sm text-text-primary bg-surface-2 pl-2 pr-6 py-2 border border-border-bright focus:outline-none focus:border-accent"
             />
 
             {isOpen && searchUsers && (
@@ -110,6 +97,7 @@ const TopBar = ({ pageField, searchBar }) => {
                 dropdownRef={dropdownRef}
                 searchUsers={searchUsers}
                 user={user}
+                request={request}
               />
             )}
           </div>

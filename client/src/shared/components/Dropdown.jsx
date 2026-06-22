@@ -1,7 +1,9 @@
 import React from "react";
 import Avatar from "./Avatar";
 
-const Dropdown = ({searchUsers,dropdownRef,user}) => {
+const Dropdown = ({searchUsers,dropdownRef,user,request}) => {
+
+  
   return (
     <div
       className="flex flex-col  absolute w-full mt-1 border border-accent-muted "

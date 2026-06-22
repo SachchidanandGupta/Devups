@@ -29,7 +29,7 @@ const Leaderboard = () => {
 
   return (
     <div className="flex flex-col">
-      <TopBar pageField="LEADERBOARD" searchBar={true}  />
+      <TopBar pageField="leaderboard_terminal" searchBar={true}  />
       <div className=" w-full p-6 pt-4 flex flex-col font-mono">
         <div className="flex bg-black  w-full border-b border-border mb-7 ">
           <button

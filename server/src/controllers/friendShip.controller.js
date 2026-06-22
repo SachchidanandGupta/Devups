@@ -7,6 +7,7 @@ const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
 
+
 const sendRequest = asyncHandler(async function (req, res) {
   const receiverId = req.params.receiverId;
   const senderId = req.user.id;
@@ -44,6 +45,7 @@ const sendRequest = asyncHandler(async function (req, res) {
     status: "pending",
   });
   emitFriendActivity(receiverId, { type: "friend_request" });
+  
   return res.status(201).json({
     message: "Friend request sent successfully",
     friendShip,

@@ -7,7 +7,6 @@ const getRecentActivity = asyncHandler(async function (req, res) {
     .sort({ createdAt: -1 })
     .limit(20)
     .populate("userId", "username");
-  console.log(activities);
   return res.status(200).json({
     success: true,
     activities,

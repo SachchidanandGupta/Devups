@@ -57,12 +57,12 @@ const Contest = () => {
 
   return (
     <div>
-      <TopBar pageField="CONTEST" searchBar={true} />
+      <TopBar pageField="contest_terminal" searchBar={true} />
       <div className="w-full px-4 flex h-50  flex-col font-mono">
         {activeTab === "platform" ? (
           <div className=" text-text-primary flex font-bold mb-6 ">
             <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
-            <div className="">
+            <div >
               <h1 className="text-3xl font-mono">EVENT_TERMINAL </h1>
               <div className="flex gap-2 py-1">
                 <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
