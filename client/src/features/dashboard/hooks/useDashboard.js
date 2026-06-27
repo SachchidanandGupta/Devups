@@ -5,6 +5,7 @@ import useAuthStore from "../../auth/store/authStore";
 
 const useDashBoard = () => {
     const user = useAuthStore((state)=>state.user);
+    console.log(user);
   return {
     xp:user?.xp || 0,
     level:user?.level || 0,

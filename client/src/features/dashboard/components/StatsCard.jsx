@@ -1,67 +1,56 @@
 import React from "react";
 import useAuthStore from "../../auth/store/authStore";
-import useDashboard from '../hooks/useDashboard';
+import useDashboard from "../hooks/useDashboard";
+import XPbar from "./XPbar";
 const StatsCard = () => {
-
- const { leetcodeSolved } = useDashboard()
-const { easy = 0, medium = 0, hard = 0 } = leetcodeSolved || {}
+  const { leetcodeSolved } = useDashboard();
+  const { easy = 0, medium = 0, hard = 0 } = leetcodeSolved || {};
   const totalSolved = easy + medium + hard;
 
   return (
-    <div className="bg-zinc-950 p-6 sm:p-7 rounded-3xl border border-zinc-800 shadow-2xl w-full max-w-sm font-sans flex flex-col">
-      
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h3 className="text-xl font-bold text-slate-100 tracking-tight">
-            LeetCode
-          </h3>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-0.5">
-            Problems Solved
-          </p>
+   
+      <div className="flex flex-col justify-between items-center w-full">
+        <div className="uppercase bg-surface-2 flex justify-between items-center p-2 w-full border-2 border-border ">
+          <span className="text-sm">Intelligence_wing_metrics</span>{" "}
+          <span className="text-accent animate-pulse text-xs">LIVE</span>
         </div>
-        
-        <div className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
-          <span className="text-lg font-black text-slate-200">
-            {totalSolved}
-          </span>
+        <div className="w-full p-2 border border-border flex flex-col gap-2 ">
+          <div className="text-text-secondary text-sm ">
+            QUERY_RESOLUTION_DISTRIBUTION
+          </div>
+          <div className="flex justify-between items-center p-2 ">
+            <div className="flex items-center gap-3 h-full">
+              <div className="w-2 h-full bg-accent "></div>
+              <span className="text-lg font-semibold  text-text-primary">Easy</span>
+            </div>
+            <span className="text-xl font-bold text-accent ">
+              {easy}
+            </span>
+          </div>
+          <div className="flex justify-between items-center p-2  ">
+            <div className="flex items-center gap-3 h-full">
+              <div className="w-2 h-full bg-warning"></div>
+              <span className="text-sm font-bold text-text-primary">Medium</span>
+            </div>
+            <span className="text-xl font-bold text-warning">
+              {medium}
+            </span>
+          </div>
+          <div className="flex justify-between items-center p-2">
+            <div className="flex items-center gap-3 h-full">
+              <div className="w-2 h-full bg-danger "></div>
+              <span className="text-lg font-semibold text-text-primary">Hard</span>
+            </div>
+            <span className="text-xl font-bold text-danger ">
+              {hard}
+            </span>
+          </div>
+          <XPbar/>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        
-        <div className="flex justify-between items-center bg-zinc-900/50 px-5 py-4 rounded-2xl border border-zinc-800/50 hover:bg-zinc-900 hover:border-emerald-500/30 transition-all duration-300">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
-            <span className="text-sm font-bold text-slate-300">Easy</span>
-          </div>
-          <span className="text-xl font-black text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]">
-            {easy}
-          </span>
-        </div>
-
-
-        <div className="flex justify-between items-center bg-zinc-900/50 px-5 py-4 rounded-2xl border border-zinc-800/50 hover:bg-zinc-900 hover:border-amber-500/30 transition-all duration-300">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
-            <span className="text-sm font-bold text-slate-300">Medium</span>
-          </div>
-          <span className="text-xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.3)]">
-            {medium}
-          </span>
-        </div>
-
-        <div className="flex justify-between items-center bg-zinc-900/50 px-5 py-4 rounded-2xl border border-zinc-800/50 hover:bg-zinc-900 hover:border-rose-500/30 transition-all duration-300">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
-            <span className="text-sm font-bold text-slate-300">Hard</span>
-          </div>
-          <span className="text-xl font-black text-rose-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.3)]">
-            {hard}
-          </span>
-        </div>
-
-      </div>
-    </div>
+   
+  
   );
 };
 

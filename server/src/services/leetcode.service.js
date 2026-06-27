@@ -22,13 +22,26 @@ const getUserCalenderQuery = `query getUserCalendar($username: String!) {
 }`;
 
 const getLeetCodeContestQuery = `query {
-  
-  upcomingContests {
-    title
-    startTime
-    duration
+
+upcomingContests {
+  title
+  startTime
+  duration
   }
-}`;
+  }`;
+
+const getDailyQuestionQuery = `query questionOfToday {
+    activeDailyCodingChallengeQuestion {
+      date
+      link
+      question {
+        title
+        titleSlug
+        difficulty
+        acRate
+      }
+    }
+  }`;
 
 async function getUserSolved(username) {
   try {
@@ -122,8 +135,40 @@ async function getLeetCodeContest() {
   }
 }
 
+async function getDailyQuestion() {
+  try {
+    const { data } = await axios.post(
+      LEETCODE_API,
+      {
+        query: getDailyQuestionQuery,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+        },
+      },
+    );
+    if (!data.data.activeDailyCodingChallengeQuestion) {
+      throw new Error("No daily question data returned");
+    }
+    const daily = data.data.activeDailyCodingChallengeQuestion;
+    return {
+      title: daily.question.title,
+      difficulty: daily.question.difficulty,
+      acRate: daily.question.acRate,
+      link: `https://leetcode.com${daily.link}`,
+      date: daily.date,
+    };
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserCalender,
   getUserSolved,
-  getLeetCodeContest
+  getLeetCodeContest,
+  getDailyQuestion,
 };

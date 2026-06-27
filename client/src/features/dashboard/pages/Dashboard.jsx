@@ -5,12 +5,14 @@ import StatsCard from '../components/StatsCard';
 import useAuthStore from '../../auth/store/authStore';
 import useAuth from '../../auth/hooks/useAuth';
 import ActivityFeedPanel from '../../activityLog/components/ActivityFeedPanel';
+import TopBar from '../../../shared/components/TopBar';
 const Dashboard = () => {
   const user = useAuthStore((state) => state.user)
   return (
+
     <div className=" p-4 sm:p-8 lg:p-12 font-sans selection:bg-cyan-500/30 ">
      
-     
+     <TopBar  pageField={"Dashboard"} searchBar={true} />
       <div className="max-w-6xl mx-auto space-y-8 lg:space-y-12">
         
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-zinc-800/60 pb-6">
