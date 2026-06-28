@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import useUserStore from "../stores/useUserStore"; 
-import useUser from "../hooks/useUser"; 
+import useUserStore from "../stores/useUserStore";
+import useUser from "../hooks/useUser";
 
 const GithubHeatmap = ({ userId }) => {
   const heatMap = useUserStore((state) => state.heatMap);
   const isLoading = useUserStore((state) => state.isLoading);
-  
+
   const { userHeatMap } = useUser();
 
   useEffect(() => {
@@ -14,88 +14,142 @@ const GithubHeatmap = ({ userId }) => {
     }
   }, [userId]);
 
-  const getColor = (count) => {
-    if (!count || count === 0) return "bg-zinc-800";
-    if (count <= 3) return "bg-emerald-900";
-    if (count <= 6) return "bg-emerald-700";
-    if (count <= 9) return "bg-emerald-500";
-    return "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]";
-  };
-  
-  if (isLoading) {
-    return (
-      <div className="w-full h-48 flex flex-col items-center justify-center bg-zinc-950 rounded-3xl border border-zinc-800 shadow-2xl">
-        <div className="w-6 h-6 border-2 border-zinc-700 border-t-emerald-500 rounded-full animate-spin mb-3"></div>
-        <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest animate-pulse">
-          Syncing GitHub...
-        </p>
-      </div>
-    );
+  function getMonthLabels(weeks) {
+    const monthLabels = [];
+    let lastMonth = null;
+    let lastLabelWeek = -3;
+
+    weeks.forEach((week, weekIndex) => {
+      if (!week[0]) return;
+      const date = new Date(week[0].date);
+      const month = date.getMonth();
+
+      if (month !== lastMonth && weekIndex - lastLabelWeek >= 3) {
+        monthLabels.push({
+          weekIndex,
+          label: date.toLocaleDateString("en-US", { month: "short" }),
+        });
+        lastMonth = month;
+        lastLabelWeek = weekIndex;
+      } else if (month !== lastMonth) {
+        lastMonth = month;
+      }
+    });
+
+    return monthLabels;
   }
 
-  if (!heatMap || heatMap.length === 0) {
-    return (
-      <div className="w-full h-48 flex flex-col items-center justify-center bg-zinc-950 rounded-3xl border border-zinc-800 border-dashed shadow-2xl p-6 text-center">
-        <span className="text-3xl mb-3 opacity-50 text-slate-300 font-semibold">No Github in this era</span>
-        <p className="text-slate-300 font-semibold mb-1">No contribution data found.</p>
-        <p className="text-slate-500 text-sm">Time to start pushing some code!</p>
-      </div>
-    );
+  function buildHeatmapGrid(heatMap) {
+    if (!heatMap || heatMap.length === 0) return { weeks: [], monthLabels: [] };
+
+    const dataMap = new Map(heatMap.map((d) => [d.date, d.contributionCount]));
+
+    const firstDate = new Date(heatMap[0].date);
+    const startDate = new Date(firstDate);
+    startDate.setDate(startDate.getDate() - startDate.getDay());
+    const lastDate = new Date(heatMap[heatMap.length - 1].date);
+
+    const weeks = [];
+    let currentDate = new Date(startDate);
+    let weekIndex = 0;
+
+    while (currentDate <= lastDate) {
+      if (!weeks[weekIndex]) weeks[weekIndex] = [];
+
+      const dateStr = currentDate.toISOString().split("T")[0];
+      const dayIndex = currentDate.getDay();
+      const count = dataMap.get(dateStr) || 0;
+
+      weeks[weekIndex][dayIndex] = { date: dateStr, count };
+
+      currentDate.setDate(currentDate.getDate() + 1);
+      if (dayIndex === 6) weekIndex++;
+    }
+
+    return { weeks, monthLabels: getMonthLabels(weeks) };
   }
 
-  const weeks = [];
-  for (let i = 0; i < heatMap.length; i += 7) {
-    weeks.push(heatMap.slice(i, i + 7));
+  const CELL_SIZE = 11;
+  const CELL_GAP = 2;
+  const STEP = CELL_SIZE + CELL_GAP;
+  const LEFT_PADDING = 4;
+  const TOP_PADDING = 20;
+
+  function getColor(count) {
+    if (count === 0) return "var(--color-surface-2)";
+    if (count <= 3) return "#003319";
+    if (count <= 7) return "#006633";
+    if (count <= 12) return "#00b359";
+    return "#00ff88";
   }
 
+  const { weeks, monthLabels } = buildHeatmapGrid(heatMap);
   return (
-    <div className="bg-zinc-950 p-5 sm:p-7 rounded-3xl border border-zinc-800 shadow-2xl w-full font-sans">
-      
-      <div className="mb-5">
-        <h3 className="text-lg font-bold text-slate-100 tracking-tight">
-          Contribution Activity
-        </h3>
-      </div>
-
-      <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
-        <div className="inline-flex gap-1.5 min-w-max pr-4">
-          
-          {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="flex flex-col gap-1.5">
-              
-              {week.map((day, dayIndex) => {
-                const displayDate = day.date 
-                  ? new Date(day.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                  : "Unknown Date";
-
-                return (
-                  <div
-                    key={dayIndex}
-                    title={`${day.contributionCount || 0} contributions on ${displayDate}`}
-                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-sm transition-colors duration-300 hover:ring-1 hover:ring-slate-300 hover:ring-offset-1 hover:ring-offset-zinc-950 cursor-crosshair ${getColor(day.contributionCount)}`}
-                  />
-                );
-              })}
-              
-            </div>
+    <div className="w-full   border-2 border-border p-2">
+      <div className="flex flex-col w-full">
+        <div className="flex items-center justify-between p-2">
+          <span className="uppercase text-text-secondary text-xl">
+            commit_velocity_grid
+          </span>
+          <div className="flex items-center gap-1 ">
+            <span className="text-sm text-text-secondary">LESS</span>
+            <div className="w-3 h-3 bg-surface-2"></div>
+            <div
+              className="w-3 h-3"
+              style={{ backgroundColor: "#003319" }}
+            ></div>
+            <div
+              className="w-3 h-3"
+              style={{ backgroundColor: "#006633" }}
+            ></div>
+            <div
+              className="w-3 h-3"
+              style={{ backgroundColor: "#00b359" }}
+            ></div>
+            <div className="w-3 h-3 bg-accent"></div>
+            <span className="text-sm text-text-secondary">MORE</span>
+          </div>
+        </div>
+        <svg
+          viewBox={`0 0 ${LEFT_PADDING + weeks.length * STEP} ${TOP_PADDING + 7 * STEP}`}
+          width="100%"
+          className="w-full"
+          preserveAspectRatio="xMinYMin meet"
+        >
+          {monthLabels.map(({ weekIndex, label }) => (
+            <text
+              key={weekIndex}
+              x={LEFT_PADDING + weekIndex * STEP}
+              y={12}
+              fontSize="10"
+              fill="var(--color-text-secondary)"
+              fontFamily="JetBrains Mono"
+            >
+              {label}
+            </text>
           ))}
-          
-        </div>
-      </div>
 
-      {/* GitHub-style Legend */}
-      <div className="flex items-center justify-end gap-2 text-[10px] sm:text-xs font-semibold text-slate-500 mt-2">
-        <span>Less</span>
-        <div className="flex gap-1.5 items-center">
-          <div className="w-3 h-3 rounded-sm bg-zinc-800"></div>
-          <div className="w-3 h-3 rounded-sm bg-emerald-900"></div>
-          <div className="w-3 h-3 rounded-sm bg-emerald-700"></div>
-          <div className="w-3 h-3 rounded-sm bg-emerald-500"></div>
-          <div className="w-3 h-3 rounded-sm bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.5)]"></div>
-        </div>
-        <span>More</span>
+          {weeks.map((week, weekIndex) =>
+            week.map((day, dayIndex) => {
+              if (!day) return null;
+              return (
+                <rect
+                  key={`${weekIndex}-${dayIndex}`}
+                  x={LEFT_PADDING + weekIndex * STEP}
+                  y={TOP_PADDING + dayIndex * STEP}
+                  width={CELL_SIZE}
+                  height={CELL_SIZE}
+                  fill={getColor(day.count)}
+                >
+                  <title>
+                    {day.count} contributions on {day.date}
+                  </title>
+                </rect>
+              );
+            }),
+          )}
+        </svg>
       </div>
-
     </div>
   );
 };

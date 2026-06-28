@@ -28,9 +28,34 @@ const Leaderboard = () => {
     activeTab === "global" ? globalRankings : friendRankings;
 
   return (
-    <div className="flex flex-col">
-      <TopBar pageField="leaderboard_terminal" searchBar={true}  />
-      <div className=" w-full p-6 pt-4 flex flex-col font-mono">
+    <div>
+      <TopBar pageField="leaderboard_terminal" searchBar={true} />
+      <div className=" w-full p-4 flex flex-col h-50 font-mono">
+        {activeTab === "global" ? (
+          <div className=" text-text-primary flex font-bold mb-6 ">
+            <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
+            <div>
+              <h1 className="text-3xl font-mono">GLOBAL_TERMINAL </h1>
+              <div className="flex gap-2 py-1">
+                <span className="text-accent font-mono text-xs  flex items-center justify-center ">
+                  [ SYSTEM_STABLE ]
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className=" text-text-primary flex font-bold mb-6 ">
+            <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
+            <div>
+              <h1 className="text-3xl font-mono">FRIENDS_TERMINAL </h1>
+              <div className="flex gap-2 py-1">
+                <span className="text-accent font-mono text-xs flex items-center justify-center ">
+                  [ SYSTEM_STABLE ]
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex bg-black  w-full border-b border-border mb-7 ">
           <button
             onClick={() => setActiveTab("global")}
@@ -87,7 +112,6 @@ const Leaderboard = () => {
             ))
           )}
         </div>
-        
       </div>
     </div>
   );

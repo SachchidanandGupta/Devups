@@ -1,15 +1,16 @@
 import React from "react";
 import useAuthStore from "../../auth/store/authStore";
 import useDashboard from "../hooks/useDashboard";
-import XPbar from "./XPbar";
+// import XPbar from "./XPBar2";
+import StreakCard from "./StreakCard";
 const StatsCard = () => {
   const { leetcodeSolved } = useDashboard();
   const { easy = 0, medium = 0, hard = 0 } = leetcodeSolved || {};
   const totalSolved = easy + medium + hard;
-
+  console.log("statsrendered")
   return (
    
-      <div className="flex flex-col justify-between items-center w-full">
+      <div className="flex flex-col justify-between items-center w-full h-full">
         <div className="uppercase bg-surface-2 flex justify-between items-center p-2 w-full border-2 border-border ">
           <span className="text-sm">Intelligence_wing_metrics</span>{" "}
           <span className="text-accent animate-pulse text-xs">LIVE</span>
@@ -45,7 +46,7 @@ const StatsCard = () => {
               {hard}
             </span>
           </div>
-          <XPbar/>
+          <StreakCard/>
         </div>
       </div>
 

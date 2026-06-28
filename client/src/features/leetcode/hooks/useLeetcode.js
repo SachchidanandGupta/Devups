@@ -1,14 +1,23 @@
 import {getDailyQuestions} from "../api/leetcode.api";
-import useLeetStore from "../store/useLeetStore";
+import leetcodeStore from "../store/leetcodeStore";
 
 
-const useLeetcode = async() =>{
+const useLeetcode = () =>{
     const fetchDaily = async() =>{
-        useLeetStore.getState().setIsLoading(true);
+        leetcodeStore.getState().setIsLoading(true);
         try{
             const data = await getDailyQuestions();
-            useLeetStore.getState().setDaily(data.data);
+            leetcodeStore.getState().setDaily(data.daily);
+        }
+        catch(err) {
+             leetcodeStore.getState().setError(err.response?.data?.message || err.message);
+        }finally{
+            leetcodeStore.getState().setIsLoading(false);
         }
     }
-
+  return {
+    fetchDaily
+  }
 }
+
+export default useLeetcode;
