@@ -31,17 +31,19 @@ upcomingContests {
   }`;
 
 const getDailyQuestionQuery = `query questionOfToday {
-    activeDailyCodingChallengeQuestion {
-      date
-      link
-      question {
-        title
-        titleSlug
-        difficulty
-        acRate
-      }
+  activeDailyCodingChallengeQuestion {
+    date
+    link
+    question {
+      questionFrontendId
+      title
+      titleSlug
+      difficulty
+      acRate
+      content
     }
-  }`;
+  }
+}`;
 
 async function getUserSolved(username) {
   try {
@@ -139,9 +141,7 @@ async function getDailyQuestion() {
   try {
     const { data } = await axios.post(
       LEETCODE_API,
-      {
-        query: getDailyQuestionQuery,
-      },
+      { query: getDailyQuestionQuery },
       {
         headers: {
           "Content-Type": "application/json",
@@ -153,12 +153,26 @@ async function getDailyQuestion() {
       throw new Error("No daily question data returned");
     }
     const daily = data.data.activeDailyCodingChallengeQuestion;
+    const q = daily.question;
+
+    // strip HTML tags for a clean text preview
+    const plainDescription = q.content
+      .replace(/<[^>]*>/g, " ") // remove HTML tags
+      .replace(/&nbsp;/g, " ") // common HTML entity
+      .replace(/\s+/g, " ") // collapse whitespace
+      .trim();
+
+    const shortDescription =
+      plainDescription.slice(0, 200) +
+      (plainDescription.length > 200 ? "..." : "");
+
     return {
-      title: daily.question.title,
-      difficulty: daily.question.difficulty,
-      acRate: daily.question.acRate,
+      questionNumber: q.questionFrontendId,
+      title: q.title,
+      difficulty: q.difficulty,
+      acRate: q.acRate.toFixed(1),
+      description: shortDescription,
       link: `https://leetcode.com${daily.link}`,
-      date: daily.date,
     };
   } catch (error) {
     console.error(error.response?.data?.message || error.message);

@@ -13,6 +13,8 @@ import Dropdown from "./Dropdown";
 import Avatar from "./Avatar";
 import BellDropdown from "./BellDropdown";
 import { getSocket } from "../hooks/useSocket";
+import { MdOutlineTerminal } from "react-icons/md";
+import Terminal from "./Terminal";
 const TopBar = ({ pageField, searchBar }) => {
   const user = useAuthStore((state) => state.user) || {};
   const searchUsers = useUserStore((state) => state.searchResult) || [];
@@ -39,6 +41,7 @@ const TopBar = ({ pageField, searchBar }) => {
   const dropdownRef = useRef(null);
   const bellDropRef = useRef(null);
   const [isBellOpen, setIsBellOpen] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   useEffect(() => {
     if (!query.trim()) {
       useUserStore.getState().setSearchResult([]);
@@ -72,7 +75,7 @@ const TopBar = ({ pageField, searchBar }) => {
   }, []);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border">
+    <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border">
       <div className="flex items-center gap-4 ">
         <h2 className="text-2xl font-semibold sm:text-2xl font-mono text-accent uppercase">
           {pageField}
@@ -126,6 +129,15 @@ const TopBar = ({ pageField, searchBar }) => {
             />
           )}
         </div>
+        <div>
+          <MdOutlineTerminal
+            onClick={()=>setIsTerminalOpen(!isTerminalOpen)}
+            size={24}
+            className="hover:text-accent cursor-pointer"
+          />
+          
+        </div>
+          {isTerminalOpen && <Terminal/>} 
         <Link to="/profile">
           <Avatar data={user} style={"border-accent"} />
         </Link>

@@ -13,7 +13,7 @@ const Friends = () => {
     const socket = getSocket();
     if (!socket) return;
     socket.on("friend:activity", (data) => {
-      console.log("friendRequest",data);
+      console.log("friendRequest", data);
       fetchFriends();
       requestsPending();
     });
@@ -77,77 +77,83 @@ const Friends = () => {
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col font-mono w-full min-h-screen bg-black">
       <TopBar pageField="FRIEND_TERMINAL" />
-      <div className=" m-2 flex justify-between ">
-        <div>
-          <h1 className="text-4xl font-mono font-bold uppercase ">
-            friends({friends?.length} online)
-          </h1>
-          <h1 className="uppercase flex gap-2 items-center text-accent">
-            <div className="bg-accent h-2 w-2"></div>uplink stable // session:
-            active
-          </h1>
-        </div>
-        <div
-          ref={dropdownRef}
-          className=" grid grid-cols-2 gap-2 items-center relative "
-        >
-          <button className="uppercase border col-span-1 border-text-secondary text-text-primary px-4 py-1 font-bold cursor-pointer hover:bg-accent hover:text-surface">
-            add friends
-          </button>
-          <button
-            ref={dropdownRef}
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="uppercase border col-span-1  border-text-secondary text-text-primary px-4 py-1 font-bold cursor-pointer hover:bg-text-primary  hover:text-surface"
-          >
-            request
-            {pendingFriendRequests.length > 0 ? (
-              <span>[{pendingFriendRequests.length}]</span>
-            ) : (
-              ""
-            )}
-            
-          </button>
 
-          {isOpen ? (
-            <RequestDropdown
-              requests={pendingFriendRequests}
-              accept={handleAccept}
-              decline={handleDecline}
-            />
-          ) : (
-            ""
-          )}
-        </div>
-      </div>
-      <div className="w-full p-2 pt-4 flex flex-col font-mono ">
-        <div className="flex justify-between py-4 px-4  bg-surface-2 border border-border text-text-secondary text-sm uppercase">
-          <div className="flex-1">DEVELOPER_IDENTITY</div>
-          <div className="flex-1 flex justify-between">
-            <div className="w-16">LEVEL</div>
-            <div className="w-24">XP</div>
+      <div className="w-full p-4 sm:p-6 flex flex-col gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-4">
+          <div className="flex flex-col min-w-0">
+            <h1 className="text-2xl sm:text-4xl font-bold uppercase truncate text-text-primary tracking-tight">
+              friends ({friends?.length || 0} online)
+            </h1>
+            <div className="flex items-center gap-2 mt-1 uppercase text-xs sm:text-sm text-accent tracking-widest font-bold">
+              <div className="h-2 w-2 bg-accent shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.6)] animate-pulse"></div>
+              uplink stable // session: active
+            </div>
           </div>
-          <div className="flex-1 text-right">ACTIONS</div>
+
+          <div
+            className="flex items-center gap-3 shrink-0 relative"
+            ref={dropdownRef}
+          >
+            <button className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors">
+              Add Friend
+            </button>
+
+            <button
+              onClick={() => setIsOpen((prev) => !prev)}
+              className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
+                isOpen || pendingFriendRequests.length > 0
+                  ? "border-accent text-accent hover:bg-accent hover:text-black"
+                  : "border-border text-text-primary hover:bg-text-primary hover:text-black"
+              }`}
+            >
+              Requests
+              {pendingFriendRequests?.length > 0 && (
+                <span className="ml-1.5">[{pendingFriendRequests.length}]</span>
+              )}
+            </button>
+
+            {isOpen && (
+              <div className="absolute top-full right-0 mt-2 z-50 min-w-[250px]">
+                <RequestDropdown
+                  requests={pendingFriendRequests}
+                  accept={handleAccept}
+                  decline={handleDecline}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col">
-          {isLoading ? (
-            <FriendSkeleton />
-          ) : !friends || friends.length === 0 ? (
-            <div className="text-text-muted text-sm text-center py-20">
-              NO_FRIENDS_FOUND
+          <div className="flex justify-between px-4 py-2 bg-surface-2 border border-border text-text-muted text-xs uppercase tracking-widest">
+            <div className="flex-1 min-w-0 pr-4">IDENTIFIER</div>
+            <div className="flex-1 flex gap-8 min-w-0">
+              <div className="w-16">LEVEL</div>
+              <div className="w-24 text-right sm:text-left">XP</div>
             </div>
-          ) : (
-            friends.map((friend) => (
-              <FriendCard
-                key={friend._id || friend.id}
-                friend={friend}
-                onUnfriend={handleUnfriend}
-                onBlock={handleBlock}
-              />
-            ))
-          )}
+            <div className="flex-1 text-right">ACTIONS</div>
+          </div>
+
+          <div className="flex flex-col border-x border-b border-border bg-black">
+            {isLoading ? (
+              <FriendSkeleton />
+            ) : !friends || friends.length === 0 ? (
+              <div className="text-text-muted text-xs sm:text-sm text-center py-20 uppercase tracking-widest">
+                NO_FRIENDS_FOUND
+              </div>
+            ) : (
+              friends.map((friend) => (
+                <FriendCard
+                  key={friend._id || friend.id}
+                  friend={friend}
+                  onUnfriend={handleUnfriend}
+                  onBlock={handleBlock}
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

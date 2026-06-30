@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import useUserStore from "../stores/useUserStore";
 import useUser from "../hooks/useUser";
-
+import { GithubSkeleton } from "../../../shared/ui/Skeleton";
 const GithubHeatmap = ({ userId }) => {
   const heatMap = useUserStore((state) => state.heatMap);
   const isLoading = useUserStore((state) => state.isLoading);
@@ -85,71 +85,81 @@ const GithubHeatmap = ({ userId }) => {
 
   const { weeks, monthLabels } = buildHeatmapGrid(heatMap);
   return (
-    <div className="w-full   border-2 border-border p-2">
-      <div className="flex flex-col w-full">
-        <div className="flex items-center justify-between p-2">
-          <span className="uppercase text-text-secondary text-xl">
-            commit_velocity_grid
-          </span>
-          <div className="flex items-center gap-1 ">
-            <span className="text-sm text-text-secondary">LESS</span>
-            <div className="w-3 h-3 bg-surface-2"></div>
-            <div
-              className="w-3 h-3"
-              style={{ backgroundColor: "#003319" }}
-            ></div>
-            <div
-              className="w-3 h-3"
-              style={{ backgroundColor: "#006633" }}
-            ></div>
-            <div
-              className="w-3 h-3"
-              style={{ backgroundColor: "#00b359" }}
-            ></div>
-            <div className="w-3 h-3 bg-accent"></div>
-            <span className="text-sm text-text-secondary">MORE</span>
+    <div>
+      {isLoading ? (
+        <GithubSkeleton />
+      ) : (
+        <div className="w-full border border-border p-4 bg-black font-mono flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+            <span className="uppercase text-text-secondary text-sm font-bold tracking-widest truncate block">
+              commit_velocity_grid
+            </span>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-xs text-text-muted">LESS</span>
+              <div className="w-3 h-3 bg-surface-2 "></div>
+              <div
+                className="w-3 h-3"
+                style={{ backgroundColor: "#003319" }}
+              ></div>
+              <div
+                className="w-3 h-3"
+                style={{ backgroundColor: "#006633" }}
+              ></div>
+              <div
+                className="w-3 h-3"
+                style={{ backgroundColor: "#00b359" }}
+              ></div>
+              <div className="w-3 h-3 bg-accent"></div>
+              <span className="text-xs text-text-muted">MORE</span>
+            </div>
+          </div>
+
+          <div className="w-full overflow-hidden">
+            <svg
+              viewBox={`0 0 ${LEFT_PADDING + weeks.length * STEP} ${TOP_PADDING + 7 * STEP}`}
+              width="100%"
+              height="100%"
+              className="w-full block"
+              preserveAspectRatio="xMinYMin meet"
+            >
+              {monthLabels.map(({ weekIndex, label }) => (
+                <text
+                  key={weekIndex}
+                  x={LEFT_PADDING + weekIndex * STEP}
+                  y={12}
+                  fontSize="10"
+                  fill="currentColor"
+                  className="text-text-muted font-mono"
+                >
+                  {label}
+                </text>
+              ))}
+
+              {weeks.map((week, weekIndex) =>
+                week.map((day, dayIndex) => {
+                  if (!day) return null;
+                  return (
+                    <rect
+                      key={`${weekIndex}-${dayIndex}`}
+                      x={LEFT_PADDING + weekIndex * STEP}
+                      y={TOP_PADDING + dayIndex * STEP}
+                      width={CELL_SIZE}
+                      height={CELL_SIZE}
+                      fill={getColor(day.count)}
+                      className="hover:stroke-accent hover:stroke-[1.5px] cursor-pointer transition-all duration-200"
+                    >
+                      <title>
+                        {day.count} contributions on {day.date}
+                      </title>
+                    </rect>
+                  );
+                }),
+              )}
+            </svg>
           </div>
         </div>
-        <svg
-          viewBox={`0 0 ${LEFT_PADDING + weeks.length * STEP} ${TOP_PADDING + 7 * STEP}`}
-          width="100%"
-          className="w-full"
-          preserveAspectRatio="xMinYMin meet"
-        >
-          {monthLabels.map(({ weekIndex, label }) => (
-            <text
-              key={weekIndex}
-              x={LEFT_PADDING + weekIndex * STEP}
-              y={12}
-              fontSize="10"
-              fill="var(--color-text-secondary)"
-              fontFamily="JetBrains Mono"
-            >
-              {label}
-            </text>
-          ))}
-
-          {weeks.map((week, weekIndex) =>
-            week.map((day, dayIndex) => {
-              if (!day) return null;
-              return (
-                <rect
-                  key={`${weekIndex}-${dayIndex}`}
-                  x={LEFT_PADDING + weekIndex * STEP}
-                  y={TOP_PADDING + dayIndex * STEP}
-                  width={CELL_SIZE}
-                  height={CELL_SIZE}
-                  fill={getColor(day.count)}
-                >
-                  <title>
-                    {day.count} contributions on {day.date}
-                  </title>
-                </rect>
-              );
-            }),
-          )}
-        </svg>
-      </div>
+      )}
     </div>
   );
 };
