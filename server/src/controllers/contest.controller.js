@@ -10,6 +10,7 @@ const { logActivity } = require("../services/activityLog.service");
 const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
+const userModel = require("../models/user.model");
 
 // async function getCodeforcesContest() {
 //   const response = await axios.get(
@@ -214,6 +215,41 @@ const rejectContestInvite = asyncHandler(async function (req, res) {
   });
 });
 
+const getUserContestHistory = asyncHandler(async function (req, res) {
+  const userId = req.params.userId;
+  const user = await userModel.findById(userId);
+  if (!user) {
+    throw new appError("User not found", 404);
+  }
+  const contestHistory = await contestModel
+    .find({
+      $or: [{ creator: userId }, { participants: userId }],
+      status: "completed",
+    })
+    .populate([
+      { path: "creator", select: "username avatar level" },
+      { path: "participants", select: "username avatar level" },
+      { path: "winner", select: "username avatar level" },
+    ]);
+
+  const contestHistoryWithRank = contestHistory.map((contest) => {
+    const sortedContest = [...contest.scores].sort(
+      (a, b) => b.xpEarned - a.xpEarned,
+    );
+    const rank =
+      sortedContest.findIndex((s) => String(s.userId) === String(userId)) + 1;
+    return {
+      ...contest.toObject(),
+      userRank: rank || null,
+    };
+  });
+
+  return res.status(200).json({
+    status: "success",
+    contestHistory: contestHistoryWithRank,
+  });
+});
+
 module.exports = {
   getContest,
   createContest,
@@ -221,4 +257,5 @@ module.exports = {
   completeFriendContest,
   acceptContestInvite,
   rejectContestInvite,
+  getUserContestHistory,
 };

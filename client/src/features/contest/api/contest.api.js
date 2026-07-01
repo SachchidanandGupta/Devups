@@ -6,6 +6,11 @@ export async function getContests(){
     return response.data;
 }
 
+export async function getUserContestHistory(userId){
+    const response = await axiosInstance.get(`/contest/${userId}/history`);
+    return response.data;
+}
+
 export async function createContest( contestName,participantIds, startTime, endTime){
     const response = await axiosInstance.post("/contest/create",{
       contestName,  participantIds, startTime, endTime

@@ -5,6 +5,7 @@ const authMiddleware = require("../middlewares/auth.middleware");
 const router = Router();
 
 router.get("/",authMiddleware.authUser,contestController.getContest);
+router.get("/:userId/history",contestController.getUserContestHistory);
 router.post("/create",authMiddleware.authUser,contestController.createContest);
 router.get("/friends",authMiddleware.authUser,contestController.getFriendContest);
 router.put("/complete/:contestid",authMiddleware.authUser,contestController.completeFriendContest);

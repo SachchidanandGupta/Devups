@@ -6,6 +6,7 @@ import {
   getFriendContests,
   acceptContest,
   rejectContest,
+  getUserContestHistory
 } from "../api/contest.api";
 
 const useContest = () => {
@@ -104,6 +105,19 @@ const useContest = () => {
     }
   };
 
+  const userContestHistory = async(userId) =>{
+    useContestStore.getState().setIsLoading(true);
+    try{
+     const data =  await getUserContestHistory(userId);
+     useContestStore.getState().setCompletedContests(data.contestHistory);
+    }catch(error){
+      useContestStore.getState().setError(error.response?.data?.message || error.message);
+    }finally{
+      useContestStore.getState().setIsLoading(false);
+    }
+
+  }
+
   return {
     contest,
     friendContest,
@@ -111,6 +125,7 @@ const useContest = () => {
     concludeContest,
     acceptInvite,
     rejectInvite,
+    userContestHistory
   };
 };
 

@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const userSchema = new mongoose.Schema(
   {
-    /** Core identity fields  */
     username: {
       type: String,
       required: [true, "Username is required"],
@@ -31,7 +30,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    /** Platform usernames  */
     leetcodeUsername: {
       type: String,
       default: null,
@@ -49,7 +47,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    /** XP & gamification  */
     xp: {
       type: Number,
       default: 0,
@@ -70,7 +67,6 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    /** Auth  */
     githubId: {
       type: String,
       default: undefined, // uset undefined so that we can get github as undefined as null raise the duplicate error
@@ -85,6 +81,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["admin", "user"],
       default: "user",
+    },
+    lastContestSyncAt: {
+      type: Date,
+      default: null,
     },
   },
   {

@@ -7,7 +7,6 @@ const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
 
-
 const sendRequest = asyncHandler(async function (req, res) {
   const receiverId = req.params.receiverId;
   const senderId = req.user.id;
@@ -45,7 +44,7 @@ const sendRequest = asyncHandler(async function (req, res) {
     status: "pending",
   });
   emitFriendActivity(receiverId, { type: "friend_request" });
-  
+
   return res.status(201).json({
     message: "Friend request sent successfully",
     friendShip,
@@ -207,6 +206,35 @@ const getFriends = asyncHandler(async function (req, res) {
   });
 });
 
+const getFriendsById = asyncHandler(async function (req, res) {
+  const userId = req.params.id;
+  const user = await userModel.findById(userId);
+  if (!user) {
+    throw new appError("User not found", 404);
+  }
+  const friendships = await friendModel
+    .find({
+      $or: [{ receiver: userId }, { requester: userId }],
+      status: "accepted",
+    })
+    .populate("receiver", "username avatar level xp")
+    .populate("requester", "username avatar xp level");
+
+    const friends = friendships.map(function(friendShip){
+      if(friendShip.requester._id.toString() === userId){
+        return friendShip.receiver
+      }
+      return friendShip.requester
+    });
+
+    return res.status(200).json({
+      message:"FriendList fetched successfully",
+      status:"Success",
+      count : friends.length,
+      friendList : friends
+    })
+});
+
 module.exports = {
   sendRequest,
   pendingRequests,
@@ -214,4 +242,5 @@ module.exports = {
   unFriend,
   getFriends,
   blockUser,
+  getFriendsById
 };

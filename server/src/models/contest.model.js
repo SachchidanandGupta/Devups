@@ -34,6 +34,19 @@ const contestSchema = new mongoose.Schema(
     ],
     problems: [
       {
+        platform: {
+          type: String,
+          enum: ["leetcode"],
+          default: "leetcode",
+        },
+        titleSlug: {
+          type: String,
+          required: true,
+        },
+        title: {
+          type: String,
+          required: true,
+        },
         difficulty: {
           type: String,
           enum: ["easy", "medium", "hard"],
@@ -65,6 +78,12 @@ const contestSchema = new mongoose.Schema(
       {
         userId: { type: mongoose.Schema.Types.ObjectId },
         xpEarned: { type: Number },
+        reachedTargetAt: {
+          type: Date,
+          default: null,
+        },
+        solvedCount: { type: Number, default: 0 }, 
+        lastUpdatedAt: { type: Date, default: null },
       },
     ],
   },

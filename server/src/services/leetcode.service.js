@@ -45,6 +45,14 @@ const getDailyQuestionQuery = `query questionOfToday {
   }
 }`;
 
+const getRecentAcSubmissionQuery = `query recentAcSubmissions($username: String!, $limit: Int!) {
+  recentAcSubmissionList(username: $username, limit: $limit) {
+    title
+    titleSlug
+    timestamp
+  }
+}`;
+
 async function getUserSolved(username) {
   try {
     const { data } = await axios.post(
@@ -180,9 +188,37 @@ async function getDailyQuestion() {
   }
 }
 
+async function getRecentAcSubmission(username, limit) {
+  try {
+    const { data } = await axios.post(
+      LEETCODE_API,
+      { query: getRecentAcSubmissionQuery, variables: { username, limit } },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+        },
+      },
+    );
+    const acSubmissions = data.data.recentAcSubmissionList;
+    if (!acSubmissions) {
+      throw new Error("No AcSubmission record found");
+    }
+    return acSubmissions.map((contest) => ({
+      title: contest.title,
+      titleSlug: contest.titleSlug,
+      timestamps: new Date(contest.timestamps * 1000),
+    }));
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserCalender,
   getUserSolved,
   getLeetCodeContest,
   getDailyQuestion,
+  getRecentAcSubmission,
 };

@@ -2,23 +2,26 @@ import React, { useEffect } from "react";
 import useAuthStore from "../../auth/store/authStore"; 
 import useUserStore from "../stores/useUserStore"; 
 import useUser from "../hooks/useUser"; 
-
+import useContest from "../../contest/hooks/useContest";
 import { SiLeetcode,SiCodeforces,SiGithub } from "react-icons/si";
 import GithubHeatmap from "../components/GithubHeatmap";
+import useContestStore from "../../contest/stores/useContestStore";
 const Profile = () => {
   const authUser = useAuthStore((state) => state.user);
   const userId = authUser?._id || authUser?.id;
-
+  const {userContestHistory} = useContest();
   const { fetchProfile } = useUser();
   const userProfile = useUserStore((state) => state.user);
   const isLoading = useUserStore((state) => state.isLoading);
-
+  const completedContests = useContestStore((state) => state.completedContests);
   useEffect(() => {
     if (userId) {
       fetchProfile(userId);
+      userContestHistory(userId);
     }
   }, [userId]);
-
+  console.log(authUser)
+ console.log(completedContests);
   const { 
     username = "Developer", 
     avatar, 
