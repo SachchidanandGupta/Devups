@@ -1,7 +1,6 @@
 const asyncHandler = require("../utils/asyncHandler");
 const { getLeetCodeContest } = require("../services/leetcode.service");
 const contestModel = require("../models/contest.model");
-
 const axios = require("axios");
 const appError = require("../utils/appError");
 const { getIo } = require("../config/socket");
@@ -11,7 +10,8 @@ const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
 const userModel = require("../models/user.model");
-
+const { determineWinner } = require("../services/contest.service");
+const { awardContestXp } = require("../services/xp.service");
 // async function getCodeforcesContest() {
 //   const response = await axios.get(
 //     "https://codeforces.com/api/contest.list?gym=false",
@@ -139,15 +139,13 @@ const completeFriendContest = asyncHandler(async function (req, res) {
     throw new appError("Contest already completed", 400);
   }
 
-  const topScore = contest.scores.reduce((max, score) => {
-    return score.xpEarned > max.xpEarned ? score : max;
-  }, contest.scores[0]);
+  const winnerId = determineWinner(contest);
 
   const updateContest = await contestModel
     .findByIdAndUpdate(
       contestId,
       {
-        winner: topScore.userId,
+        winner: winnerId,
         status: "completed",
       },
       {
@@ -156,6 +154,11 @@ const completeFriendContest = asyncHandler(async function (req, res) {
       },
     )
     .populate("winner", "username avatar ");
+  await Promise.all(
+    contest.scores
+      .filter((c) => c.xpEarned > 0)
+      .map((c) => awardContestXp(c.userId, c.xpEarned)),
+  );
   const socket = getIo();
   socket.emit("contest:reminder", {
     contestName: contest.contestName || "Friend Contest",

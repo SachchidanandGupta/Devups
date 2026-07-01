@@ -6,6 +6,8 @@ const asyncHandler = require("../utils/asyncHandler");
 
 const appError = require("../utils/appError");
 
+const { getLevelProgress} = require("../services/xp.service");
+
 const registerUser = asyncHandler(async function (req, res) {
   const { username, email, password } = req.body;
 
@@ -86,13 +88,18 @@ const loginUser = asyncHandler(async function (req, res) {
 
 const getMeUser = asyncHandler(async function (req, res) {
   const user = await userModel.findById(req.user.id);
+  const {currentXP,requiredXP,level} = getLevelProgress(user.xp);
   if (!user) {
     throw new appError("User not found", 404);
   }
   return res.status(200).json({
-    message: "user data fetched successfully",
-    user,
-  });
+  message: "user data fetched successfully",
+  user: {
+    ...user.toObject(),
+    currentXP,
+    requiredXP,
+  },
+});
 });
 
 const logOutUser = asyncHandler(async function (req, res) {

@@ -23,11 +23,13 @@ const useSocket = () => {
       socketInstance.emit("join_room", user._id);
     });
 
-    socketInstance.on("xp:updated", ({ xp, level, amount, source }) => {
+    socketInstance.on("xp:updated", ({ xp, level, amount, source,currentXP, requiredXP  }) => {
       useAuthStore.getState().setUser({
         ...useAuthStore.getState().user,
         xp,
         level,
+        currentXP,
+        requiredXP
       });
     });
 

@@ -11,6 +11,7 @@ const Dashboard = () => {
   const user = useAuthStore((state) => state.user);
   return (
     <div>
+      
       <TopBar pageField={"Dashboard"} searchBar={true} />
       <div className="p-4 flex flex-col gap-4">
         <GithubHeatmap userId={user._id} />

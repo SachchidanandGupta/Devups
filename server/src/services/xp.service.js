@@ -14,8 +14,33 @@ const xpEventModel = require("../models/xpEvent.model");
 const userModel = require("../models/user.model");
 const { emitXPUpdate } = require("./socket.service");
 
+function resolveLevelData(xp) {
+  let level = 1;
+  let cost = 100;
+  let threshold = 0;
+  while (xp >= threshold + cost) {
+    threshold += cost;
+    cost = Math.floor(cost * 1.1);
+    level++;
+  }
+  return {
+    level,
+    threshold,
+    cost,
+  };
+}
+
 function calculateLevel(xp) {
-  return Math.floor(xp / 100) + 1;
+  return resolveLevelData(xp).level;
+}
+
+function getLevelProgress(xp) {
+  const { level, threshold, cost } = resolveLevelData(xp);
+  return {
+    level,
+    currentXP: xp - threshold,
+    requiredXP: cost,
+  };
 }
 async function awardXP(userId, source, action, metaData = {}) {
   const amount = XP_VALUES[action];
@@ -37,10 +62,10 @@ async function awardXP(userId, source, action, metaData = {}) {
     { returnDocument: "after" },
   );
 
-  const newLevel = calculateLevel(updatedUser.xp);
-  if (newLevel !== updatedUser.level) {
-    await userModel.findByIdAndUpdate(userId, { level: newLevel });
-    updatedUser.level = newLevel;
+  const { level, currentXP, requiredXP } = getLevelProgress(updatedUser.xp);
+  if (level !== updatedUser.level) {
+    await userModel.findByIdAndUpdate(userId, { level: level });
+    updatedUser.level = level;
   }
 
   emitXPUpdate(userId, {
@@ -48,6 +73,8 @@ async function awardXP(userId, source, action, metaData = {}) {
     level: updatedUser.level,
     action,
     amount,
+    currentXP,
+    requiredXP
   });
   return {
     xpEvent,
@@ -59,4 +86,41 @@ async function awardXP(userId, source, action, metaData = {}) {
   };
 }
 
-module.exports = { awardXP };
+async function awardContestXp(userId, amount) {
+  const xpEvent = await xpEventModel.create({
+    userId,
+    action: "contest_completion",
+    source: "contest",
+    amount,
+    metaData: {},
+  });
+
+  const updatedUser = await userModel.findByIdAndUpdate(
+    userId,
+    { $inc: { xp: amount } },
+    { returnDocument: "after" },
+  );
+
+  const { level, currentXP, requiredXP } = getLevelProgress(updatedUser.xp);
+  if (level !== updatedUser.level) {
+    await userModel.findByIdAndUpdate(userId, { level: level });
+    updatedUser.level = level;
+  }
+  emitXPUpdate(userId, {
+    xp: updatedUser.xp,
+    level: updatedUser.level,
+    action: "contest_completion",
+    amount,
+    currentXP,
+    requiredXP
+  });
+  return {
+    xpEvent,
+    user: {
+      id: updatedUser._id,
+      xp: updatedUser.xp,
+      level: updatedUser.level,
+    },
+  };
+}
+module.exports = { awardXP, awardContestXp,getLevelProgress };

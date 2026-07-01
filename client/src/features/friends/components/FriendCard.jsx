@@ -2,10 +2,8 @@ import React from "react";
 import Avatar from "../../../shared/components/Avatar";
 
 const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
-  const { _id, username = "Unknown", avatar, xp = 0, level = 1 } = friend || {};
-  const xpInCurrentLevel = xp % 100;
-  const progressPercentage = Math.floor((xpInCurrentLevel / 100) * 100);
-  const xpToNextLevel = 100 - xpInCurrentLevel;
+  const { _id, username = "Unknown", avatar, xp = 0, level = 1,currentXP , requiredXP } = friend || {};
+  const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 
   return (
     <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-mono transition-colors">
@@ -34,7 +32,7 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
         <div className="w-54 ">
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs font-mono ">
-              XP:{xp}
+              XP:{currentXP}/{requiredXP}
             </span>
             <span className="text-text-secondary text-xs font-mono ">
               {progressPercentage}%

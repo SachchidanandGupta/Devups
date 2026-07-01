@@ -7,6 +7,8 @@ const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
 
+const { getLevelProgress } = require("../services/xp.service");
+
 const sendRequest = asyncHandler(async function (req, res) {
   const receiverId = req.params.receiverId;
   const senderId = req.user.id;
@@ -190,14 +192,26 @@ const getFriends = asyncHandler(async function (req, res) {
     })
     .populate("requester", "username avatar xp level")
     .populate("receiver", "username avatar xp level");
-
+  // const friends = friendships.map(function (friendship) {
+  //   if (friendship.requester._id.toString() === userId) {
+  //     const {currentXP,level,requiredXP} = getLevelProgress(friendship.receiver.xp);
+  //     return friendship.receiver;
+  //   }
+  //   return friendship.requester;
+  // });
   const friends = friendships.map(function (friendship) {
-    if (friendship.requester._id.toString() === userId) {
-      return friendship.receiver;
-    }
-    return friendship.requester;
-  });
+    const friend =
+      friendship.requester._id.toString() === userId
+        ? friendship.receiver
+        : friendship.requester;
 
+    const { currentXP, requiredXP } = getLevelProgress(friend.xp);
+    return {
+      ...friend.toObject(),
+      currentXP,
+      requiredXP,
+    };
+  });
   return res.status(200).json({
     message: "friendList fetched successfully.",
     status: "success",
@@ -220,19 +234,19 @@ const getFriendsById = asyncHandler(async function (req, res) {
     .populate("receiver", "username avatar level xp")
     .populate("requester", "username avatar xp level");
 
-    const friends = friendships.map(function(friendShip){
-      if(friendShip.requester._id.toString() === userId){
-        return friendShip.receiver
-      }
-      return friendShip.requester
-    });
+  const friends = friendships.map(function (friendShip) {
+    if (friendShip.requester._id.toString() === userId) {
+      return friendShip.receiver;
+    }
+    return friendShip.requester;
+  });
 
-    return res.status(200).json({
-      message:"FriendList fetched successfully",
-      status:"Success",
-      count : friends.length,
-      friendList : friends
-    })
+  return res.status(200).json({
+    message: "FriendList fetched successfully",
+    status: "Success",
+    count: friends.length,
+    friendList: friends,
+  });
 });
 
 module.exports = {
@@ -242,5 +256,5 @@ module.exports = {
   unFriend,
   getFriends,
   blockUser,
-  getFriendsById
+  getFriendsById,
 };

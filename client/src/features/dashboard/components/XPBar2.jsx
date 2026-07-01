@@ -2,11 +2,9 @@ import React from "react";
 import useDashboard from "../hooks/useDashboard";
 
 const XPbar = () => {
-  const { xp, level } = useDashboard();
-
-  const xpInCurrentLevel = xp % 100;
-  const progressPercentage = Math.floor((xpInCurrentLevel / 100) * 100);
-  const xpToNextLevel = 100 - xpInCurrentLevel;
+const { xp, level, currentXP, requiredXP } = useDashboard();
+const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
+const xpToNextLevel = requiredXP - currentXP;
 
   return (
     <div className="w-full flex flex-col font-mono gap-2 p-4 border border-border bg-black">
@@ -16,7 +14,7 @@ const XPbar = () => {
       LVL {level}_Stability_uplink
     </span>
     <span className="text-xs sm:text-sm text-text-secondary font-bold shrink-0 mb-0.5">
-      {xpInCurrentLevel} / 100 XP
+      {currentXP} / {requiredXP} XP
     </span>
   </div>
   

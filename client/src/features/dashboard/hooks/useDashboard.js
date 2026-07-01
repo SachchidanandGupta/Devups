@@ -9,6 +9,8 @@ const useDashBoard = () => {
     streak: user?.streak || 0,
     maxStreak: user?.maxStreak || 0,
     leetcodeSolved: user?.leetcodeSolved || 0,
+    currentXP: user?.currentXP ?? 0,
+    requiredXP: user?.requiredXP ?? 100,
   };
 };
 
