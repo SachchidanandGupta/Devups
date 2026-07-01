@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import useAuthStore from "../../auth/store/authStore"; 
-import useUserStore from "../stores/useUserStore"; 
-import useUser from "../hooks/useUser"; 
+import useUserStore from "../../user/stores/useUserStore"; 
+import useUser from "../../user/hooks/useUser"; 
 import useContest from "../../contest/hooks/useContest";
+import useProfileStore from "../store/useProfileStore";
 import { SiLeetcode,SiCodeforces,SiGithub } from "react-icons/si";
-import GithubHeatmap from "../components/GithubHeatmap";
+import GithubHeatmap from "../../user/components/GithubHeatmap";
 import useContestStore from "../../contest/stores/useContestStore";
+import useProfile from "../hooks/useProfile";
+
 const Profile = () => {
   const authUser = useAuthStore((state) => state.user);
   const userId = authUser?._id || authUser?.id;
@@ -14,14 +17,17 @@ const Profile = () => {
   const userProfile = useUserStore((state) => state.user);
   const isLoading = useUserStore((state) => state.isLoading);
   const completedContests = useContestStore((state) => state.completedContests);
+  const {fetchProfileData} = useProfile();
+ 
   useEffect(() => {
     if (userId) {
       fetchProfile(userId);
       userContestHistory(userId);
+      fetchProfileData(userId);
     }
   }, [userId]);
-  console.log(authUser)
- console.log(completedContests);
+  
+  
   const { 
     username = "Developer", 
     avatar, 
@@ -35,7 +41,7 @@ const Profile = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 font-sans pb-10">
-      
+      <button onClick={()=>getData(userId)}>hello</button>
       <div className="border-b border-zinc-800/60 pb-6">
         <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
           My Profile

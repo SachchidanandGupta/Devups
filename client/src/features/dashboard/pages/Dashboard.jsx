@@ -9,6 +9,7 @@ import GithubHeatmap from "../../user/components/GithubHeatmap";
 import DailyProblem from "../components/DailyProblem";
 const Dashboard = () => {
   const user = useAuthStore((state) => state.user);
+  console.log(user)
   return (
     <div>
       

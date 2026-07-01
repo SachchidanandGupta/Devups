@@ -9,7 +9,7 @@ import Navbar from "./shared/components/Navbar";
 import Leaderboard from "./features/leaderboard/pages/Leaderboard";
 import Friends from "./features/friends/pages/Friends";
 import Contest from "./features/contest/pages/Contest";
-import Profile from "./features/user/pages/Profile";
+import Profile from "./features/profile/pages/Profile";
 
 export const router = createBrowserRouter([
   {

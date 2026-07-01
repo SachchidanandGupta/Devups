@@ -221,7 +221,7 @@ const getFriends = asyncHandler(async function (req, res) {
 });
 
 const getFriendsById = asyncHandler(async function (req, res) {
-  const userId = req.params.id;
+  const userId = req.params.userId;
   const user = await userModel.findById(userId);
   if (!user) {
     throw new appError("User not found", 404);
