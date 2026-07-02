@@ -8,7 +8,10 @@ import { useEffect } from "react";
 
 const useLeaderboard = () => {
  
-
+const globalRankings = useLeaderboardStore((state)=>state.globalRankings);
+const friendRankings = useLeaderboardStore((state)=>state.friendRankings);
+const isLoading = useLeaderboardStore((state)=>state.isLoading);
+const error = useLeaderboardStore((state)=>state.error);
   const fetchGlobal = async () => {
     useLeaderboardStore.getState().setIsLoading(true);
     try {
@@ -47,6 +50,10 @@ const useLeaderboard = () => {
   return {
     fetchFriends,
     fetchGlobal,
+    globalRankings,
+    friendRankings,
+    error,
+    isLoading
   };
 };
 

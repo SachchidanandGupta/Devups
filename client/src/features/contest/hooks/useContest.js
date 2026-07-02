@@ -6,10 +6,16 @@ import {
   getFriendContests,
   acceptContest,
   rejectContest,
-  getUserContestHistory
+  getUserContestHistory,
 } from "../api/contest.api";
 
 const useContest = () => {
+  const platformContests = useContestStore((state) => state.platformContests);
+  const incomingContests = useContestStore((state) => state.incomingContests);
+  const activeContests = useContestStore((state) => state.activeContests);
+  const completedContests = useContestStore((state) => state.completedContests);
+  const isLoading = useContestStore((state) => state.isLoading);
+  const error = useContestStore((state) => state.error);
   const contest = async () => {
     useContestStore.getState().setIsLoading(true);
     try {
@@ -94,7 +100,7 @@ const useContest = () => {
   const rejectInvite = async (contestId) => {
     useContestStore.getState().setIsLoading(true);
     try {
-       await rejectContest(contestId);
+      await rejectContest(contestId);
       await friendContest();
     } catch (error) {
       useContestStore
@@ -105,18 +111,19 @@ const useContest = () => {
     }
   };
 
-  const userContestHistory = async(userId) =>{
+  const userContestHistory = async (userId) => {
     useContestStore.getState().setIsLoading(true);
-    try{
-     const data =  await getUserContestHistory(userId);
-     useContestStore.getState().setCompletedContests(data.contestHistory);
-    }catch(error){
-      useContestStore.getState().setError(error.response?.data?.message || error.message);
-    }finally{
+    try {
+      const data = await getUserContestHistory(userId);
+      useContestStore.getState().setCompletedContests(data.contestHistory);
+    } catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
       useContestStore.getState().setIsLoading(false);
     }
-
-  }
+  };
 
   return {
     contest,
@@ -125,7 +132,13 @@ const useContest = () => {
     concludeContest,
     acceptInvite,
     rejectInvite,
-    userContestHistory
+    userContestHistory,
+    platformContests,
+    activeContests,
+    error,
+    incomingContests,
+    completedContests,
+    isLoading,
   };
 };
 

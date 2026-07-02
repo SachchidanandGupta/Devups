@@ -1,29 +1,27 @@
 import React, { useEffect, useState, useRef } from "react";
 import useFriend from "../hooks/useFriend";
-import useFriendStore from "../store/useFriendStore";
 import FriendCard from "../components/FriendCard";
 import TopBar from "../../../shared/components/TopBar";
 import { FriendSkeleton } from "../../../shared/ui/Skeleton";
 import RequestDropdown from "../components/RequestDropdown";
 import { getSocket } from "../../../shared/hooks/useSocket";
 const Friends = () => {
-  const { fetchFriends, removeFriend, block, requestsPending, response } =
-    useFriend();
+  const {
+    request,
+    fetchFriends,
+    removeFriend,
+    block,
+    response,
+    requestsPending,
+    friends,
+    pendingFriendRequests = [],
+    error,
+    isLoading,
+  } = useFriend();
   useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-    socket.on("friend:activity", (data) => {
-      console.log("friendRequest", data);
-      fetchFriends();
-      requestsPending();
-    });
-    return () => socket.off("friend:activity");
+    fetchFriends();
+    requestsPending();
   }, []);
-
-  const friends = useFriendStore((state) => state.friends);
-  const isLoading = useFriendStore((state) => state.isLoading);
-  const pendingFriendRequests =
-    useFriendStore((state) => state.pendingFriendRequests) || [];
 
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
@@ -43,25 +41,8 @@ const Friends = () => {
     await requestsPending();
   };
 
-  const handleUnfriend = async (id) => {
-    const prev = useFriendStore.getState().friends;
-    useFriendStore.getState().setFriends(prev.filter((f) => f._id !== id));
-    try {
-      await removeFriend(id);
-    } catch (err) {
-      useFriendStore.getState().setFriends(prev);
-    }
-  };
-
-  const handleBlock = async (id) => {
-    const prev = useFriendStore.getState().friends;
-    useFriendStore.getState().setFriends(prev.filter((f) => f._id !== id));
-    try {
-      await block(id);
-    } catch (err) {
-      useFriendStore.getState().setFriends(prev);
-    }
-  };
+  const handleUnfriend = async (id) => await removeFriend(id);
+  const handleBlock = async (id) => await block(id);
 
   const dropdownRef = useRef(null);
 

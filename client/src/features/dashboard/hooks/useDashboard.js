@@ -1,8 +1,7 @@
 import React from "react";
-import useAuthStore from "../../auth/store/authStore";
-
+import useAuth from "../../auth/hooks/useAuth";
 const useDashBoard = () => {
-  const user = useAuthStore((state) => state.user);
+  const {user} = useAuth();
   return {
     xp: user?.xp || 0,
     level: user?.level || 0,

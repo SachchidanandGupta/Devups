@@ -1,5 +1,4 @@
 import React from "react";
-import useAuthStore from "../../auth/store/authStore";
 import useDashboard from "../hooks/useDashboard";
 
 const StreakCard = () => {

@@ -10,6 +10,15 @@ import {
 } from "../api/profile.api";
 
 const useProfile = () => {
+  const profile = useProfileStore((state) => state.profile);
+  const leetStats = useProfileStore((state) => state.leetStats);
+  const leetCalander = useProfileStore((state) => state.leetCalander);
+  const heatMap = useProfileStore((state) => state.heatMap);
+  const friends = useProfileStore((state) => state.friends);
+  const activity = useProfileStore((state) => state.activity);
+  const contestHistory = useProfileStore((state) => state.contestHistory);
+  const isLoading = useProfileStore((state) => state.isLoading);
+  const error = useProfileStore((state) => state.error);
   const fetchProfileData = async (userId) => {
     useProfileStore.getState().setIsLoading(true);
     try {
@@ -84,7 +93,18 @@ const useProfile = () => {
     }
   };
 
-  return { fetchProfileData };
+  return {
+    fetchProfileData,
+    profile,
+    error,
+    isLoading,
+    activity,
+    friends,
+    leetCalander,
+    leetStats,
+    heatMap,
+    contestHistory,
+  };
 };
 
 export default useProfile;

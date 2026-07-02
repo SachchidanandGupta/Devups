@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
-import useUserStore from "../stores/useUserStore";
 import useUser from "../hooks/useUser";
 import { GithubSkeleton } from "../../../shared/ui/Skeleton";
 const GithubHeatmap = ({ userId }) => {
-  const heatMap = useUserStore((state) => state.heatMap);
-  const isLoading = useUserStore((state) => state.isLoading);
 
-  const { userHeatMap } = useUser();
+  const { userHeatMap,heatMap,isLoading } = useUser();
 
   useEffect(() => {
     if (userId) {

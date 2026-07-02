@@ -5,8 +5,6 @@ import { MdOutlineLeaderboard, MdLeaderboard } from "react-icons/md";
 import { HiOutlineTrophy, HiTrophy } from "react-icons/hi2";
 import { IoPeopleOutline, IoPeople } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
-
-import useAuthStore from "../../features/auth/store/authStore";
 import useAuth from "../../features/auth/hooks/useAuth";
 
 const navItems = [
@@ -35,9 +33,8 @@ const SideNavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const user = useAuthStore((state) => state.user) || {};
 
-  const { logout } = useAuth();
+  const { logout,user } = useAuth();
 
   const handleLogout = async () => {
     await logout();

@@ -7,6 +7,12 @@ import {
 import useNotificationStore from "../store/useNotificationStore";
 
 const useNotification = () => {
+  const notifications = useNotificationStore((state)=>state.notifications);
+  const isLoading = useNotificationStore((state)=>state.isLoading);
+  const error = useNotificationStore((state)=>state.error);
+  const prependNotification = useNotificationStore((state)=>state.prependNotification);
+  const removeNotification = useNotificationStore((state)=>state.removeNotification);
+  const clearAll = useNotificationStore((state)=>state.clearAll);
   const fetchNotifications = async () => {
     useNotificationStore.getState().setIsLoading(true);
     try {
@@ -53,6 +59,12 @@ const useNotification = () => {
     fetchNotifications,
     clear,
     clearFriendTerminal,
+    notifications,
+    removeNotification,
+    prependNotification,
+    isLoading,
+    error,
+    clearAll
   };
 };
 

@@ -6,7 +6,14 @@ import {
 } from "../api/auth.api";
 import useAuthStore from "../store/authStore";
 
-  const useAuth = () => {
+const useAuth = () => {
+  const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const error = useAuthStore((state) => state.error);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const setError = useAuthStore((state) => state.setError);
+  const setUser = useAuthStore((state) => state.setUser);
   const login = async (identifier, password) => {
     useAuthStore.getState().setIsLoading(true);
     try {
@@ -22,53 +29,62 @@ import useAuthStore from "../store/authStore";
     }
   };
 
-  const register = async(username,email,password) =>{
+  const register = async (username, email, password) => {
     useAuthStore.getState().setIsLoading(true);
-    try{
-        const data = await registerUser(username,email,password);
-        useAuthStore.getState().setUser(data.user);
-        useAuthStore.getState().setAuthenticated(true);
-        
-    }catch(error){
-        useAuthStore.getState().setError(error.response?.data?.message || error.message);
-    }finally{
-        useAuthStore.getState().setIsLoading(false);
+    try {
+      const data = await registerUser(username, email, password);
+      useAuthStore.getState().setUser(data.user);
+      useAuthStore.getState().setAuthenticated(true);
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
     }
   };
-  const fetchMe = async ()=>{
+  const fetchMe = async () => {
     useAuthStore.getState().setIsLoading(true);
-    try{
-        const data = await getMeUser();
-        useAuthStore.getState().setUser(data.user);
-        useAuthStore.getState().setAuthenticated(true);
-        
-      }catch(error){
-        useAuthStore.getState().setError(error.response?.data?.message|| error.message)
-      }finally{
-        useAuthStore.getState().setIsLoading(false)
-        useAuthStore.getState().setInitialized(true);
+    try {
+      const data = await getMeUser();
+      useAuthStore.getState().setUser(data.user);
+      useAuthStore.getState().setAuthenticated(true);
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
+      useAuthStore.getState().setInitialized(true);
     }
-  }
+  };
 
-  const logout = async()=>{
+  const logout = async () => {
     useAuthStore.getState().setIsLoading(true);
-    try{
-        const data = await logOutUser();
-        useAuthStore.getState().logout();
-
-    }catch(error){
-        useAuthStore.getState().setError(error.response?.data?.message|| error.message);
-    }finally{
-        useAuthStore.getState().setIsLoading(false);
+    try {
+      const data = await logOutUser();
+      useAuthStore.getState().logout();
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
     }
-  }
+  };
 
   return {
     login,
     register,
     logout,
     fetchMe,
+    user,
+    isInitialized,
+    isAuthenticated,
+    isLoading,
+    error,
+    setError,
+    setUser
   };
 };
 export default useAuth;
-

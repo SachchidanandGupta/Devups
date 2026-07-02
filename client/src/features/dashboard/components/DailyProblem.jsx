@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
 import useLeetcode from "../../leetcode/hooks/useLeetcode";
-import leetcodeStore from "../../leetcode/store/leetcodeStore";
 import { MdOutlineTerminal } from "react-icons/md";
 import { useNavigate } from "react-router";
 const DailyProblem = () => {
-  const { fetchDaily } = useLeetcode();
+  const { fetchDaily,daily } = useLeetcode();
   const navigate = useNavigate();
   useEffect(() => {
     fetchDaily();
   }, []);
-  const daily = leetcodeStore((state) => state.daily);
   const { title, link, difficulty, acRate, questionNumber, description } =
     daily || {};
   const executionRate = (acRate / 2).toFixed(0);

@@ -1,15 +1,13 @@
 import React from "react";
 import StreakCard from "../components/StreakCard";
 import StatsCard from "../components/StatsCard";
-import useAuthStore from "../../auth/store/authStore";
 import useAuth from "../../auth/hooks/useAuth";
 import ActivityFeedPanel from "../../activityLog/components/ActivityFeedPanel";
 import TopBar from "../../../shared/components/TopBar";
 import GithubHeatmap from "../../user/components/GithubHeatmap";
 import DailyProblem from "../components/DailyProblem";
 const Dashboard = () => {
-  const user = useAuthStore((state) => state.user);
-  console.log(user)
+  const {user} = useAuth();  
   return (
     <div>
       

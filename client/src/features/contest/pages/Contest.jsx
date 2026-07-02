@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import useContest from "../hooks/useContest";
-import useContestStore from "../stores/useContestStore";
 import ContestCard from "../components/ContestCard";
 import FriendContestCard from "../components/FriendContestCard";
 import TopBar from "../../../shared/components/TopBar";
@@ -13,14 +12,12 @@ const Contest = () => {
     concludeContest,
     acceptInvite,
     rejectInvite,
+    platformContests,
+    activeContests,
+    incomingContests,isLoading
   } = useContest();
 
-  const platformContests = useContestStore((state) => state.platformContests);
-  const activeContests = useContestStore((state) => state.activeContests);
-  const incomingContests = useContestStore((state) => state.incomingContests);
-  const isLoading = useContestStore((state) => state.isLoading);
   const [utcTime, setUtcTime] = useState("");
-  //  console.log(incomingContests)
   useEffect(() => {
     const tick = () => {
       setUtcTime(new Date().toUTCString().slice(17, 25));

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiCalendar, FiCheckCircle } from "react-icons/fi";
 import { GoTrophy } from "react-icons/go";
-import useAuthStore from "../../auth/store/authStore";
+import useAuth from "../../auth/hooks/useAuth";
 const FriendContestCard = ({ contest, onComplete }) => {
   const {
     _id,
@@ -15,10 +15,11 @@ const FriendContestCard = ({ contest, onComplete }) => {
     contestName,
     target = 100,
   } = contest || {};
+  const { user } = useAuth();
   const [timeLeft, setTimeLeft] = useState("");
   const [timeRemaining, setTimeRemaining] = useState("");
-  const username = useAuthStore((state) => state.user?.username);
-  const currentUserId = useAuthStore((state) => state.user?._id);
+  const username = user?.username;
+  const currentUserId = user?._id;
 
   useEffect(() => {
     const calc = () => {
@@ -213,7 +214,7 @@ const FriendContestCard = ({ contest, onComplete }) => {
         </div>
 
         <div className="flex items-center gap-4 shrink-0 mt-2 sm:mt-0 pt-4 sm:pt-0 border-t border-border sm:border-t-0">
-          {timeRemaining !== "COMPLETED"  && timeLeft === "LIVE_NOW" ? (
+          {timeRemaining !== "COMPLETED" && timeLeft === "LIVE_NOW" ? (
             <button className="text-accent text-xs sm:text-sm font-bold tracking-widest hover:underline active:scale-95 transition-all cursor-pointer">
               JOIN_NOW ➤
             </button>

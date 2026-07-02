@@ -8,6 +8,12 @@ import {
 } from "../api/user.api";
 
 const useUser = () => {
+  const user = useUserStore((state)=>state.user);
+  const heatMap = useUserStore((state)=>state.heatMap);
+  const isLoading = useUserStore((state)=>state.isLoading);
+  const error = useUserStore((state)=>state.error);
+  const searchResult = useUserStore((state)=>state.searchResult);
+  const setSearchResult = useUserStore((state)=>state.setSearchResult);
   const fetchProfile = async (userId) => {
     useUserStore.getState().setIsLoading(true);
     try {
@@ -95,7 +101,13 @@ const useUser = () => {
     updateUserProfile,
     userHeatMap,
     deleteUser,
-    search
+    search,
+    user,
+    searchResult,
+    error,
+    isLoading,
+    heatMap,
+    setSearchResult
   }
 };
 

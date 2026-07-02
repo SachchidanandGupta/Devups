@@ -1,12 +1,9 @@
 import React from 'react'
-import useAuthStore from '../../features/auth/store/authStore'
-
+import useAuth from '../../features/auth/hooks/useAuth'
 import {Navigate} from 'react-router'
 
 const ProtectedRoutes = ({children}) => {
-  const isAuthenticated = useAuthStore((state)=>state.isAuthenticated);
-  const isLoading = useAuthStore((state)=>state.isLoading);
-  const isInitialized = useAuthStore((state)=>state.isInitialized);
+  const {isAuthenticated,isLoading,isInitialized} = useAuth();
   if(isLoading){
     return <h1>Loading...</h1>
   }

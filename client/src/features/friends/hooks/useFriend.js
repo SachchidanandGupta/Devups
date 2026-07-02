@@ -7,9 +7,16 @@ import {
   pendingRequests,
 } from "../api/friend.api";
 import useFriendStore from "../store/useFriendStore";
+
 import { useEffect } from "react";
 import { getSocket } from "../../../shared/hooks/useSocket";
 const useFriend = () => {
+  const friends = useFriendStore((state) => state.friends);
+  const pendingFriendRequests = useFriendStore(
+    (state) => state.pendingFriendRequests,
+  );
+  const isLoading = useFriendStore((state) => state.isLoading);
+  const error = useFriendStore((state) => state.error);
   const request = async (receiverId) => {
     useFriendStore.getState().setIsLoading(true);
     try {
@@ -27,7 +34,7 @@ const useFriend = () => {
     useFriendStore.getState().setIsLoading(true);
     try {
       const data = await pendingRequests();
-      useFriendStore.getState().setPendingFriendRequests(data.pendings || []); 
+      useFriendStore.getState().setPendingFriendRequests(data.pendings || []);
     } catch (err) {
       useFriendStore
         .getState()
@@ -65,28 +72,32 @@ const useFriend = () => {
   };
 
   const removeFriend = async (friendId) => {
-    useFriendStore.getState().setIsLoading(true);
+    const prev = useFriendStore.getState().friends;
+    useFriendStore
+      .getState()
+      .setFriends(prev.filter((f) => f._id !== friendId));
     try {
       await unFriend(friendId);
     } catch (err) {
+      useFriendStore.getState().setFriends(prev); // rollback
       useFriendStore
         .getState()
         .setError(err.response?.data?.message || err.message);
-    } finally {
-      useFriendStore.getState().setIsLoading(false);
     }
   };
 
   const block = async (blockUserId) => {
-    useFriendStore.getState().setIsLoading(true);
+    const prev = useFriendStore.getState().friends;
+    useFriendStore
+      .getState()
+      .setFriends(prev.filter((f) => f._id !== blockUserId));
     try {
       await blockUser(blockUserId);
     } catch (err) {
+      useFriendStore.getState().setFriends(prev); // rollback
       useFriendStore
         .getState()
         .setError(err.response?.data?.message || err.message);
-    } finally {
-      useFriendStore.getState().setIsLoading(false);
     }
   };
 
@@ -106,6 +117,10 @@ const useFriend = () => {
     block,
     response,
     requestsPending,
+    friends,
+    pendingFriendRequests,
+    error,
+    isLoading,
   };
 };
 

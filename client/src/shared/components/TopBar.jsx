@@ -2,13 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Link } from "react-router";
 import { CiBellOn } from "react-icons/ci";
-import useAuthStore from "../../features/auth/store/authStore";
-import useUserStore from "../../features/user/stores/useUserStore";
+import useAuth from "../../features/auth/hooks/useAuth";
 import useUser from "../../features/user/hooks/useUser";
-import useContestStore from "../../features/contest/stores/useContestStore";
 import useContest from "../../features/contest/hooks/useContest";
 import useFriend from "../../features/friends/hooks/useFriend";
-import useFriendStore from "../../features/friends/store/useFriendStore";
 import Dropdown from "./Dropdown";
 import Avatar from "./Avatar";
 import BellDropdown from "./BellDropdown";
@@ -16,15 +13,12 @@ import { getSocket } from "../hooks/useSocket";
 import { MdOutlineTerminal } from "react-icons/md";
 import Terminal from "./Terminal";
 const TopBar = ({ pageField, searchBar }) => {
-  const user = useAuthStore((state) => state.user) || {};
-  const searchUsers = useUserStore((state) => state.searchResult) || [];
-  const incomingContests =
-    useContestStore((state) => state.incomingContests) || [];
-  const pendingRequests =
-    useFriendStore((state) => state.pendingFriendRequests) || [];
-  const { search } = useUser();
-  const { friendContest } = useContest();
-  const { request, requestsPending } = useFriend();
+  const { user } = useAuth();
+  const { search, searchResult,setSearchResult } = useUser();
+  const { friendContest, incomingContests } = useContest();
+  const { request, requestsPending, pendingFriendRequests } = useFriend();
+  const searchUsers = searchResult;
+  const pendingRequests = pendingFriendRequests;
   const location = useLocation();
 
   useEffect(() => {
@@ -44,7 +38,7 @@ const TopBar = ({ pageField, searchBar }) => {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   useEffect(() => {
     if (!query.trim()) {
-      useUserStore.getState().setSearchResult([]);
+      setSearchResult([]);
       setIsOpen(false);
       return;
     }
@@ -131,13 +125,12 @@ const TopBar = ({ pageField, searchBar }) => {
         </div>
         <div>
           <MdOutlineTerminal
-            onClick={()=>setIsTerminalOpen(!isTerminalOpen)}
+            onClick={() => setIsTerminalOpen(!isTerminalOpen)}
             size={24}
             className="hover:text-accent cursor-pointer"
           />
-          
         </div>
-          {isTerminalOpen && <Terminal/>} 
+        {isTerminalOpen && <Terminal />}
         <Link to="/profile">
           <Avatar data={user} style={"border-accent"} />
         </Link>

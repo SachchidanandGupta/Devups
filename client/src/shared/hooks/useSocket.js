@@ -1,15 +1,14 @@
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import useAuth from "../../features/auth/hooks/useAuth";
 import useAuthStore from "../../features/auth/store/authStore";
-
 let socketInstance = null;
 
 export const getSocket = () => socketInstance;
 
 const useSocket = () => {
-  const user = useAuthStore((state) => state.user);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const initialized = useRef(false);
+  const { user, isAuthenticated, setUser } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated || !user?._id) return;
@@ -23,15 +22,18 @@ const useSocket = () => {
       socketInstance.emit("join_room", user._id);
     });
 
-    socketInstance.on("xp:updated", ({ xp, level, amount, source,currentXP, requiredXP  }) => {
-      useAuthStore.getState().setUser({
-        ...useAuthStore.getState().user,
-        xp,
-        level,
-        currentXP,
-        requiredXP
-      });
-    });
+    socketInstance.on(
+      "xp:updated",
+      ({ xp, level, amount, source, currentXP, requiredXP }) => {
+        setUser({
+          ...useAuthStore.getState().user,
+          xp,
+          level,
+          currentXP,
+          requiredXP,
+        });
+      },
+    );
 
     socketInstance.on("leaderboard:refresh", () => {});
 

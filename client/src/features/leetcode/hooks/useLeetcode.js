@@ -3,6 +3,9 @@ import leetcodeStore from "../store/leetcodeStore";
 
 
 const useLeetcode = () =>{
+    const daily = leetcodeStore((state)=>state.daily);
+    const isLoading = leetcodeStore((state)=>state.isLoading);
+    const error = leetcodeStore((state)=>state.error);
     const fetchDaily = async() =>{
         leetcodeStore.getState().setIsLoading(true);
         try{
@@ -16,7 +19,10 @@ const useLeetcode = () =>{
         }
     }
   return {
-    fetchDaily
+    fetchDaily,
+    daily,
+    isLoading,
+    error
   }
 }
 

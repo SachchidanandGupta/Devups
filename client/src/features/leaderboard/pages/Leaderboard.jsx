@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
-import useLeaderboardStore from "../store/useLeaderboardStore";
 import useLeaderboard from "../hooks/useLeaderboard";
 import RankCard from "../components/RankCard";
 import { LeaderboardSkeleton } from "../../../shared/ui/Skeleton";
-import useAuthStore from "../../auth/store/authStore";
+import useAuth from "../../auth/hooks/useAuth";
 import TopBar from "../../../shared/components/TopBar";
 
 const Leaderboard = () => {
-  const globalRankings = useLeaderboardStore((state) => state.globalRankings);
-  const friendRankings = useLeaderboardStore((state) => state.friendRankings);
-  const isLoading = useLeaderboardStore((state) => state.isLoading);
-  const currentUser = useAuthStore((state) => state.user);
+  
+  const {user} = useAuth();
+  const currentUser = user;
 
-  const { fetchGlobal, fetchFriends } = useLeaderboard();
+  const { fetchGlobal, fetchFriends,globalRankings,friendRankings,isLoading } = useLeaderboard();
 
   const [activeTab, setActiveTab] = useState("global");
 
