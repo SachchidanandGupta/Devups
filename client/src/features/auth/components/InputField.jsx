@@ -1,28 +1,54 @@
-import React from 'react'
-
-const InputField = ({ label, id, type, placeholder, value, onChange, error }) => {
+import React from "react";
+import { PiGreaterThanBold } from "react-icons/pi";
+const InputField = ({
+  label,
+  id,
+  type,
+  placeholder,
+  value,
+  onChange,
+  error,
+  define=null,
+}) => {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1">
-        {label}
-      </label>
-      <input
-        id={id}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className={`block w-full px-4 py-3 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 sm:text-sm ${
-          error ? "border-red-300 focus:ring-red-500" : "border-slate-200 focus:ring-teal-500"
-        }`}
-      />
-      {error && (
-        <p className="mt-1.5 text-xs font-medium text-red-500">
-          {error}
-        </p>
-      )}
+      <div className="flex justify-between">
+        <label
+          htmlFor={id}
+          className="block text-sm font-mono uppercase text-text-secondary mb-1"
+        >
+          {label}
+        </label>
+        {define ? <span className="uppercase font-mono text-accent-muted text-sm">
+          [{define}]
+        </span> :"" }
+        
+      </div>
+      <div className="relative ">
+        <input
+          id={id}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={`block w-full pl-8 py-3 border text-accent placeholder-text-secondary focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 sm:text-sm    [&:-webkit-autofill]:border-accent
+                [&:-webkit-autofill]:ring-2
+              [&:-webkit-autofill]:ring-accent
+                [&:-webkit-autofill]:[-webkit-text-fill-color:#00ff88]
+                [&:-webkit-autofill]:shadow-[0_0_0_2px_#00ff88,inset_0_0_0_1000px_#0d0d0d]
+${
+  error ? "border-danger focus:ring-danger" : "border-border focus:ring-accent"
+}`}
+        />
+        <div className="absolute left-1 top-3 text-accent  ">
+          <PiGreaterThanBold size={20} />
+        </div>
+        {error && (
+          <p className="mt-1.5 text-xs font-mono text-danger">{error}</p>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default InputField
+export default InputField;

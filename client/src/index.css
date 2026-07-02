@@ -10,7 +10,7 @@
   --color-border-bright: #333333;
 
   --color-accent: #00ff88;
-  --color-accent-dim: #0B2B1C;
+  --color-accent-dim: #0b2b1c;
   --color-accent-muted: #00ff8850;
 
   --color-danger: #ff3333;
@@ -23,7 +23,7 @@
   --color-text-muted: #444444;
 
   /* Typography */
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-mono: "JetBrains Mono", monospace;
   --font-sans: "JetBrains Mono", "Courier New", monospace;
 
   /* Spacing and radius */
@@ -68,6 +68,8 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #00ff88;
   }
+
+
 
   /* Selection color */
   ::selection {
