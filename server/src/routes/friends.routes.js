@@ -30,6 +30,7 @@ router.put(
   authMiddlerware.authUser,
   friendController.blockUser,
 );
-router.get("/:userId/friends", friendController.getFriendsById);
+router.get("/status/:userId", authMiddlerware.authUser, friendController.getFriendStatus);
+router.get("/:userId/friends", authMiddlerware.authUser, friendController.getFriendsById);
 router.get("/", authMiddlerware.authUser, friendController.getFriends);
 module.exports = router;

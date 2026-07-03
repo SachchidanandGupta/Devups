@@ -30,7 +30,7 @@ const DailyProblem = () => {
   }
   return (
     <div className="border border-border h-full flex flex-col ">
-      <div className="  p-2 flex justify-between items-center border border-border bg-surface-2">
+      <div className="  p-2 flex justify-between items-center border-b border-border bg-surface-2">
         <span className="uppercase text-text-primary text-xm ">
           activity_mission_protocol
         </span>

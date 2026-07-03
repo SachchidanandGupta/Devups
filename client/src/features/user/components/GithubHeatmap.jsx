@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import useUser from "../hooks/useUser";
 import { GithubSkeleton } from "../../../shared/ui/Skeleton";
+import {  SiGithub } from "react-icons/si";
+
 const GithubHeatmap = ({ userId }) => {
 
   const { userHeatMap,heatMap,isLoading } = useUser();
@@ -88,8 +90,8 @@ const GithubHeatmap = ({ userId }) => {
       ) : (
         <div className="w-full border border-border p-4 bg-black font-mono flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
-            <span className="uppercase text-text-secondary text-sm font-bold tracking-widest truncate block">
-              commit_velocity_grid
+            <span className="uppercase text-accent  text-lg font-bold tracking-widest truncate flex items-center gap-2">
+               <SiGithub/> commit_velocity_grid
             </span>
 
             <div className="flex items-center gap-1.5 shrink-0">

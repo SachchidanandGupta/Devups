@@ -55,7 +55,6 @@ const sendRequest = asyncHandler(async function (req, res) {
 
 const pendingRequests = asyncHandler(async function (req, res) {
   const receiverId = req.user.id;
-
   const pendings = await friendModel
     .find({ receiver: receiverId, status: "pending" })
     .populate("requester", "username avatar level");
@@ -222,6 +221,7 @@ const getFriends = asyncHandler(async function (req, res) {
 
 const getFriendsById = asyncHandler(async function (req, res) {
   const userId = req.params.userId;
+  const loggedInUserId = req.user.id;
   const user = await userModel.findById(userId);
   if (!user) {
     throw new appError("User not found", 404);
@@ -241,11 +241,80 @@ const getFriendsById = asyncHandler(async function (req, res) {
     return friendShip.requester;
   });
 
+  const friendsIds = friends.map((f) => f._id);
+  const statuses = await friendModel.find({
+    $or: [
+      { requester: loggedInUserId, receiver: { $in: friendsIds } },
+      { requester: { $in: friendsIds }, receiver: loggedInUserId },
+    ],
+  });
+
+  const statusMap = new Map();
+  for (const record of statuses) {
+    const otherId =
+      record.requester.toString() !== loggedInUserId
+        ? record.requester
+        : record.receiver;
+
+    statusMap.set(otherId, {
+      status: record.status,
+      isRequester: record.requester.toString() === loggedInUserId,
+    });
+  }
+
+  const enriched = friends.map((friend) => {
+    const record = statusMap.get(friend._id.toString());
+    let friendStatus = "not_friends";
+    if (record) {
+      if (record.status === "accepted") friendStatus = "friends";
+      else if (record.status === "pending")
+        friendStatus = record.isRequester ? "request_sent" : "request_received";
+      else if (record.status === "blocked") friendStatus = "blocked";
+    }
+    return {
+      ...friend.toObject(),
+      friendStatus,
+    };
+  });
+
   return res.status(200).json({
     message: "FriendList fetched successfully",
     status: "Success",
-    count: friends.length,
-    friendList: friends,
+    friendList: enriched,
+    count: enriched.length,
+  });
+});
+
+const getFriendStatus = asyncHandler(async function (req, res) {
+  const loggedInUserId = req.user.id;
+  const userId = req.params.userId;
+  const user = await userModel.findById(userId);
+  if (!user) {
+    throw new appError("user not found", 404);
+  }
+  const friendDoc = await friendModel.findOne({
+    $or: [
+      { receiver: loggedInUserId, requester: userId },
+      { receiver: userId, requester: loggedInUserId },
+    ],
+  });
+  let friendStatus = "not_friends";
+  if (!friendDoc) {
+    return res
+      .status(200)
+      .json({ status: "success", friendStatus: "not_friends" });
+  }
+  if (friendDoc.status === "accepted") friendStatus = "friends";
+  else if (friendDoc.status === "pending")
+    friendStatus =
+      friendDoc.requester.toString() === loggedInUserId
+        ? "request_sent"
+        : "request_received";
+  else if (friendDoc.status === "blocked") friendStatus = "blocked";
+
+  return res.status(200).json({
+    status: "success",
+    friendStatus,
   });
 });
 
@@ -257,4 +326,5 @@ module.exports = {
   getFriends,
   blockUser,
   getFriendsById,
+  getFriendStatus,
 };

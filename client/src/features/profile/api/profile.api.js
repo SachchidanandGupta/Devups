@@ -34,3 +34,8 @@ export async function getUserContestHistory(userId) {
   const response = await axiosInstance.get(`/contest/${userId}/history`);
   return response.data;
 }
+
+export async function getFriendStatus(userId) {
+  const response = await axiosInstance.get(`/friends/status/${userId}`);
+  return response.data;
+}

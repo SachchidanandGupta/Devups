@@ -111,7 +111,7 @@ const Friends = () => {
           <div className="flex justify-between px-4 py-2 bg-surface-2 border border-border text-text-muted text-xs uppercase tracking-widest">
             <div className="flex-1 min-w-0 pr-4">IDENTIFIER</div>
             <div className="flex-1 flex gap-8 min-w-0">
-              <div className="w-16">LEVEL</div>
+              <div className="w-35">LEVEL</div>
               <div className="w-24 text-right sm:text-left">XP</div>
             </div>
             <div className="flex-1 text-right">ACTIONS</div>

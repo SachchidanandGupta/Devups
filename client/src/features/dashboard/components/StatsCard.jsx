@@ -8,10 +8,7 @@ const StatsCard = () => {
   const totalSolved = easy + medium + hard;
   return (
     <div className="flex flex-col h-full w-full gap-4 font-mono">
-      <div>
-        <XPbar />
-      </div>
-
+      <XPbar />
       <div className="flex flex-col w-full h-full bg-black">
         <div className="uppercase bg-surface-2 flex justify-between items-center px-4 py-2 w-full border border-border">
           <span className="text-sm font-bold tracking-widest text-text-primary truncate pr-4">

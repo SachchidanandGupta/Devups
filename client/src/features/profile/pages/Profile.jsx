@@ -5,19 +5,34 @@ import useContest from "../../contest/hooks/useContest";
 import { SiLeetcode, SiCodeforces, SiGithub } from "react-icons/si";
 import GithubHeatmap from "../../user/components/GithubHeatmap";
 import useProfile from "../hooks/useProfile";
-
+import TopBar from "../../../shared/components/TopBar";
+import ProfileAvatar from "../components/ProfileAvatar";
+import { getLevelTitle } from "../../../shared/constants/levelTitles";
+import useLeaderboard from "../../leaderboard/hooks/useLeaderboard";
 const Profile = () => {
   const { user: authUser } = useAuth();
+  const { createdAt, _id } = authUser;
+  const joinedAt = createdAt.slice(0, 10).replace(/-/g, ".");
+  const usercode = _id.slice(0, 8);
   const userId = authUser?._id || authUser?.id;
   const { userContestHistory, completedContests } = useContest();
   const { fetchProfile } = useUser();
   const { fetchProfileData, profile: userProfile, isLoading } = useProfile();
-
+  const { globalRankings, fetchGlobal } = useLeaderboard();
+  let globalRank = 0;
+ globalRankings.map((f, index) => {
+    if(f._id.toString() === userId){
+      globalRank = index+1;
+    }
+  });
+  console.log(globalRankings);
+  console.log(globalRank);
   useEffect(() => {
     if (userId) {
       fetchProfile(userId);
       userContestHistory(userId);
       fetchProfileData(userId);
+      fetchGlobal();
     }
   }, [userId]);
 
@@ -33,106 +48,102 @@ const Profile = () => {
   } = userProfile || {};
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 font-sans pb-10">
-      <button onClick={() => getData(userId)}>hello</button>
-      <div className="border-b border-zinc-800/60 pb-6">
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
-          My Profile
-        </h2>
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">
-          Manage your identity & stats
-        </p>
-      </div>
-
-      {isLoading ? (
-        <div className="w-full h-48 flex flex-col items-center justify-center bg-zinc-950 rounded-3xl border border-zinc-800 shadow-2xl">
-          <div className="w-8 h-8 border-4 border-zinc-800 border-t-cyan-500 rounded-full animate-spin"></div>
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-4 animate-pulse">
-            Loading Profile...
-          </p>
-        </div>
-      ) : (
-        <div className="bg-zinc-950 p-6 sm:p-8 rounded-3xl border border-zinc-800 shadow-2xl flex flex-col md:flex-row gap-8 items-center md:items-start">
-          <div className="relative w-32 h-32 rounded-3xl overflow-hidden bg-zinc-900 border-2 border-zinc-800 flex-shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
-            {avatar ? (
-              <img
-                src={avatar}
-                alt={username}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-300 font-black text-5xl bg-gradient-to-br from-zinc-800 to-zinc-900">
-                {username.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div className="absolute -bottom-1 -right-0 bg-zinc-900 px-3 py-1 rounded-tl-xl border-t border-l border-zinc-800">
-              <span className="text-xs font-black text-cyan-400">
-                Lvl {level}
-              </span>
-            </div>
+    <div className="flex flex-col bg-black min-h-screen">
+      <TopBar pageField={"system_user_terminal"} searchBar={true} />
+      <div className="w-full p-4 gap-4 flex flex-col font-mono">
+        {isLoading ? (
+          <div className="w-full h-48 flex flex-col items-center justify-center border border-border">
+            <div className="w-8 h-8 border-4 border-border border-t-cyan-500 rounded-full animate-spin"></div>
+            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-4 animate-pulse">
+              Loading Profile...
+            </p>
           </div>
-
-          <div className="flex flex-col flex-grow w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <h3 className="text-3xl font-black text-slate-100">
-                <p>{username}</p>
-              </h3>
-              <button className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-slate-300 text-sm font-bold rounded-xl border border-zinc-700 transition-colors">
-                Edit Profile
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-              <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800/50">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
-                  Total XP
-                </p>
-                <p className="text-2xl font-black text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.3)]">
-                  {xp}
-                </p>
+        ) : (
+          <div className="flex flex-col w-full gap-4">
+            <div className="w-full  grid grid-cols-3 gap-4">
+              <div className=" relative col-span-2 flex flex-col justify-end border border-border">
+                <div className="absolute right-0 top-0 border-l border-b border-border p-2 uppercase text-text-secondary">
+                  secure_session_active
+                </div>
+                <div className="p-8 flex justify-between">
+                  <div className="flex items-center  gap-6">
+                    <ProfileAvatar data={authUser} />
+                    <div className="flex flex-col gap-2">
+                      <span className="text-text-primary font-bold uppercase text-6xl">
+                        {username}
+                      </span>
+                      <div className="flex gap-2 items-center">
+                        <div className="text-black bg-accent px-3 py-1">
+                          {getLevelTitle(level)}
+                        </div>
+                        <span className="text-accent text-2xl ">
+                          // LVL {level}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-end">
+                    <button className="border cursor-pointer border-accent text-accent px-4 py-2 hover:text-black hover:bg-accent">
+                      EDIT_NODES
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800/50">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
-                  Current Streak
-                </p>
-                <div className="flex items-center gap-1.5">
-                  <p className="text-2xl font-black text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]">
-                    {streak}
-                  </p>
-                  <span className="text-sm">🔥</span>
+              <div className="col-span-1 flex flex-col gap-2 font-mono border border-border p-4">
+                <div className=" flex p-2 justify-between items-center border-b border-border">
+                  <span className="text-text-secondary">_id:</span>
+                  <span className="text-text-primary">{usercode}</span>
+                </div>
+                <div className=" flex p-2 justify-between items-center border-b border-border">
+                  <span className="text-text-secondary">joined:</span>
+                  <span className="text-text-primary">{joinedAt}</span>
+                </div>
+                <div className=" flex p-2 justify-between items-center border-b border-border">
+                  <span className="text-text-secondary">uplink:</span>
+                  <span className="text-accent">ACTIVE_SECURE</span>
+                </div>
+                <div className=" flex p-2 justify-between items-center border-b border-border">
+                  <span className="text-text-secondary">platform:</span>
+                  <span className="text-text-primary">CYBERSPACE_DEVUPS</span>
+                </div>
+                <div className="flex items-center gap-2 mt-4">
+                  <div className="w-2 h-2 bg-accent animate-pulse"></div>
+                  <span className="text-text-muted text-xs">
+                    SYSYTEM OPERATIONAL
+                  </span>
                 </div>
               </div>
             </div>
-
-            <div className="flex flex-wrap gap-3 border-t border-zinc-800/60 pt-6">
-              <div className="flex items-center gap-2 bg-zinc-900/80 px-3 py-1.5 rounded-lg border border-zinc-800">
-                <SiGithub className="text-slate-400" />
-                <span className="text-xs font-bold text-slate-300">
-                  {githubUsername || "Not connected"}
-                </span>
+            <div className="w-full h-auto grid grid-cols-3 gap-4 ">
+              <div className="col-span-2 border border-border p-6 flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg text-accent  font-bold">
+                    TECH_SUBSTRATE
+                  </span>
+                  <span className="text-text-muted text-xs">
+                    TOTAL_MASTERY: 3_UNITS
+                  </span>
+                </div>
+                <div className="w-full flex justify-between">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
               </div>
-              <div className="flex items-center gap-2 bg-zinc-900/80 px-3 py-1.5 rounded-lg border border-zinc-800">
-                <SiLeetcode className="text-cyan-500" />
-                <span className="text-xs font-bold text-slate-300">
-                  {leetcodeUsername || "Not connected"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 bg-zinc-900/80 px-3 py-1.5 rounded-lg border border-zinc-800">
-                <SiCodeforces className="text-yellow-500" />
-                <span className="text-xs font-bold text-slate-300">
-                  {codeforcesUsername || "Not connected"}
-                </span>
-              </div>
+              <div className="col-span-1 border border-border"></div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+        <div className="grid grid-cols-4 gap-4 ">
+          {userId && (
+            <div className="col-span-3">
+              <GithubHeatmap userId={userId} />
+            </div>
+          )}
 
-      {userId && (
-        <div className="w-full mt-4">
-          <GithubHeatmap userId={userId} />
+          <div className="col-span-1 border border-border"></div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

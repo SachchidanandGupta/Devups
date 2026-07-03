@@ -7,25 +7,31 @@ import {
   getUserLeetCalander,
   getUserLeetStats,
   getUserProfile,
+  getFriendStatus,
 } from "../api/profile.api";
 
 const useProfile = () => {
   const profile = useProfileStore((state) => state.profile);
   const leetStats = useProfileStore((state) => state.leetStats);
   const leetCalander = useProfileStore((state) => state.leetCalander);
+  const friendStatus = useProfileStore((state) => state.friendStatus);
   const heatMap = useProfileStore((state) => state.heatMap);
   const friends = useProfileStore((state) => state.friends);
   const activity = useProfileStore((state) => state.activity);
   const contestHistory = useProfileStore((state) => state.contestHistory);
   const isLoading = useProfileStore((state) => state.isLoading);
   const error = useProfileStore((state) => state.error);
-  const fetchProfileData = async (userId) => {
+  const isOwnProfile = useProfileStore((state) => state.isOwnProfile);
+  const fetchProfileData = async (userId, loggedInUserId) => {
+    const isOwn = userId === loggedInUserId;
+    useProfileStore.getState().setIsOwnProfile(isOwn);
     useProfileStore.getState().setIsLoading(true);
     try {
       const results = await Promise.allSettled([
         getUserProfile(userId),
         getUserLeetStats(userId),
         getUserLeetCalander(userId),
+        isOwn ? Promise.resolve(null) : getFriendStatus(userId),
         getUserHeatMap(userId),
         getUserFriends(userId),
         getUserContestHistory(userId),
@@ -35,6 +41,7 @@ const useProfile = () => {
         profileRes,
         leetStatsRes,
         leetCalanderRes,
+        friendStatusRes,
         heatMapRes,
         friendsRes,
         contestRes,
@@ -58,6 +65,13 @@ const useProfile = () => {
         .setLeetCalander(
           leetCalanderRes.status === "fulfilled"
             ? leetCalanderRes.value.leetCalander
+            : null,
+        );
+      useProfileStore
+        .getState()
+        .setFriendStatus(
+          !isOwn && friendStatusRes.status === "fulfilled"
+            ? friendStatusRes.value.friendStatus
             : null,
         );
       useProfileStore
@@ -104,6 +118,8 @@ const useProfile = () => {
     leetStats,
     heatMap,
     contestHistory,
+    friendStatus,
+    isOwnProfile
   };
 };
 

@@ -4,7 +4,7 @@ import Avatar from "../../../shared/components/Avatar";
 const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
   
   return (
-    <div ref={dropdownRef} className=" absolute top-12 w-full h-50">
+    <div ref={dropdownRef} className=" absolute top-1 w-full h-50">
       {requests.length > 0 ? (
         <div className="w-full h-full">
           <div className="absolute top-12 w-full mt-1 flex flex-col"></div>
