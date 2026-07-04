@@ -39,3 +39,4 @@ export async function getFriendStatus(userId) {
   const response = await axiosInstance.get(`/friends/status/${userId}`);
   return response.data;
 }
+

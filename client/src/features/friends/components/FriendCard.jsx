@@ -1,14 +1,23 @@
 import React from "react";
 import Avatar from "../../../shared/components/Avatar";
+import { Link } from "react-router";
 
 const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
-  const { _id, username = "Unknown", avatar, xp = 0, level = 1,currentXP , requiredXP } = friend || {};
+  const {
+    _id,
+    username = "Unknown",
+    avatar,
+    xp = 0,
+    level = 1,
+    currentXP,
+    requiredXP,
+  } = friend || {};
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 
   return (
     <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-mono transition-colors">
       <div className="flex items-center gap-3 flex-1 overflow-hidden">
-        <Avatar data={friend}/>
+        <Avatar data={friend} />
         <div className="flex flex-col flex-start">
           <span className="text-text-primary text-xl uppercase truncate font-mono ">
             {username}
@@ -48,9 +57,12 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
       </div>
 
       <div className="flex-1 flex gap-2 justify-end">
-        <button className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-accent font-mono transition-colors">
-          PROFILE
-        </button>
+        <Link to={`/profile/${_id}`}>
+          <button className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-accent font-mono transition-colors">
+            PROFILE
+          </button>
+        </Link>
+
         <button
           onClick={() => onUnfriend(_id)}
           className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-danger font-mono transition-colors"

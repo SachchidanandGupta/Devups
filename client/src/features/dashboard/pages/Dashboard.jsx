@@ -16,7 +16,7 @@ const Dashboard = () => {
         <GithubHeatmap userId={user._id} />
         <div className="grid grid-cols-3 gap-4 ">
           <div className="col-span-1 ">
-            <StatsCard />
+            <StatsCard user={user} />
           </div>
           <div className="col-span-2">
             <DailyProblem />

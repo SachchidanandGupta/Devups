@@ -179,6 +179,19 @@ const blockUser = asyncHandler(async function (req, res) {
   });
 });
 
+const unblockUser = asyncHandler(async function (req, res) {
+  const blockUserId = req.params.blockUserId;
+  const userId = req.user.id;
+  await friendModel.findOneAndDelete({
+    $or: [
+      { receiver: userId, requester: blockUserId },
+      { receiver: blockUserId, requester: userId },
+    ],
+    status: "blocked",
+  });
+  
+});
+
 const getFriends = asyncHandler(async function (req, res) {
   const userId = req.user.id;
   if (!userId) {
@@ -219,7 +232,7 @@ const getFriends = asyncHandler(async function (req, res) {
   });
 });
 
-const getFriendsById = asyncHandler(async function (req, res) {
+const getFriendStatusWithLoggedInUser = asyncHandler(async function (req, res) {
   const userId = req.params.userId;
   const loggedInUserId = req.user.id;
   const user = await userModel.findById(userId);
@@ -325,6 +338,6 @@ module.exports = {
   unFriend,
   getFriends,
   blockUser,
-  getFriendsById,
+  getFriendStatusWithLoggedInUser,
   getFriendStatus,
 };

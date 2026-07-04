@@ -131,7 +131,7 @@ const TopBar = ({ pageField, searchBar }) => {
           />
         </div>
         {isTerminalOpen && <Terminal />}
-        <Link to="/profile">
+        <Link to={`/profile/${user._id}`}>
           <Avatar data={user} style={"border-accent"} />
         </Link>
       </div>

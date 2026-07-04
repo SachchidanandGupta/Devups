@@ -2,13 +2,13 @@ import React from "react";
 import useDashboard from "../hooks/useDashboard";
 import XPbar from "./XPBar2";
 import StreakCard from "./StreakCard";
-const StatsCard = () => {
+const StatsCard = ({user}) => {
   const { leetcodeSolved } = useDashboard();
   const { easy = 0, medium = 0, hard = 0 } = leetcodeSolved || {};
   const totalSolved = easy + medium + hard;
   return (
     <div className="flex flex-col h-full w-full gap-4 font-mono">
-      <XPbar />
+      <XPbar user={user}  />
       <div className="flex flex-col w-full h-full bg-black">
         <div className="uppercase bg-surface-2 flex justify-between items-center px-4 py-2 w-full border border-border">
           <span className="text-sm font-bold tracking-widest text-text-primary truncate pr-4">

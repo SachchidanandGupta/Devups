@@ -4,7 +4,6 @@ import { GithubSkeleton } from "../../../shared/ui/Skeleton";
 import {  SiGithub } from "react-icons/si";
 
 const GithubHeatmap = ({ userId }) => {
-
   const { userHeatMap,heatMap,isLoading } = useUser();
 
   useEffect(() => {

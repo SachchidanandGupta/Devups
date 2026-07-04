@@ -6,6 +6,7 @@ const {
   getUserSolved,
   getUserCalender,
 } = require("../services/leetcode.service");
+const { getLevelProgress } = require("../services/xp.service");
 
 const getProfile = asyncHandler(async function (req, res) {
   const userId = req.params.userId;
@@ -15,10 +16,11 @@ const getProfile = asyncHandler(async function (req, res) {
   if (!user) {
     throw new appError("user not found", 404);
   }
+  const { currentXP, requiredXP } = getLevelProgress(user.xp);
   res.status(200).json({
     status: "success",
     data: {
-      user,
+      user: { ...user.toObject(), currentXP, requiredXP },
     },
   });
 });
@@ -113,20 +115,20 @@ const getLeetcodeStats = asyncHandler(async function (req, res) {
   });
 });
 
-const getLeetCalander = asyncHandler(async function(req,res){
+const getLeetCalander = asyncHandler(async function (req, res) {
   const userId = req.params.userId;
   const user = await userModel.findById(userId).select("leetcodeUsername");
-  if(!user){
-    throw new appError("User not found",404);
+  if (!user) {
+    throw new appError("User not found", 404);
   }
-  if(!user.leetcodeUsername){
-    throw new appError("Leetcode not linked",400);
+  if (!user.leetcodeUsername) {
+    throw new appError("Leetcode not linked", 400);
   }
   const leetCalander = await getUserCalender(user.leetcodeUsername);
   return res.status(200).json({
-    status:"success",
-    leetCalander
-  })
+    status: "success",
+    leetCalander,
+  });
 });
 module.exports = {
   getProfile,
@@ -135,5 +137,5 @@ module.exports = {
   getHeatmap,
   searchUser,
   getLeetcodeStats,
-  getLeetCalander
+  getLeetCalander,
 };

@@ -1,8 +1,8 @@
 import React from "react";
 import useDashboard from "../hooks/useDashboard";
 import { getLevelTitle } from "../../../shared/constants/levelTitles";
-const XPbar = () => {
-const { xp, level, currentXP, requiredXP } = useDashboard();
+const XPbar = ({user}) => {
+const { xp, level, currentXP, requiredXP } = user || {};
 const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 const xpToNextLevel = requiredXP - currentXP;
 
