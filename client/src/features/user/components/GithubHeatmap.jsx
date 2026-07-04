@@ -12,7 +12,6 @@ const GithubHeatmap = ({ userId }) => {
       userHeatMap(userId);
     }
   }, [userId]);
-
   function getMonthLabels(weeks) {
     const monthLabels = [];
     let lastMonth = null;

@@ -21,3 +21,4 @@ export const getLevelTitle = (level) => {
 
   return rank?.title.toUpperCase() ?? "unknown";
 };
+

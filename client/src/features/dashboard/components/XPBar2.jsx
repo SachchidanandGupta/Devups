@@ -1,6 +1,6 @@
 import React from "react";
 import useDashboard from "../hooks/useDashboard";
-
+import { getLevelTitle } from "../../../shared/constants/levelTitles";
 const XPbar = () => {
 const { xp, level, currentXP, requiredXP } = useDashboard();
 const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
@@ -26,7 +26,7 @@ const xpToNextLevel = requiredXP - currentXP;
   </div>
   
   <div className="text-[10px] sm:text-xs text-text-muted uppercase tracking-widest truncate block mt-0.5">
-     NEXT_TIER: ARCHITECT_PROMPT
+     NEXT_TIER: {getLevelTitle(level)}
   </div>
 
 </div>
