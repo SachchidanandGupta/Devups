@@ -106,9 +106,19 @@ const useProfile = () => {
       useProfileStore.getState().setIsLoading(false);
     }
   };
-
+  const refetchFriendStatus = async (userId) => {
+    
+  try {
+    const data = await getFriendStatus(userId);
+    useProfileStore.getState().setFriendStatus(data.friendStatus);
+  } catch (error) {
+    useProfileStore.getState().setError(error.response?.data?.message || error.message);
+  }
+};
+  
   return {
     fetchProfileData,
+    refetchFriendStatus,
     profile,
     error,
     isLoading,

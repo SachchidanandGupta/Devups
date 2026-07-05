@@ -2,35 +2,37 @@ import React, { useEffect } from "react";
 import useAuth from "../../auth/hooks/useAuth";
 import useContest from "../../contest/hooks/useContest";
 import useProfile from "../hooks/useProfile";
+import useFriend from "../../friends/hooks/useFriend";
+import useLeaderboard from "../../leaderboard/hooks/useLeaderboard";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
+import { getLevelTitle } from "../../../shared/constants/levelTitles";
 import { FaGithub } from "react-icons/fa";
+import { Link, useParams } from "react-router";
 import GithubHeatmap from "../../user/components/GithubHeatmap";
 import TopBar from "../../../shared/components/TopBar";
 import ProfileAvatar from "../components/ProfileAvatar";
-import { getLevelTitle } from "../../../shared/constants/levelTitles";
-import useLeaderboard from "../../leaderboard/hooks/useLeaderboard";
 import XPbar from "../../dashboard/components/XPBar2";
 import PlatformCard from "../components/PlatformCard";
 import Avatar from "../../../shared/components/Avatar";
-import { Link, useParams } from "react-router";
 import FriendStatusButton from "../components/FriendStatusButton";
 const Profile = () => {
   const { userId } = useParams();
   const { user } = useAuth();
+  const { request, removeFriend, response } = useFriend();
+  const { userContestHistory, completedContests } = useContest();
+  const { globalRankings, fetchGlobal } = useLeaderboard();
   const {
     fetchProfileData,
+    refetchFriendStatus,
     profile,
     isLoading,
     friends,
     isOwnProfile,
     friendStatus,
   } = useProfile();
-  console.log(profile);
   const joinedAt = profile?.createdAt?.slice(0, 10).replace(/-/g, ".");
   const usercode = profile?._id?.slice(0, 8);
-  const { userContestHistory, completedContests } = useContest();
-  const { globalRankings, fetchGlobal } = useLeaderboard();
   const rankIndex = globalRankings.findIndex(
     (f) => f._id.toString() === userId,
   );
@@ -54,6 +56,26 @@ const Profile = () => {
     leetcodeUsername,
     codeforcesHandle,
   } = profile || {};
+
+  const handleAddFriend = async () => {
+    await request(userId);
+    await refetchFriendStatus(userId);
+  };
+
+  const handleRemoveFriend = async () => {
+    await removeFriend(userId);
+    await refetchFriendStatus(userId);
+  };
+
+  const handleAccept = async () => {
+    await response(userId, "accepted");
+    await refetchFriendStatus(userId);
+  };
+
+  const handleReject = async () => {
+    await response(userId, "rejected");
+    await refetchFriendStatus(userId);
+  };
 
   return (
     <div className="flex flex-col bg-black min-h-screen font-mono">
@@ -99,7 +121,13 @@ const Profile = () => {
                       </button>
                     </div>
                   ) : (
-                    <FriendStatusButton friendStatus={friendStatus} />
+                    <FriendStatusButton
+                      friendStatus={friendStatus}
+                      onAdd={handleAddFriend}
+                      onRemove={handleRemoveFriend}
+                      onAccept={handleAccept}
+                      onReject={handleReject}
+                    />
                   )}
                 </div>
               </div>
@@ -221,9 +249,9 @@ const Profile = () => {
                 {friends.length > 0 ? (
                   <div className=" h-full overflow-auto scrollbar-none ">
                     {friends.map((item) => (
-                      <Link to={`/profile/${item._id}`}>
+                      <Link key={item._id} to={`/profile/${item._id}`}>
                         <div
-                          key={item._id}
+                          
                           className="p-3 border-b border-border flex gap-4 items-center"
                         >
                           <div>
