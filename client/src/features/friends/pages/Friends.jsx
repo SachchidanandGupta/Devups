@@ -63,55 +63,53 @@ const Friends = () => {
 
       <div className="w-full p-4  flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-0 border-b border-border pb-4">
-  
-  
-  <div className="text-text-primary flex font-bold uppercase min-w-0">
-   
-    <div className="w-1 bg-accent mr-3 shrink-0"></div>
-    <div className="flex flex-col min-w-0">
-      <h1 className="text-2xl sm:text-3xl font-mono truncate">
-        friends ({friends?.length || 0} online)
-      </h1>
-      <div className="flex items-center gap-2 mt-1 uppercase text-xs sm:text-sm text-accent tracking-widest font-bold">
-        <span className="truncate">uplink stable // session: active</span>
-      </div>
-    </div>
-  </div>
+          <div className="text-text-primary flex font-bold uppercase min-w-0">
+            <div className="w-1 bg-accent mr-3 shrink-0"></div>
+            <div className="flex flex-col min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-mono truncate">
+                friends ({friends?.length || 0} online)
+              </h1>
+              <div className="flex items-center gap-2 mt-1 uppercase text-xs sm:text-sm text-accent tracking-widest font-bold">
+                <span className="truncate">
+                  uplink stable // session: active
+                </span>
+              </div>
+            </div>
+          </div>
 
-  
-  <div
-    className="flex items-center gap-3 shrink-0 relative pl-8"
-    ref={dropdownRef}
-  >
-    <button className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors">
-      Add Friend
-    </button>
+          <div
+            className="flex items-center gap-3 shrink-0 relative pl-8"
+            ref={dropdownRef}
+          >
+            <button className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors">
+              Add Friend
+            </button>
 
-    <button
-      onClick={() => setIsOpen((prev) => !prev)}
-      className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
-        isOpen || pendingFriendRequests.length > 0
-          ? "border-accent text-accent hover:bg-accent hover:text-black"
-          : "border-border text-text-primary hover:bg-text-primary hover:text-black"
-      }`}
-    >
-      Requests
-      {pendingFriendRequests?.length > 0 && (
-        <span className="ml-1.5">[{pendingFriendRequests.length}]</span>
-      )}
-    </button>
+            <button
+              onClick={() => setIsOpen((prev) => !prev)}
+              className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
+                isOpen || pendingFriendRequests.length > 0
+                  ? "border-accent text-accent hover:bg-accent hover:text-black"
+                  : "border-border text-text-primary hover:bg-text-primary hover:text-black"
+              }`}
+            >
+              Requests
+              {pendingFriendRequests?.length > 0 && (
+                <span className="ml-1.5">[{pendingFriendRequests.length}]</span>
+              )}
+            </button>
 
-    {isOpen && (
-      <div className="absolute top-full right-0 mt-2 z-50 min-w-[250px]">
-        <RequestDropdown
-          requests={pendingFriendRequests}
-          accept={handleAccept}
-          decline={handleDecline}
-        />
-      </div>
-    )}
-  </div>
-</div>
+            {isOpen && (
+              <div className="absolute top-full right-0 mt-2 z-50 min-w-[250px]">
+                <RequestDropdown
+                  requests={pendingFriendRequests}
+                  accept={handleAccept}
+                  decline={handleDecline}
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="flex flex-col">
           <div className="flex justify-between px-4 py-2 bg-surface-2 border border-border text-text-muted text-xs uppercase tracking-widest">

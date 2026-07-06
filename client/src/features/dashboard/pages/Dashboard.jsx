@@ -10,7 +10,6 @@ import { FaGithub } from "react-icons/fa";
 import { DashboardSkeleton } from "../../../shared/ui/Skeleton";
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
-  console.log(user);
   return (
     <div>
       <TopBar pageField={"Dashboard"} searchBar={true} />

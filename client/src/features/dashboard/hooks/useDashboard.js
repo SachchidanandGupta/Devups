@@ -1,7 +1,7 @@
 import React from "react";
 import useAuth from "../../auth/hooks/useAuth";
 const useDashBoard = () => {
-  const {user} = useAuth();
+  const {user,isLoading} = useAuth();
   return {
     xp: user?.xp || 0,
     level: user?.level || 0,
@@ -10,6 +10,7 @@ const useDashBoard = () => {
     leetcodeSolved: user?.leetcodeSolved || 0,
     currentXP: user?.currentXP ?? 0,
     requiredXP: user?.requiredXP ?? 100,
+    isLoading
   };
 };
 
