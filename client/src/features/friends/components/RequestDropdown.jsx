@@ -21,7 +21,7 @@ const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
                 <div className="flex gap-2 items-center">
                   <Avatar data={s.requester} />
                   <div className="flex flex-col">
-                    <span className="text-text-primary font-bold text-sm uppercase">
+                    <span className="text-text-primary text-nowrap font-bold text-sm uppercase">
                       {s.requester.username} //
                     </span>
                     <span className="font-semibold text-xs">
@@ -49,8 +49,13 @@ const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
           </div>
         </div>
       ) : (
-        <div className="text-xl w-full h-full flex items-center justify-center text-text-secondary font-bold uppercase p-1 border border-border bg-surface-2 ">
-          No pending requests
+        <div className="flex flex-col items-center justify-center gap-1.5 h-[120px] bg-surface-2 p-4 text-center">
+          <span className="text-accent text-sm font-bold tracking-wider uppercase">
+            no_pending_requests
+          </span>
+          <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-mono uppercase">
+            SYSTEM_IDLE // UPLINK_CLEAR
+          </span>
         </div>
       )}
     </div>

@@ -80,7 +80,7 @@ const Friends = () => {
 
   
   <div
-    className="flex items-center gap-3 shrink-0 relative"
+    className="flex items-center gap-3 shrink-0 relative pl-8"
     ref={dropdownRef}
   >
     <button className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors">

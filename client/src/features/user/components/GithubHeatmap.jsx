@@ -4,7 +4,7 @@ import { GithubSkeleton } from "../../../shared/ui/Skeleton";
 import {  SiGithub } from "react-icons/si";
 
 const GithubHeatmap = ({ userId }) => {
-  const { userHeatMap,heatMap,isLoading } = useUser();
+  const { userHeatMap,heatMap,isLoading,githubLoading } = useUser();
 
   useEffect(() => {
     if (userId) {
@@ -83,7 +83,7 @@ const GithubHeatmap = ({ userId }) => {
   const { weeks, monthLabels } = buildHeatmapGrid(heatMap);
   return (
     <div>
-      {isLoading ? (
+      {githubLoading ? (
         <GithubSkeleton />
       ) : (
         <div className="w-full border border-border p-4 bg-black font-mono flex flex-col gap-4">

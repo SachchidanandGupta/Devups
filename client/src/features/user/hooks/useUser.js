@@ -11,6 +11,7 @@ const useUser = () => {
   const user = useUserStore((state)=>state.user);
   const heatMap = useUserStore((state)=>state.heatMap);
   const isLoading = useUserStore((state)=>state.isLoading);
+  const githubLoading = useUserStore((state)=>state.githubLoading);
   const error = useUserStore((state)=>state.error);
   const searchResult = useUserStore((state)=>state.searchResult);
   const setSearchResult = useUserStore((state)=>state.setSearchResult);
@@ -55,7 +56,7 @@ const useUser = () => {
   };
 
   const userHeatMap = async(userId) =>{
-    useUserStore.getState().setIsLoading(true);
+    useUserStore.getState().setGithubLoading(true);
     try {
       const data = await getHeatmap(userId);
       useUserStore.getState().setHeatMap(data.heatmap)
@@ -64,7 +65,7 @@ const useUser = () => {
         .getState()
         .setError(err.response?.data?.message || err.message);
     } finally {
-      useUserStore.getState().setIsLoading(false);
+      useUserStore.getState().setGithubLoading(false);
     }
       
   }
@@ -107,6 +108,7 @@ const useUser = () => {
     error,
     isLoading,
     heatMap,
+    githubLoading,
     setSearchResult
   }
 };

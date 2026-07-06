@@ -5,12 +5,14 @@ const useUserStore = create((set) => ({
   heatMap: null,
   searchResult: [],
   isLoading: false,
+  githubLoading:false,
   error: null,
 
   setUser: (username) => set({ user: username }),
   setHeatMap: (data) => set({ heatMap: data }),
   setSearchResult: (data) => set({ searchResult:data }),
   setIsLoading: (bool) => set({ isLoading: bool }),
+  setGithubLoading :(bool) =>set({githubLoading:bool}),
   setError: (error) => set({ error: error }),
   deleteUser: () => set({ user: null, heatMap: null, error: null }),
 }));

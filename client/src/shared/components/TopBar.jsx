@@ -14,7 +14,7 @@ import { MdOutlineTerminal } from "react-icons/md";
 import Terminal from "./Terminal";
 const TopBar = ({ pageField, searchBar }) => {
   const { user } = useAuth();
-  const { search, searchResult,setSearchResult } = useUser();
+  const { search, searchResult, setSearchResult } = useUser();
   const { friendContest, incomingContests } = useContest();
   const { request, requestsPending, pendingFriendRequests } = useFriend();
   const searchUsers = searchResult;
@@ -103,15 +103,16 @@ const TopBar = ({ pageField, searchBar }) => {
         )}
         <div className="relative" ref={bellDropRef}>
           <CiBellOn
+            size={36}
             onClick={() => {
               setIsOpen(false);
               setIsBellOpen(!isBellOpen);
             }}
-            size={24}
-            className="hover:text-accent font-bold cursor-pointer p-2 h-auto w-auto border-none hover:bg-accent-dim rounded-full  "
+            className={`cursor-pointer p-2 rounded-full transition-colors hover:bg-accent-dim hover:text-accent ${isBellOpen ? "text-accent bg-accent-dim" : "text-text-primary"}`}
           />
+
           {incomingContests.length + pendingRequests.length > 0 ? (
-            <div className="absolute top-0 right-0 h-2 w-2 m-1 text-sm   rounded-full bg-accent  text-text-primary"></div>
+            <div className="absolute top-0 right-0 h-2 w-2 m-1 text-sm rounded-full bg-accent  text-text-primary"></div>
           ) : (
             ""
           )}

@@ -14,35 +14,6 @@ const useAuth = () => {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   const setError = useAuthStore((state) => state.setError);
   const setUser = useAuthStore((state) => state.setUser);
-  const login = async (identifier, password) => {
-    useAuthStore.getState().setIsLoading(true);
-    try {
-      const data = await loginUser(identifier, password);
-      useAuthStore.getState().setUser(data.user);
-      useAuthStore.getState().setAuthenticated(true);
-    } catch (err) {
-      useAuthStore
-        .getState()
-        .setError(err.response?.data?.message || err.message);
-    } finally {
-      useAuthStore.getState().setIsLoading(false);
-    }
-  };
-
-  const register = async (username, email, password) => {
-    useAuthStore.getState().setIsLoading(true);
-    try {
-      const data = await registerUser(username, email, password);
-      useAuthStore.getState().setUser(data.user);
-      useAuthStore.getState().setAuthenticated(true);
-    } catch (error) {
-      useAuthStore
-        .getState()
-        .setError(error.response?.data?.message || error.message);
-    } finally {
-      useAuthStore.getState().setIsLoading(false);
-    }
-  };
   const fetchMe = async () => {
     useAuthStore.getState().setIsLoading(true);
     try {
@@ -56,6 +27,34 @@ const useAuth = () => {
     } finally {
       useAuthStore.getState().setIsLoading(false);
       useAuthStore.getState().setInitialized(true);
+    }
+  };
+
+  const login = async (identifier, password) => {
+    useAuthStore.getState().setIsLoading(true);
+    try {
+      await loginUser(identifier, password);
+      await fetchMe(); // fetch full user data immediately after login
+    } catch (err) {
+      useAuthStore
+        .getState()
+        .setError(err.response?.data?.message || err.message);
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
+    }
+  };
+
+  const register = async (username, email, password) => {
+    useAuthStore.getState().setIsLoading(true);
+    try {
+      await registerUser(username, email, password);
+      await fetchMe();
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
     }
   };
 
@@ -84,7 +83,7 @@ const useAuth = () => {
     isLoading,
     error,
     setError,
-    setUser
+    setUser,
   };
 };
 export default useAuth;
