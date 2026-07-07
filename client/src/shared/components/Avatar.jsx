@@ -4,7 +4,7 @@ const Avatar = ({ data, style = null }) => {
   const { _id, username = "Unknown", avatar, xp = 0, level = 1 } = data || {};
   return (
     <div
-      className={` relative w-10 h-10 bg-surface-2 border  flex items-center justify-center shrink-0 ${style ? style : "border-border"}`}
+      className={`  w-10 h-10 bg-surface-2 border  flex items-center justify-center shrink-0 ${style ? style : "border-border"}`}
     >
       {avatar ? (
         <img

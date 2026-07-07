@@ -19,30 +19,31 @@ const Dashboard = () => {
       ) : (
         <div className="p-4 flex flex-col gap-4">
           {user?.githubUsername ? (
-            <div className="lg:col-span-3 overflow-hidden bg-black border border-border">
+            <div className="w-full overflow-hidden bg-black border border-border">
               {user._id && <GithubHeatmap userId={user._id} />}
             </div>
           ) : (
-            <div className="lg:col-span-3 flex flex-col gap-4 p-4 overflow-hidden bg-black border border-border">
-              <div className=" text-accent ">
-                COMMIT_VELOCITY // LINK_REQUIRED{" "}
+            <div className="w-full flex flex-col gap-4 p-4 overflow-hidden bg-black border border-border">
+              <div className="text-accent font-bold tracking-widest">
+                COMMIT_VELOCITY // LINK_REQUIRED
               </div>
-              <div className="border border-dashed border-accent-dim flex flex-col gap-4 items-center justify-center w-full h-50">
-                <span className="text-text-muted animate-pulse">
+              <div className="border border-dashed border-accent-dim flex flex-col gap-4 items-center justify-center w-full min-h-[200px]">
+                <span className="text-text-muted animate-pulse font-bold tracking-widest uppercase">
                   [NO_DATA_SIGNAL]
                 </span>
-                <button className="text-accent border flex gap-2 items-center border-accent px-5 py-2 cursor-pointer  hover:bg-accent hover:text-black active:bg-danger active:text-text-primary active:border-none  ">
-                  <FaGithub />
+                <button className="text-accent border flex gap-2 items-center border-accent px-5 py-2 cursor-pointer hover:bg-accent hover:text-black active:bg-danger active:text-text-primary active:border-danger transition-colors uppercase font-bold tracking-wider">
+                  <FaGithub size={16} />
                   <span>INITIALIZE_GITHUB_NODE</span>
                 </button>
               </div>
             </div>
           )}
-          <div className="grid grid-cols-3 gap-4 ">
-            <div className="col-span-1 ">
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-1 h-full">
               <StatsCard user={user} />
             </div>
-            <div className="col-span-2">
+            <div className="lg:col-span-2 h-full">
               <DailyProblem />
             </div>
           </div>

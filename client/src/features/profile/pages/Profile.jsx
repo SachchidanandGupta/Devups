@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "../../auth/hooks/useAuth";
 import useContest from "../../contest/hooks/useContest";
 import useProfile from "../hooks/useProfile";
@@ -17,12 +17,14 @@ import PlatformCard from "../components/PlatformCard";
 import Avatar from "../../../shared/components/Avatar";
 import FriendStatusButton from "../components/FriendStatusButton";
 import { ProfileSkeleton } from "../../../shared/ui/Skeleton";
+import EditPopupForm from "../components/EditPopupForm";
 const Profile = () => {
   const { userId } = useParams();
   const { user } = useAuth();
   const { request, removeFriend, response } = useFriend();
   const { userContestHistory, completedContests } = useContest();
   const { globalRankings, fetchGlobal } = useLeaderboard();
+  const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
   const {
     fetchProfileData,
     refetchFriendStatus,
@@ -84,22 +86,27 @@ const Profile = () => {
       ? (logEntries = "00" + logEntries)
       : (logEntries = "0" + logEntries);
   }
+  console.log(isEditPopUpOpen);
   return (
-    <div className="flex flex-col bg-black min-h-screen font-mono">
+    <div className="flex flex-col bg-black min-h-screen font-mono relative overflow-auto scrollbar-none ">
       <TopBar pageField={"system_user_terminal"} searchBar={true} />
-
-      <div className="w-full p-4 gap-4 flex flex-col font-mono">
+      {isEditPopUpOpen && (
+        <div>
+          <EditPopupForm setIsEditPopUpOpen={setIsEditPopUpOpen} userData={user} />
+        </div>
+      )}
+      <div className="w-full p-4 gap-4 flex flex-col font-mono ">
         {isLoading ? (
           <ProfileSkeleton />
         ) : (
-          <div className="flex flex-col w-full gap-4">
+          <div className="flex flex-col w-full gap-4 ">
             <div className="w-full flex flex-col lg:grid lg:grid-cols-3 gap-4">
-              <div className="relative lg:col-span-2 flex flex-col justify-end border border-border bg-black">
+              <div className="relative lg:col-span-2 flex flex-col justify-end border border-border bg-black ">
                 <div className="absolute right-0 top-0 border-l border-b border-border p-1.5 sm:p-2 text-[10px] sm:text-xs uppercase text-text-secondary tracking-widest bg-black">
                   secure_session_active
                 </div>
 
-                <div className="p-4 sm:p-8 flex flex-col sm:flex-row justify-between gap-6 sm:gap-4 mt-8 sm:mt-0">
+                <div className="p-4 sm:p-8 flex flex-col sm:flex-row justify-between gap-6 sm:gap-4 mt-8 sm:mt-0 ">
                   <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 min-w-0">
                     <ProfileAvatar data={profile} />
                     <div className="flex flex-col items-center sm:items-start gap-2 min-w-0">
@@ -118,8 +125,11 @@ const Profile = () => {
                   </div>
 
                   {isOwnProfile ? (
-                    <div className="flex flex-col justify-end items-center sm:items-end shrink-0">
-                      <button className="cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto uppercase">
+                    <div className="  flex flex-col justify-end items-center sm:items-end shrink-0">
+                      <button
+                        onClick={() => setIsEditPopUpOpen(true)}
+                        className="cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto uppercase "
+                      >
                         <span>EDIT_NODES</span> <IoSettingsOutline size={16} />
                       </button>
                     </div>
@@ -219,7 +229,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="w-full flex flex-col lg:grid lg:grid-cols-4 gap-4 h-54">
+            <div className="w-full flex flex-col lg:grid lg:grid-cols-4 gap-4 ">
               {profile?.githubUsername ? (
                 <div className="lg:col-span-3  bg-black ">
                   {userId && <GithubHeatmap userId={userId} />}
@@ -340,7 +350,10 @@ const Profile = () => {
                           )?.xpEarned ?? 0;
 
                         return (
-                          <div className="w-full grid grid-cols-5 items-center border-b border-border py-3 px-2 hover:bg-surface-2 transition-colors">
+                          <div
+                            key={contest._id}
+                            className="w-full grid grid-cols-5 items-center border-b border-border py-3 px-2 hover:bg-surface-2 transition-colors"
+                          >
                             <span className="col-span-1 text-sm text-text-primary font-bold truncate pr-2">
                               {contest.contestName}
                             </span>
