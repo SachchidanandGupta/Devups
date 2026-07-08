@@ -16,7 +16,7 @@ const TopBar = ({ pageField, searchBar }) => {
   const { user } = useAuth();
   const { search, searchResult, setSearchResult } = useUser();
   const { friendContest, incomingContests } = useContest();
-  const { request, requestsPending, pendingFriendRequests } = useFriend();
+  const { requestsPending, pendingFriendRequests } = useFriend();
   const searchUsers = searchResult;
   const pendingRequests = pendingFriendRequests;
   const location = useLocation();
@@ -94,7 +94,6 @@ const TopBar = ({ pageField, searchBar }) => {
                 dropdownRef={dropdownRef}
                 searchUsers={searchUsers}
                 user={user}
-                request={request}
               />
             )}
           </div>

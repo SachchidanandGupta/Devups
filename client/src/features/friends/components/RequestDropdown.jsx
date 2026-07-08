@@ -2,7 +2,6 @@ import React from "react";
 import Avatar from "../../../shared/components/Avatar";
 
 const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
-  
   return (
     <div ref={dropdownRef} className=" absolute top-1 w-full h-50">
       {requests.length > 0 ? (
@@ -49,13 +48,19 @@ const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-1.5 h-[120px] bg-surface-2 p-4 text-center">
-          <span className="text-accent text-sm font-bold tracking-wider uppercase">
-            no_pending_requests
-          </span>
-          <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-mono uppercase">
-            SYSTEM_IDLE // UPLINK_CLEAR
-          </span>
+        <div>
+          <div className="absolute top-12 w-full mt-1 flex flex-col"></div>
+          <div className="uppercase text-text-secondary bg-text-muted border text-sm border-border px-2 py-3">
+            incoming uplink requests
+          </div>
+          <div className="flex flex-col items-center justify-center gap-1.5 h-[120px] bg-surface-2  p-4 text-center border border-accent-dim">
+            <span className="text-accent text-sm font-bold tracking-wider uppercase">
+              no_pending_requests
+            </span>
+            <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-mono uppercase">
+              SYSTEM_IDLE // UPLINK_CLEAR
+            </span>
+          </div>
         </div>
       )}
     </div>

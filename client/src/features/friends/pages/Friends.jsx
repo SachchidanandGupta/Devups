@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import useFriend from "../hooks/useFriend";
+import useUser from "../../user/hooks/useUser";
 import FriendCard from "../components/FriendCard";
 import TopBar from "../../../shared/components/TopBar";
 import { FriendSkeleton } from "../../../shared/ui/Skeleton";
 import RequestDropdown from "../components/RequestDropdown";
 import { getSocket } from "../../../shared/hooks/useSocket";
+import AddFriendDrop from "../components/AddFriendDrop";
 const Friends = () => {
   const {
     request,
@@ -18,12 +20,14 @@ const Friends = () => {
     error,
     isLoading,
   } = useFriend();
+  const { search, searchResult, setSearchResult } = useUser();
   useEffect(() => {
     fetchFriends();
     requestsPending();
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   useEffect(() => {
     fetchFriends();
     requestsPending();
@@ -45,7 +49,16 @@ const Friends = () => {
   const handleBlock = async (id) => await block(id);
 
   const dropdownRef = useRef(null);
-
+  const addRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutOfAdd(event) {
+      if (addRef.current && !addRef.current.contains(event.target)) {
+        setIsAddOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutOfAdd);
+    return () => document.removeEventListener("mousedown", handleClickOutOfAdd);
+  }, []);
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -77,37 +90,54 @@ const Friends = () => {
             </div>
           </div>
 
-          <div
-            className="flex items-center gap-3 shrink-0 relative pl-8"
-            ref={dropdownRef}
-          >
-            <button className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors">
-              Add Friend
-            </button>
-
-            <button
-              onClick={() => setIsOpen((prev) => !prev)}
-              className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
-                isOpen || pendingFriendRequests.length > 0
-                  ? "border-accent text-accent hover:bg-accent hover:text-black"
-                  : "border-border text-text-primary hover:bg-text-primary hover:text-black"
-              }`}
-            >
-              Requests
-              {pendingFriendRequests?.length > 0 && (
-                <span className="ml-1.5">[{pendingFriendRequests.length}]</span>
+          <div className="flex items-center gap-3 shrink-0  pl-8">
+            <div className="relative" ref={addRef}>
+              <button
+                onClick={() => setIsAddOpen((prev) => !prev)}
+                ref={dropdownRef}
+                className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors"
+              >
+                Add Friend
+              </button>
+              {isAddOpen && (
+                <div className="absolute top-full right-0 mt-2 z-50 min-w-[250px]">
+                  <AddFriendDrop
+                    close={setIsAddOpen}
+                    addRef={addRef}
+                    search={search}
+                    results={searchResult}
+                    setSearchResult={setSearchResult}
+                  />
+                </div>
               )}
-            </button>
+            </div>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsOpen((prev) => !prev)}
+                className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
+                  isOpen || pendingFriendRequests.length > 0
+                    ? "border-accent text-accent hover:bg-accent hover:text-black"
+                    : "border-border text-text-primary hover:bg-text-primary hover:text-black"
+                }`}
+              >
+                Requests
+                {pendingFriendRequests?.length > 0 && (
+                  <span className="ml-1.5">
+                    [{pendingFriendRequests.length}]
+                  </span>
+                )}
+              </button>
 
-            {isOpen && (
-              <div className="absolute top-full right-0 mt-2 z-50 min-w-[250px]">
-                <RequestDropdown
-                  requests={pendingFriendRequests}
-                  accept={handleAccept}
-                  decline={handleDecline}
-                />
-              </div>
-            )}
+              {isOpen && (
+                <div className="absolute top-full right-0 mt-2 z-50 min-w-[250px]">
+                  <RequestDropdown
+                    requests={pendingFriendRequests}
+                    accept={handleAccept}
+                    decline={handleDecline}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

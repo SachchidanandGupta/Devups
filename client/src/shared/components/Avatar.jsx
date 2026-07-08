@@ -1,7 +1,8 @@
 import React from "react";
 
 const Avatar = ({ data, style = null }) => {
-  const { _id, username = "Unknown", avatar, xp = 0, level = 1 } = data || {};
+  const { _id, username="unknown" , avatar, xp = 0, level = 1 } = data || {};
+  // console.log(data.username)
   return (
     <div
       className={`  w-10 h-10 bg-surface-2 border  flex items-center justify-center shrink-0 ${style ? style : "border-border"}`}
