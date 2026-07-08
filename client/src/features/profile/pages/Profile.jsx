@@ -4,6 +4,7 @@ import useContest from "../../contest/hooks/useContest";
 import useProfile from "../hooks/useProfile";
 import useFriend from "../../friends/hooks/useFriend";
 import useLeaderboard from "../../leaderboard/hooks/useLeaderboard";
+import useUser from "../../user/hooks/useUser";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { getLevelTitle } from "../../../shared/constants/levelTitles";
@@ -24,6 +25,7 @@ const Profile = () => {
   const { request, removeFriend, response } = useFriend();
   const { userContestHistory, completedContests } = useContest();
   const { globalRankings, fetchGlobal } = useLeaderboard();
+  const { updateUserProfile } = useUser();
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
   const {
     fetchProfileData,
@@ -86,13 +88,17 @@ const Profile = () => {
       ? (logEntries = "00" + logEntries)
       : (logEntries = "0" + logEntries);
   }
-  console.log(isEditPopUpOpen);
   return (
     <div className="flex flex-col bg-black min-h-screen font-mono relative overflow-auto scrollbar-none ">
       <TopBar pageField={"system_user_terminal"} searchBar={true} />
       {isEditPopUpOpen && (
         <div>
-          <EditPopupForm setIsEditPopUpOpen={setIsEditPopUpOpen} userData={user} />
+          <EditPopupForm
+            setIsEditPopUpOpen={setIsEditPopUpOpen}
+            userData={user}
+            update={updateUserProfile}
+            userID={user._id}
+          />
         </div>
       )}
       <div className="w-full p-4 gap-4 flex flex-col font-mono ">
@@ -196,7 +202,7 @@ const Profile = () => {
                   <PlatformCard
                     platfrom={"github"}
                     platfromUsername={githubUsername}
-                    style={"text-text-secondary"}
+                    style={"text-accent"}
                   />
                   <PlatformCard
                     platfrom={"leetcode"}

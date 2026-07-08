@@ -8,7 +8,8 @@ const InputField = ({
   value,
   onChange,
   error,
-  define=null,
+  define = null,
+  name = null,
 }) => {
   return (
     <div>
@@ -19,10 +20,13 @@ const InputField = ({
         >
           {label}
         </label>
-        {define ? <span className="uppercase font-mono text-accent-muted text-sm">
-          [{define}]
-        </span> :"" }
-        
+        {define ? (
+          <span className="uppercase font-mono text-accent-muted text-sm">
+            [{define}]
+          </span>
+        ) : (
+          ""
+        )}
       </div>
       <div className="relative ">
         <input
@@ -30,6 +34,7 @@ const InputField = ({
           type={type}
           placeholder={placeholder}
           value={value}
+          name={name}
           onChange={onChange}
           className={`block w-full pl-8 py-3 border text-accent placeholder-text-secondary focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 sm:text-sm    [&:-webkit-autofill]:border-accent
                 [&:-webkit-autofill]:ring-2

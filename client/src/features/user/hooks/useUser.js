@@ -30,7 +30,7 @@ const useUser = () => {
     }
   };
 
-  const updateUserProfile = async ({ userId, updateProfileData }) => {
+  const updateUserProfile = async (userId, updateProfileData) => {
     const {
       username = undefined,
       avatar = undefined,

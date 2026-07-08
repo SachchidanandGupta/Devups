@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import InputField from "../../auth/components/InputField";
 
-const EditPopupForm = ({ setIsEditPopUpOpen, userData }) => {
-  console.log(userData);
+const EditPopupForm = ({ setIsEditPopUpOpen, userData, update, userID }) => {
   const [formData, setFormData] = useState({
     avatar: userData.avatar,
     username: userData.username,
@@ -10,7 +9,18 @@ const EditPopupForm = ({ setIsEditPopUpOpen, userData }) => {
     leetcodeUsername: userData.leetcodeUsername,
     githubUsername: userData.githubUsername,
   });
- console.log(formData);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value.trim() === "" || null ? undefined : value,
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await update(userID, formData);
+    setIsEditPopUpOpen(false);
+  };
   return (
     <div className="w-full bg-transparent backdrop-blur-xl absolute right-0 top-0 h-screen max-h-screen z-10 flex items-center justify-center scrollbar-none ">
       <div className=" border border-accent flex flex-col">
@@ -21,43 +31,77 @@ const EditPopupForm = ({ setIsEditPopUpOpen, userData }) => {
           <span className="text-black text-sm">v1.0.4_STABLE</span>
         </div>
         <div className="bg-surface p-4 flex flex-col gap-4">
-          <form className="flex flex-col gap-2">
+          <form className="flex flex-col gap-2 " onSubmit={handleSubmit}>
+            <div className="grid grid-cols-4 items-center">
+              <div className="h-20 w-20 bg-surface-2 col-span-1 flex items-center justify-center border border-accent overflow-hidden ">
+                {formData.avatar ? (
+                  <img
+                    src={formData.avatar}
+                    alt="USER_AVAYAR"
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center text-5xl ">
+                    U
+                  </div>
+                )}
+              </div>
+              <div className="col-span-3">
+                <InputField
+                  label="avatar_url"
+                  name="avatar"
+                  id="avatar"
+                  type="text"
+                  placeholder="https://imageurl.com"
+                  value={formData.avatar}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
             <InputField
               label="identity_name"
+              name="username"
               id="identity_name"
               type="text"
               placeholder="USER_ALPHA_DEV"
               value={formData.username}
-              // onChange={handleChange}
+              onChange={handleChange}
             />
+
             <InputField
               label="external_node: github"
-              id="identity_name"
+              name="githubUsername"
+              id="github"
               type="text"
               placeholder="github.com/alpha_arch"
               value={formData.githubUsername}
-              // onChange={handleChange}
+              onChange={handleChange}
             />
+
             <InputField
               label="external_node: leetcode"
-              id="identity_name"
+              name="leetcodeUsername"
+              id="leetcode"
               type="text"
-              placeholder="leetcode.com/u/aplha"
+              placeholder="leetcode.com/u/alpha"
               value={formData.leetcodeUsername}
-              // onChange={handleChange}
+              onChange={handleChange}
             />
+
             <InputField
               label="external_node: codeforces"
-              id="identity_name"
+              name="codeforcesHandle"
+              id="codeforces"
               type="text"
-              placeholder="codeforces/profile/aplha"
+              placeholder="codeforces/profile/alpha"
               value={formData.codeforcesHandle}
-              // onChange={handleChange}
+              onChange={handleChange}
             />
           </form>
           <div className="grid grid-cols-3 gap-4">
             <button
-              onClick={() => setIsEditPopUpOpen(false)}
+              onClick={handleSubmit}
+              type="submit"
               className="col-span-2 py-2 px-4 text-black bg-accent hover:bg-white uppercase cursor-pointer"
             >
               save_changes
