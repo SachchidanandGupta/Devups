@@ -3,18 +3,12 @@ import useActivityLog from "../hooks/useActivityLog";
 import useNotification from "../../notifications/hooks/useNotification";
 import { getSocket } from "../../../shared/hooks/useSocket";
 import TopBar from "../../../shared/components/TopBar";
+import useUtcTime from "../../../shared/hooks/useUtcTime";
 const ActivityFeedPanel = () => {
-  const { fetchNotifications, notifications } = useNotification();
+  const { fetchNotifications, notifications,prependNotification } = useNotification();
   const { fetchActivity, activities, prependActivity } = useActivityLog();
-  const [utcTime, setUtcTime] = useState("");
-  useEffect(() => {
-    const tick = () => {
-      setUtcTime(new Date().toUTCString().slice(17, 25));
-    };
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, []);
+ const utc = useUtcTime();
+ 
   useEffect(() => {
     fetchActivity();
     fetchNotifications();
@@ -43,7 +37,7 @@ const ActivityFeedPanel = () => {
             SESSION_LOG: MAIN_SYSYTEM
           </div>
           <div className="text-text-secondary text-sm">
-            v1.0.4 - time: <span className=" text-xs">{utcTime}</span>{" "}
+            v1.0.4 - time: <span className=" text-xs">{utc}</span>{" "}
           </div>
         </div>
         <div className="col-span-2 bg-surface-2 flex items-center uppercase text-text-primary text-lg px-1 ">

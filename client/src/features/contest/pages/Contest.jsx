@@ -5,6 +5,7 @@ import FriendContestCard from "../components/FriendContestCard";
 import TopBar from "../../../shared/components/TopBar";
 import { ContestSkeleton } from "../../../shared/ui/Skeleton";
 import IncomingFriendContest from "../components/IncomingFriendContest";
+import useUtcTime from "../../../shared/hooks/useUtcTime";
 const Contest = () => {
   const {
     contest: fetchPlatformContests,
@@ -16,16 +17,16 @@ const Contest = () => {
     activeContests,
     incomingContests,isLoading
   } = useContest();
-
-  const [utcTime, setUtcTime] = useState("");
-  useEffect(() => {
-    const tick = () => {
-      setUtcTime(new Date().toUTCString().slice(17, 25));
-    };
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, []);
+const utc = useUtcTime();
+  // const [utcTime, setUtcTime] = useState("");
+  // useEffect(() => {
+  //   const tick = () => {
+  //     setUtcTime(new Date().toUTCString().slice(17, 25));
+  //   };
+  //   tick();
+  //   const interval = setInterval(tick, 1000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const [activeTab, setActiveTab] = useState("platform");
   useEffect(() => {
@@ -62,13 +63,13 @@ const Contest = () => {
             <div >
               <h1 className="text-3xl font-mono">EVENT_TERMINAL </h1>
               <div className="flex gap-2 py-1">
-                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
+                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
                   [ SYSTEM_STABLE ]
                 </span>
-                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
-                  UTC: {utcTime}
+                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
+                  UTC: {utc}
                 </span>
-                <span className="text-accent font-mono text-xs  pr-2 flex items-center justify-center ">
+                <span className="text-accent font-mono text-xs  pr-2  ">
                   {" "}
                   CONTEST_COUNT: {activeList.length}{" "}
                 </span>
@@ -85,7 +86,7 @@ const Contest = () => {
                   [ SYSTEM_STABLE ]
                 </span>
                 <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
-                  UTC: {utcTime}
+                  UTC: {utc}
                 </span>
                 <span className="text-accent font-mono text-xs  pr-2 flex items-center justify-center ">
                   {" "}

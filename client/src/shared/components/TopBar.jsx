@@ -67,7 +67,7 @@ const TopBar = ({ pageField, searchBar }) => {
     return () =>
       document.removeEventListener("mousedown", handleClickBellOutside);
   }, []);
-
+  console.log(isTerminalOpen)
   return (
     <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border">
       <div className="flex items-center gap-4 ">

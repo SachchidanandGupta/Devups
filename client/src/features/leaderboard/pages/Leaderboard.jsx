@@ -4,7 +4,7 @@ import RankCard from "../components/RankCard";
 import { LeaderboardSkeleton } from "../../../shared/ui/Skeleton";
 import useAuth from "../../auth/hooks/useAuth";
 import TopBar from "../../../shared/components/TopBar";
-
+import useUtcTime from "../../../shared/hooks/useUtcTime";
 const Leaderboard = () => {
   
   const {user} = useAuth();
@@ -13,7 +13,7 @@ const Leaderboard = () => {
   const { fetchGlobal, fetchFriends,globalRankings,friendRankings,isLoading } = useLeaderboard();
 
   const [activeTab, setActiveTab] = useState("global");
-
+  const utc = useUtcTime();
   useEffect(() => {
     if (activeTab === "global") {
       fetchGlobal();
@@ -35,8 +35,11 @@ const Leaderboard = () => {
             <div>
               <h1 className="text-3xl font-mono">GLOBAL_TERMINAL </h1>
               <div className="flex gap-2 py-1">
-                <span className="text-accent font-mono text-xs  flex items-center justify-center ">
+                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2   ">
                   [ SYSTEM_STABLE ]
+                </span>
+                <span className="text-accent font-mono text-xs  ">
+                    UTC:{utc}
                 </span>
               </div>
             </div>
@@ -47,8 +50,11 @@ const Leaderboard = () => {
             <div>
               <h1 className="text-3xl font-mono">FRIENDS_TERMINAL </h1>
               <div className="flex gap-2 py-1">
-                <span className="text-accent font-mono text-xs flex items-center justify-center ">
+                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 ">
                   [ SYSTEM_STABLE ]
+                </span>
+                <span className="text-accent font-mono text-xs  ">
+                    UTC:{utc}
                 </span>
               </div>
             </div>
