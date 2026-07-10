@@ -12,6 +12,7 @@ const {
 const userModel = require("../models/user.model");
 const { determineWinner } = require("../services/contest.service");
 const { awardContestXp } = require("../services/xp.service");
+const { contestXpRewards } = require("../constants/xpRewards");
 // async function getCodeforcesContest() {
 //   const response = await axios.get(
 //     "https://codeforces.com/api/contest.list?gym=false",
@@ -51,11 +52,43 @@ const getContest = asyncHandler(async function (req, res) {
 
 const createContest = asyncHandler(async function (req, res) {
   const creatorID = req.user.id;
-  const { contestName, participantIds, startTime, endTime } = req.body;
+  const {
+    contestName,
+    participantIds,
+    startTime,
+    endTime,
+    problems = [],
+  } = req.body;
+  if (problems.length === 0)
+    throw new appError("Contest must have at least one problem", 400);
 
   if (startTime > endTime) {
     throw new appError("startTime can't be after endTime", 400);
   }
+
+  const durationMs = new Date(endTime) - new Date(startTime);
+  const minDuration = 30 * 60 * 1000; // 30 minutes
+  const maxDuration = 24 * 60 * 60 * 1000; // 24 hours
+
+  if (durationMs < minDuration) {
+    throw new appError("Contest must be at least 30 minutes long", 400);
+  }
+  if (durationMs > maxDuration) {
+    throw new appError("Contest cannot exceed 24 hours", 400);
+  }
+  const mappedProblems = problems.map((p) => {
+    const difficulty = p.difficulty.toLowerCase();
+    const xpReward = contestXpRewards[difficulty];
+    if (!xpReward)
+      throw new appError(`Invalid difficulty: ${p.difficulty}`, 400);
+    return {
+      platform: p.platform || "leetcode",
+      titleSlug: p.titleSlug,
+      title: p.title,
+      difficulty,
+      xpReward,
+    };
+  });
 
   const invitations = participantIds.map((id) => ({
     userId: id,
@@ -69,6 +102,7 @@ const createContest = asyncHandler(async function (req, res) {
     invitations,
     startTime,
     endTime,
+    problems: mappedProblems,
   });
 
   participantIds.forEach((id) =>

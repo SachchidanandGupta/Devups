@@ -54,10 +54,10 @@ const useContest = () => {
     }
   };
 
-  const initiateContest = async (participantIds, startTime, endTime) => {
+  const initiateContest = async (contestData) => {
     useContestStore.getState().setIsLoading(true);
     try {
-      await createContest(participantIds, startTime, endTime);
+      await createContest(contestData);
       await friendContest();
     } catch (error) {
       useContestStore

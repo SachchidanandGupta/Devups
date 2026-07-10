@@ -6,6 +6,7 @@ import TopBar from "../../../shared/components/TopBar";
 import { ContestSkeleton } from "../../../shared/ui/Skeleton";
 import IncomingFriendContest from "../components/IncomingFriendContest";
 import useUtcTime from "../../../shared/hooks/useUtcTime";
+import { useNavigate } from "react-router";
 const Contest = () => {
   const {
     contest: fetchPlatformContests,
@@ -15,20 +16,12 @@ const Contest = () => {
     rejectInvite,
     platformContests,
     activeContests,
-    incomingContests,isLoading
+    incomingContests,
+    isLoading,
   } = useContest();
-const utc = useUtcTime();
-  // const [utcTime, setUtcTime] = useState("");
-  // useEffect(() => {
-  //   const tick = () => {
-  //     setUtcTime(new Date().toUTCString().slice(17, 25));
-  //   };
-  //   tick();
-  //   const interval = setInterval(tick, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
+  const utc = useUtcTime();
   const [activeTab, setActiveTab] = useState("platform");
+  const navigate = useNavigate();
   useEffect(() => {
     fetchPlatformContests();
     fetchFriendContests();
@@ -58,41 +51,61 @@ const utc = useUtcTime();
       <TopBar pageField="contest_terminal" searchBar={true} />
       <div className="w-full p-4 flex h-50  flex-col font-mono">
         {activeTab === "platform" ? (
-          <div className=" text-text-primary flex font-bold mb-6 ">
-            <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
-            <div >
-              <h1 className="text-3xl font-mono">EVENT_TERMINAL </h1>
-              <div className="flex gap-2 py-1">
-                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
-                  [ SYSTEM_STABLE ]
-                </span>
-                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
-                  UTC: {utc}
-                </span>
-                <span className="text-accent font-mono text-xs  pr-2  ">
-                  {" "}
-                  CONTEST_COUNT: {activeList.length}{" "}
-                </span>
+          <div className=" text-text-primary flex justify-between font-bold mb-6 ">
+            <div className="flex">
+              <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
+              <div>
+                <h1 className="text-3xl font-mono">EVENT_TERMINAL </h1>
+                <div className="flex gap-2 py-1">
+                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
+                    [ SYSTEM_STABLE ]
+                  </span>
+                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
+                    UTC: {utc}
+                  </span>
+                  <span className="text-accent font-mono text-xs  pr-2  ">
+                    {" "}
+                    CONTEST_COUNT: {activeList.length}{" "}
+                  </span>
+                </div>
               </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <button
+                onClick={() => navigate("/contest/create")}
+                className="uppercase text-text-primay border border-border px-3 py-2 cursor-pointer hover:bg-accent hover:text-black "
+              >
+                host_contest
+              </button>
             </div>
           </div>
         ) : (
-          <div className=" text-text-primary flex font-bold mb-6 ">
-            <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
-            <div className="">
-              <h1 className="text-3xl font-mono">FRIENDS_TERMINAL </h1>
-              <div className="flex gap-2 py-1">
-                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
-                  [ SYSTEM_STABLE ]
-                </span>
-                <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
-                  UTC: {utc}
-                </span>
-                <span className="text-accent font-mono text-xs  pr-2 flex items-center justify-center ">
-                  {" "}
-                  ACTIVE_CONTEST: {activeList.length}{" "}
-                </span>
+          <div className=" text-text-primary flex justify-between font-bold mb-6 ">
+            <div className="flex">
+              <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
+              <div>
+                <h1 className="text-3xl font-mono">FRIENDS_TERMINAL </h1>
+                <div className="flex gap-2 py-1">
+                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
+                    [ SYSTEM_STABLE ]
+                  </span>
+                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
+                    UTC: {utc}
+                  </span>
+                  <span className="text-accent font-mono text-xs  pr-2 flex items-center justify-center ">
+                    {" "}
+                    ACTIVE_CONTEST: {activeList.length}{" "}
+                  </span>
+                </div>
               </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <button
+                onClick={() => navigate("/contest/create")}
+                className="uppercase text-black bg-accent border border-accent px-3 py-2 cursor-pointer hover:bg-white hover:text-black "
+              >
+                host_contest
+              </button>
             </div>
           </div>
         )}

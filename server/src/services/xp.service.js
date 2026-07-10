@@ -74,7 +74,7 @@ async function awardXP(userId, source, action, metaData = {}) {
     action,
     amount,
     currentXP,
-    requiredXP
+    requiredXP,
   });
   return {
     xpEvent,
@@ -112,7 +112,7 @@ async function awardContestXp(userId, amount) {
     action: "contest_completion",
     amount,
     currentXP,
-    requiredXP
+    requiredXP,
   });
   return {
     xpEvent,
@@ -123,4 +123,4 @@ async function awardContestXp(userId, amount) {
     },
   };
 }
-module.exports = { awardXP, awardContestXp,getLevelProgress };
+module.exports = { awardXP, awardContestXp, getLevelProgress };

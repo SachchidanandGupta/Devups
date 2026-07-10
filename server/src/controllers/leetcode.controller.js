@@ -1,5 +1,5 @@
 const asyncHandler  = require("../utils/asyncHandler");
-const { getDailyQuestion } = require("../services/leetcode.service");
+const { getDailyQuestion, getSearchProblems } = require("../services/leetcode.service");
 const appError = require("../utils/appError");
 
 const getDaily = asyncHandler(async function (req, res) {
@@ -13,7 +13,18 @@ const getDaily = asyncHandler(async function (req, res) {
   })
 });
 
+const searchLeetcodeProblems = asyncHandler(async function(req,res){
+  const {q} = req.query;
+  if(!q || q.trim() === "")throw new appError("Search query is required", 400);
+  const problems = await getSearchProblems(q);
+  return res.status(200).json({
+    status: "success",
+    problems,
+  });
+})
+
 
 module.exports = {
-    getDaily
+    getDaily,
+    searchLeetcodeProblems
 }

@@ -1,6 +1,7 @@
 const axios = require("axios");
+const appError = require("../utils/appError");
 
-const LEETCODE_API = "https://leetcode.com/graphql";
+const LEETCODE_URL = "https://leetcode.com/graphql";
 const getUserSolvedQuery = `query getUserSolved($username: String!) {
   matchedUser(username: $username) {
     submitStats {
@@ -53,10 +54,27 @@ const getRecentAcSubmissionQuery = `query recentAcSubmissions($username: String!
   }
 }`;
 
+const getSearchProblemsQuery = `query searchProblems($keyword: String!) {
+  problemsetQuestionList(
+    categorySlug: ""
+    limit: 10
+    skip: 0
+    filters: { searchKeywords: $keyword }
+  ) {
+    questions {
+      questionFrontendId
+      title
+      titleSlug
+      difficulty
+      acRate
+    }
+  }
+}`;
+
 async function getUserSolved(username) {
   try {
     const { data } = await axios.post(
-      LEETCODE_API,
+      LEETCODE_URL,
       {
         query: getUserSolvedQuery,
         variables: { username },
@@ -89,7 +107,7 @@ async function getUserSolved(username) {
 async function getUserCalender(username) {
   try {
     const { data } = await axios.post(
-      LEETCODE_API,
+      LEETCODE_URL,
       {
         query: getUserCalenderQuery,
         variables: { username },
@@ -119,7 +137,7 @@ async function getUserCalender(username) {
 async function getLeetCodeContest() {
   try {
     const { data } = await axios.post(
-      LEETCODE_API,
+      LEETCODE_URL,
       {
         query: getLeetCodeContestQuery,
       },
@@ -148,7 +166,7 @@ async function getLeetCodeContest() {
 async function getDailyQuestion() {
   try {
     const { data } = await axios.post(
-      LEETCODE_API,
+      LEETCODE_URL,
       { query: getDailyQuestionQuery },
       {
         headers: {
@@ -191,7 +209,7 @@ async function getDailyQuestion() {
 async function getRecentAcSubmission(username, limit) {
   try {
     const { data } = await axios.post(
-      LEETCODE_API,
+      LEETCODE_URL,
       { query: getRecentAcSubmissionQuery, variables: { username, limit } },
       {
         headers: {
@@ -215,10 +233,42 @@ async function getRecentAcSubmission(username, limit) {
   }
 }
 
+async function getSearchProblems(keyword) {
+  try {
+    const { data } = await axios.post(
+      LEETCODE_URL,
+      {
+        query: getSearchProblemsQuery,
+        variables: { keyword },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+        },
+      },
+    );
+    const questionList = data.data.problemsetQuestionList?.questions;
+    if (!questionList) {
+      throw new Error("question not present");
+    }
+    return questionList.map((questions) => ({
+      questionFrontendId: questions.questionFrontendId,
+      title: questions.title,
+      titleSlug: questions.titleSlug,
+      difficulty: questions.difficulty,
+      acRate: questions.acRate,
+    }));
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
 module.exports = {
   getUserCalender,
   getUserSolved,
   getLeetCodeContest,
   getDailyQuestion,
   getRecentAcSubmission,
+  getSearchProblems,
 };

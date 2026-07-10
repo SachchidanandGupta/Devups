@@ -10,6 +10,7 @@ import Leaderboard from "./features/leaderboard/pages/Leaderboard";
 import Friends from "./features/friends/pages/Friends";
 import Contest from "./features/contest/pages/Contest";
 import Profile from "./features/profile/pages/Profile";
+import CreateContest from "./features/contest/pages/CreateContest";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,15 @@ export const router = createBrowserRouter([
       <ProtectedRoutes>
         <Layout>
             <Profile/>
+        </Layout>
+      </ProtectedRoutes>
+    )
+  },{
+    path:"/contest/create",
+    element:(
+      <ProtectedRoutes>
+        <Layout>
+          <CreateContest/>
         </Layout>
       </ProtectedRoutes>
     )
