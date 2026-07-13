@@ -33,23 +33,9 @@ const CreateContest = () => {
           </div>
           <form action="">
             <div className="grid grid-cols-3 gap-4 items-center justify-between">
-              <InputField
-                label="contest_name"
-                type="text"
-                id="contest_name"
-                value={contestData.contestName}
-                placeholder="ENTER_NAME..."
-                onChange={handleInput}
-              />
-              <InputField label="start_utc_time" type="datetime-local" id="start_utc_time"   />
-              <div className="flex flex-col">
-                {options.map((option)=>(
-                    <label key={option} htmlFor="">
-
-                    </label>
-                ))}
-              </div>
-              
+               <div className="col-span-1"></div>
+               <div className="col-span-1"></div>
+               <div className="col-span-1"></div>
             </div>
           </form>
         </div>
