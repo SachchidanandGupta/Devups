@@ -6,9 +6,9 @@
   --color-black: #000000;
   --color-surface: #0d0d0d;
   --color-surface-2: #111111;
-  --color-border: #ffffff66;  
+  --color-border: #ffffff66;
   --color-border-bright: #333333;
-  --color-border-white:#FFFFFF;
+  --color-border-white: #ffffff;
 
   --color-accent: #00ff88;
   --color-accent-dim: #0b2b1c;
@@ -69,7 +69,12 @@
     background: #00ff88;
   }
 
-
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1);
+  }
 
   /* Selection color */
   ::selection {

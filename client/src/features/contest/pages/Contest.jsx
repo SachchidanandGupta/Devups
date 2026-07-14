@@ -73,7 +73,7 @@ const Contest = () => {
             <div className="flex items-center justify-center">
               <button
                 onClick={() => navigate("/contest/create")}
-                className="uppercase text-text-primay border border-border px-3 py-2 cursor-pointer hover:bg-accent hover:text-black "
+                className="uppercase text-text-primay border border-border px-4 py-2 cursor-pointer hover:bg-accent hover:text-black "
               >
                 host_contest
               </button>
@@ -102,7 +102,7 @@ const Contest = () => {
             <div className="flex items-center justify-center">
               <button
                 onClick={() => navigate("/contest/create")}
-                className="uppercase text-black bg-accent border border-accent px-3 py-2 cursor-pointer hover:bg-white hover:text-black "
+                className="uppercase text-text-primay border border-border px-4 py-2 cursor-pointer hover:bg-accent hover:text-black "
               >
                 host_contest
               </button>
