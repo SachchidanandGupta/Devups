@@ -260,7 +260,7 @@ async function getSearchProblems(keyword) {
       acRate: questions.acRate,
     }));
   } catch (error) {
-    console.error(error.response?.data?.message || error.message);
+    console.error(error);
     throw error;
   }
 }
