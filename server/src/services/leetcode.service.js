@@ -1,6 +1,6 @@
 const axios = require("axios");
 const appError = require("../utils/appError");
-
+const problemModel = require("../models/problem.model");
 const LEETCODE_URL = "https://leetcode.com/graphql";
 const getUserSolvedQuery = `query getUserSolved($username: String!) {
   matchedUser(username: $username) {
@@ -54,22 +54,22 @@ const getRecentAcSubmissionQuery = `query recentAcSubmissions($username: String!
   }
 }`;
 
-const getSearchProblemsQuery = `query searchProblems($keyword: String!) {
-  problemsetQuestionList(
-    categorySlug: ""
-    limit: 10
-    skip: 0
-    filters: { searchKeywords: $keyword }
-  ) {
-    questions {
-      questionFrontendId
-      title
-      titleSlug
-      difficulty
-      acRate
-    }
-  }
-}`;
+// const getSearchProblemsQuery = `query searchProblems($keyword: String!) {
+//   problemsetQuestionList(
+//     categorySlug: ""
+//     limit: 10
+//     skip: 0
+//     filters: { searchKeywords: $keyword }
+//   ) {
+//     questions {
+//       questionFrontendId
+//       title
+//       titleSlug
+//       difficulty
+//       acRate
+//     }
+//   }
+// }`;
 
 async function getUserSolved(username) {
   try {
@@ -233,34 +233,26 @@ async function getRecentAcSubmission(username, limit) {
   }
 }
 
-async function getSearchProblems(keyword) {
+async function getSearchProblems(query) {
+  function escapeRegex(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
   try {
-    const { data } = await axios.post(
-      LEETCODE_URL,
-      {
-        query: getSearchProblemsQuery,
-        variables: { keyword },
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "User-Agent": "Mozilla/5.0",
-        },
-      },
-    );
-    const questionList = data.data.problemsetQuestionList?.questions;
-    if (!questionList) {
-      throw new Error("question not present");
-    }
-    return questionList.map((questions) => ({
-      questionFrontendId: questions.questionFrontendId,
-      title: questions.title,
-      titleSlug: questions.titleSlug,
-      difficulty: questions.difficulty,
-      acRate: questions.acRate,
-    }));
+    const search = escapeRegex(query);
+    const questionList = await problemModel
+      .find({
+        $or: [
+          { questionFrontendId: { $regex: search, $options: "i" } },
+          { title: { $regex: search, $options: "i" } },
+          { titleSlug: { $regex: search, $options: "i" } },
+        ],
+      })
+      .select("questionFrontendId title titleSlug difficulty acRate -_id")
+      .limit(10)
+      .lean();
+    return questionList;
   } catch (error) {
-    console.error(error);
+    console.error(error.response?.data?.message || error.message);
     throw error;
   }
 }
