@@ -8,17 +8,9 @@ const problemSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-
     title: {
       type: String,
       required: true,
-    },
-
-    titleSlug: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true,
     },
 
     difficulty: {
@@ -40,26 +32,15 @@ const problemSchema = new mongoose.Schema(
         },
       },
     ],
-
-    companyTags: [
-      {
-        name: String,
-      },
-    ],
-
-    isPaidOnly: {
-      type: Boolean,
-      default: false,
-    },
-
     url: {
       type: String,
       required: true,
+      unique: true,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Problem", problemSchema);
