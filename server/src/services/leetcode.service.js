@@ -54,22 +54,7 @@ const getRecentAcSubmissionQuery = `query recentAcSubmissions($username: String!
   }
 }`;
 
-// const getSearchProblemsQuery = `query searchProblems($keyword: String!) {
-//   problemsetQuestionList(
-//     categorySlug: ""
-//     limit: 10
-//     skip: 0
-//     filters: { searchKeywords: $keyword }
-//   ) {
-//     questions {
-//       questionFrontendId
-//       title
-//       titleSlug
-//       difficulty
-//       acRate
-//     }
-//   }
-// }`;
+
 
 async function getUserSolved(username) {
   try {
@@ -233,7 +218,7 @@ async function getRecentAcSubmission(username, limit) {
   }
 }
 
-async function getSearchProblems(query) {
+async function getSearchProblemsWithTitleOrNumber(query) {
   function escapeRegex(text) {
     return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
@@ -244,10 +229,9 @@ async function getSearchProblems(query) {
         $or: [
           { questionFrontendId: { $regex: search, $options: "i" } },
           { title: { $regex: search, $options: "i" } },
-          { titleSlug: { $regex: search, $options: "i" } },
         ],
       })
-      .select("questionFrontendId title titleSlug difficulty acRate -_id")
+      .select("questionFrontendId title  difficulty acRate topicTags -_id")
       .limit(10)
       .lean();
     return questionList;
@@ -262,5 +246,5 @@ module.exports = {
   getLeetCodeContest,
   getDailyQuestion,
   getRecentAcSubmission,
-  getSearchProblems,
+  getSearchProblemsWithTitleOrNumber,
 };
