@@ -218,6 +218,34 @@ async function getRecentAcSubmission(username, limit) {
   }
 }
 
+async function searchProblemsByTopicTags(tags) {
+  // tags: array of strings, e.g. ["Array", "Dynamic Programming"]
+  try {
+    const questionList = await problemModel
+      .find({ "topicTags.name": { $in: tags } })
+      .select("questionFrontendId title difficulty acRate topicTags -_id")
+      .limit(10)
+      .lean();
+    return questionList;
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
+
+async function searchProblemsByNumberPrefix(query) {
+  try {
+    const questionList = await problemModel
+      .find({ questionFrontendId: { $regex: `^${query}` } })
+      .select("questionFrontendId title difficulty acRate topicTags -_id")
+      .limit(10)
+      .lean();
+    return questionList;
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
 async function getSearchProblemsWithTitleOrNumber(query) {
   function escapeRegex(text) {
     return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
