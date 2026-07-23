@@ -54,8 +54,6 @@ const getRecentAcSubmissionQuery = `query recentAcSubmissions($username: String!
   }
 }`;
 
-
-
 async function getUserSolved(username) {
   try {
     const { data } = await axios.post(
@@ -218,12 +216,24 @@ async function getRecentAcSubmission(username, limit) {
   }
 }
 
-async function searchProblemsByTopicTags(tags) {
-  // tags: array of strings, e.g. ["Array", "Dynamic Programming"]
+function escapeRegex(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+async function getSearchProblemsWithTitleOrNumber(query) {
   try {
     const questionList = await problemModel
-      .find({ "topicTags.name": { $in: tags } })
-      .select("questionFrontendId title difficulty acRate topicTags -_id")
+      .find({
+        $or: [
+          {
+            questionFrontendId: {
+              $regex: `^${escapeRegex(query)}`,
+              $options: "i",
+            },
+          },
+          { title: { $regex: `${escapeRegex(query)}`, $options: "i" } },
+        ],
+      })
+      .select("questionFrontendId title  difficulty acRate topicTags -_id")
       .limit(10)
       .lean();
     return questionList;
@@ -233,12 +243,22 @@ async function searchProblemsByTopicTags(tags) {
   }
 }
 
-async function searchProblemsByNumberPrefix(query) {
+async function getQuestionsWithTags(tags, query) {
   try {
+    const filter = {};
+    if (tags && tags.length > 0) {
+      filter["topicTags.name"] = { $in: tags };
+    }
+    if (query && query.trim() !== "") {
+      const search = escapeRegex(query.trim());
+      filter.$or = [
+        { questionFrontendId: { $regex: `^${search}` } },
+        { title: { $regex: search, $options: "i" } },
+      ];
+    }
     const questionList = await problemModel
-      .find({ questionFrontendId: { $regex: `^${query}` } })
+      .find(filter)
       .select("questionFrontendId title difficulty acRate topicTags -_id")
-      .limit(10)
       .lean();
     return questionList;
   } catch (error) {
@@ -246,23 +266,11 @@ async function searchProblemsByNumberPrefix(query) {
     throw error;
   }
 }
-async function getSearchProblemsWithTitleOrNumber(query) {
-  function escapeRegex(text) {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
+
+async function getAllTopicTags() {
   try {
-    const search = escapeRegex(query);
-    const questionList = await problemModel
-      .find({
-        $or: [
-          { questionFrontendId: { $regex: search, $options: "i" } },
-          { title: { $regex: search, $options: "i" } },
-        ],
-      })
-      .select("questionFrontendId title  difficulty acRate topicTags -_id")
-      .limit(10)
-      .lean();
-    return questionList;
+    const topicTags = await problemModel.distinct("topicTags.name");
+    return topicTags;
   } catch (error) {
     console.error(error.response?.data?.message || error.message);
     throw error;
@@ -275,4 +283,6 @@ module.exports = {
   getDailyQuestion,
   getRecentAcSubmission,
   getSearchProblemsWithTitleOrNumber,
+  getQuestionsWithTags,
+  getAllTopicTags,
 };
