@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TopBar from "../../../shared/components/TopBar";
 import { IoSearchSharp } from "react-icons/io5";
 import useLeetcode from "../../leetcode/hooks/useLeetcode";
+import { Link } from "react-router";
 const CreateContest = () => {
   const { problemsSearch, searchQuestions, searchLoading } = useLeetcode();
   const [selected, setSelected] = useState("");
@@ -124,9 +125,16 @@ const CreateContest = () => {
             </div>
           </div>
           <div className="border border-border flex flex-col gap-4 p-4 uppercase">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-accent"></div>
-              <span className="text-accent">problem_selection_protocol</span>
+            <div className="flex items-center justify-between ">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-accent"></div>
+                <span className="text-accent">problem_selection_protocol</span>
+              </div>
+              <Link to={"/contest/explore"}>
+                <span className="text-accent hover:underline text-xs ">
+                  Explore_nodes
+                </span>
+              </Link>
             </div>
             {/* search for questions */}
             <div className="flex gap-2 items-center border border-border p-4 justify-between">
@@ -140,8 +148,12 @@ const CreateContest = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full h-full focus:outline-none text-accent placeholder:text-text-secondary"
               />
-              <span className="text-text-mute
-              d text-xs">debounce_300ms</span>
+              <span
+                className="text-text-mute
+              d text-xs"
+              >
+                debounce_300ms
+              </span>
             </div>
             <div className="grid grid-cols-9  gap-4  border-b border-border p-2 ">
               <span className="text-text-muted text-xs col-span-1 ">ID</span>
@@ -155,6 +167,27 @@ const CreateContest = () => {
                 ACTION
               </span>
             </div>
+            {problemsSearch.length > 0 ? (
+              <div>
+
+              </div>
+            ) : (
+              <div className=" flex items-center justify-center border border-dashed border-border h-50">
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-text-secondary">
+                    ADD_QUESTIONS_TERMINAL
+                  </span>
+                  <span className="text-text-muted text-sm">
+                    visit_either_explore_or_search_questions
+                  </span>
+                  <Link to={"/contest/explore"}>
+                    <button className="text-accent border border-accent px-4 py-2 text-sm hover:bg-accent hover:text-black cursor-pointer active:bg-danger active:text-text-primary active:border-danger ">
+                      EXPLORE_NODES
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </form>
