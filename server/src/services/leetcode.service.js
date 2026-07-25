@@ -233,7 +233,9 @@ async function getSearchProblemsWithTitleOrNumber(query) {
           { title: { $regex: `${escapeRegex(query)}`, $options: "i" } },
         ],
       })
-      .select("questionFrontendId title  difficulty acRate topicTags -_id")
+      .select(
+        "questionFrontendId title titleSlug  difficulty acRate topicTags -_id",
+      )
       .limit(10)
       .lean();
     return questionList;
@@ -258,7 +260,9 @@ async function getQuestionsWithTags(tags, query) {
     }
     const questionList = await problemModel
       .find(filter)
-      .select("questionFrontendId title difficulty acRate topicTags -_id")
+      .select(
+        "questionFrontendId title titleSlug difficulty acRate topicTags -_id",
+      )
       .lean();
     return questionList;
   } catch (error) {
