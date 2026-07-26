@@ -2,13 +2,12 @@ import React from "react";
 import Avatar from "../../../shared/components/Avatar";
 
 const InviteFriend = ({ friendList, removeInvite, addInvite }) => {
-  console.log("friends:", friendList);
   const totalRecords = friendList.length;
 
   return (
     <div
       className={`
-        grid w-full border border-border h-40 overflow-y-auto
+        grid w-full border border-border max-h-40 overflow-y-auto
         ${totalRecords === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}
       `}
     >

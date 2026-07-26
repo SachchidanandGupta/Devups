@@ -3,7 +3,6 @@ import Avatar from "./Avatar";
 import { Link } from "react-router";
 
 const Dropdown = ({ searchUsers, dropdownRef, user }) => {
-  console.log(searchUsers);
   return (
     <div
       className="flex flex-col absolute w-full mt-1 border border-accent-muted bg-surface-2 z-50"
@@ -16,7 +15,7 @@ const Dropdown = ({ searchUsers, dropdownRef, user }) => {
       {searchUsers && searchUsers.length > 0 ? (
         <div className="max-h-[300px] overflow-y-auto">
           {searchUsers.map((s) => (
-            <Link to={`/profile/${s._id}`}>
+            <Link key={s._id} to={`/profile/${s._id}`}>
               <div
                 className="flex items-center hover:bg-accent-dim justify-between gap-2 border-b py-2 bg-surface-2 border-border p-2"
                 key={s._id}

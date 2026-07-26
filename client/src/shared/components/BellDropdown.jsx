@@ -25,7 +25,7 @@ const BellDropdown = ({ contest, requests }) => {
                   <Avatar data={s.requester} />
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm">
-                      {s.requester.username}//
+                      {s.requester.username}{" "}//
                     </span>
                     <span className="text-accent text-xs font-semibold">
                       lvl:{s.requester.level}
@@ -49,7 +49,7 @@ const BellDropdown = ({ contest, requests }) => {
                   className="flex gap-2 flex-start p-2 border-b border-t border-border items-center bg-surface-2"
                 >
                   <div className="flex flex-col">
-                    <span className="font-semibold text-sm">
+                    <span className="font-semibold text-sm uppercase">
                       {s.contestName}//
                     </span>
                     <span className="text-accent text-xs font-semibold">

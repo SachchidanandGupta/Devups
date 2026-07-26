@@ -11,6 +11,8 @@ import Friends from "./features/friends/pages/Friends";
 import Contest from "./features/contest/pages/Contest";
 import Profile from "./features/profile/pages/Profile";
 import CreateContest from "./features/contest/pages/CreateContest";
+import YourContest from "./features/contest/pages/YourContest";
+import ExploreQuestions from "./features/contest/pages/ExploreQuestions";
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +77,24 @@ export const router = createBrowserRouter([
       <ProtectedRoutes>
         <Layout>
           <CreateContest/>
+        </Layout>
+      </ProtectedRoutes>
+    )
+  },{
+    path:"/contest/explore",
+    element:(
+      <ProtectedRoutes>
+        <Layout>
+          <ExploreQuestions/>
+        </Layout>
+      </ProtectedRoutes>
+    )
+  },{
+    path:"/yourContest",
+    element:(
+      <ProtectedRoutes>
+        <Layout>
+          <YourContest/>
         </Layout>
       </ProtectedRoutes>
     )

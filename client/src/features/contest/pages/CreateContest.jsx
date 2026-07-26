@@ -7,20 +7,28 @@ import SearchDropDown from "../components/SearchDropDown";
 import useFriend from "../../friends/hooks/useFriend";
 import { MdPersonAddAlt } from "react-icons/md";
 import InviteFriend from "../components/InviteFriend";
+import useContest from "../hooks/useContest";
+import { useNavigate } from "react-router";
 const CreateContest = () => {
   const { problemsSearch, searchQuestions, searchLoading } = useLeetcode();
   const { friends, fetchFriends } = useFriend();
-  const [selected, setSelected] = useState("");
+  const { initiateContest } = useContest();
+  const navigate = useNavigate();
+  const [selected, setSelected] = useState("2");
   const [query, setQuery] = useState("");
   const [inivitedIds, setInivitedIds] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProblems, setSelectedProblems] = useState([]);
+  const [formError, setFormError] = useState("");
   const searchRef = useRef(null);
   const options = ["0.5", "1.5", "2", "3", "4", "6"];
   const [contestData, setContestData] = useState({
     contestName: "",
-    contestStartTime: "",
-    contestDuration: "",
+    startTime: "",
+    contestDuration: "2",
+    endTime: "",
+    participantIds: [],
+    problems: [],
   });
   useEffect(() => {
     fetchFriends();
@@ -108,13 +116,65 @@ const CreateContest = () => {
   const handleRemoveInvite = (friendId) => {
     setInivitedIds((prev) => prev.filter((p) => p !== friendId));
   };
-  console.log("inviteIds:", inivitedIds);
+
+  const computeEndTime = (startTime, duration) => {
+    const StartDate = new Date(startTime);
+    console.log(duration);
+    const durationMs = parseFloat(duration) * 60 * 60 * 1000;
+    return new Date(StartDate.getTime() + durationMs).toISOString();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (selectedProblems.length === 0) {
+      setFormError("Select_at_least_one_problem_to_continue.");
+      return;
+    }
+
+    if (inivitedIds.length === 0) {
+      setFormError("Invite_at_least_one_friend_to_continue.");
+      return;
+    }
+
+    setFormError("");
+
+    const startTimeISO = new Date(contestData.startTime).toISOString();
+    const endTimeISO = computeEndTime(
+      contestData.startTime,
+      contestData.contestDuration,
+    );
+
+    const payload = {
+      contestName: contestData.contestName,
+      startTime: startTimeISO,
+      endTime: endTimeISO,
+      participantIds: inivitedIds,
+      problems: selectedProblems.map((p) => ({
+        platform: p.platform,
+        titleSlug: p.titleSlug,
+        title: p.title,
+        difficulty: p.difficulty,
+      })),
+    };
+
+    try {
+      await initiateContest(payload);
+      navigate("/contest"); 
+    } catch (error) {
+      setFormError("Contest_creation_failed. Try again.");
+    }
+  };
 
   return (
-    <div className="font-mono">
+    <div className="font-mono relative min-h-full">
       <TopBar pageField={"create_session"} />
-      <form>
-        <div className="w-full p-2 sm:p-4 flex flex-col gap-4 font-mono">
+
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col min-h-[calc(100vh-4rem)]"
+      >
+        <div className="w-full p-2 sm:p-4 flex flex-col gap-4 font-mono grow">
           <div className="border border-border-white flex flex-col gap-4 p-4 bg-surface">
             <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-2 sm:gap-0 uppercase">
               <div className="flex items-center gap-2">
@@ -142,25 +202,32 @@ const CreateContest = () => {
                   placeholder="ENTER_NAME..."
                   value={contestData.contestName}
                   onChange={handleInput}
-                  className="border border-border py-3 px-2 focus:border-accent focus:outline-none text-accent placeholder:text-text-muted w-full"
+                  required
+                  className="border border-border py-3 px-2 focus:border-accent focus:outline-none text-accent placeholder:text-text-muted w-full
+                  [&:-webkit-autofill]:border-accent
+                [&:-webkit-autofill]:ring-2
+              [&:-webkit-autofill]:ring-accent
+                [&:-webkit-autofill]:[-webkit-text-fill-color:#00ff88]
+                [&:-webkit-autofill]:shadow-[0_0_0_2px_#00ff88,inset_0_0_0_1000px_#0d0d0d]"
                 />
               </div>
               <div className="flex flex-col gap-1">
                 <label
-                  htmlFor="contestStartTime"
+                  htmlFor="startTime"
                   className="text-text-secondary text-sm"
                 >
                   start_time_utc
                 </label>
 
                 <input
-                  id="contestStartTime"
-                  name="contestStartTime"
+                  id="startTime"
+                  name="startTime"
                   type="datetime-local"
                   min={getCurrentDateTime()}
-                  value={contestData.contestStartTime}
+                  value={contestData.startTime}
                   onChange={handleInput}
-                  className="border border-border py-3 px-2 focus:border-accent focus:outline-none text-text-primary w-full"
+                  required
+                  className="border border-border py-3 px-2 focus:border-accent focus:outline-none  text-accent w-full"
                 />
               </div>
 
@@ -170,13 +237,13 @@ const CreateContest = () => {
                   contest_duration_protocol
                 </label>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 w-full">
                   {options.map((option) => (
                     <button
                       key={option}
                       type="button"
                       onClick={() => handleDurationSelect(option)}
-                     className={`flex-1 min-w-[3.5rem] h-10 flex items-center justify-center border transition-all duration-200 cursor-pointer ${
+                      className={`flex-1 min-w-[3.5rem] h-10 flex items-center justify-center border transition-all duration-200 cursor-pointer ${
                         selected === option
                           ? "bg-accent text-black border-accent"
                           : "border-border text-text-secondary hover:border-accent hover:text-accent"
@@ -297,7 +364,10 @@ const CreateContest = () => {
                   ADD_QUESTIONS_NODES
                 </span>
                 <Link to={"/contest/explore"}>
-                  <button className="px-4 py-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors"
+                  >
                     EXPLORE_QUESTIONS
                   </button>
                 </Link>
@@ -330,12 +400,52 @@ const CreateContest = () => {
                   no_peer_connection_detected
                 </span>
                 <Link to={"/friends"}>
-                  <button className="px-4 py-2 flex items-center gap-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors">
+                  <button
+                    type="button"
+                    className="px-4 py-2 flex items-center gap-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors"
+                  >
                     <MdPersonAddAlt /> INITIALISE_UPLINK
                   </button>
                 </Link>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* BOTTOM ACTION BAR - Changed from fixed to sticky */}
+        <div className="uppercase w-full p-4 sm:px-8 h-auto sm:h-20 bg-surface-2 border-t border-border-white sticky bottom-0 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 z-50">
+          <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
+            <span className="text-text-muted text-xs">validation_status</span>
+            <div className="flex gap-2 items-center">
+              <div
+                className={`h-2 w-2 ${formError ? "bg-danger" : "bg-accent animate-pulse"}`}
+              ></div>
+              <span
+                className={
+                  formError
+                    ? "text-danger text-sm sm:text-base"
+                    : "text-accent text-sm sm:text-base"
+                }
+              >
+                {formError || "ready_for_uplink"}
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <Link to={"/contest"} className="flex-1 sm:flex-none">
+              <button
+                type="button"
+                className="w-full sm:w-auto uppercase text-danger border border-danger text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-danger hover:text-text-primary text-center"
+              >
+                abort_session
+              </button>
+            </Link>
+            <button
+              type="submit"
+              className="flex-1 sm:flex-none uppercase bg-accent text-text-secondary text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-white text-center font-bold"
+            >
+              INITIALISE_CONTEST_UPLINK
+            </button>
           </div>
         </div>
       </form>

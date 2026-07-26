@@ -63,6 +63,7 @@ const useContest = () => {
       useContestStore
         .getState()
         .setError(error.response?.data?.message || error.message);
+      throw error;
     } finally {
       useContestStore.getState().setIsLoading(false);
     }
