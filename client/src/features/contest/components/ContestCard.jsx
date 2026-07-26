@@ -48,7 +48,7 @@ const ContestCard = ({ contest }) => {
       : null;
 
   return (
-    <div className="flex items-center px-4 py-3 border border-border hover:bg-surface-2 transition-colors font-mono">
+    <div className="flex items-center px-4 py-3 border border-border hover:bg-surface-2 transition-colors font-sans">
   
   <div className="w-24 shrink-0">
     {timeLeft === "LIVE_NOW" ? (

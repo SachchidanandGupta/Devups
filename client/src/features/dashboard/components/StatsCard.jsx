@@ -11,10 +11,10 @@ const StatsCard = ({user}) => {
     <div>
        {isLoading ? <div>
         <StatsCardSkeleton/>
-       </div> :<div className="flex flex-col h-full w-full gap-4 font-mono">
+       </div> :<div className="flex flex-col h-full w-full gap-4 font-sans">
       <XPbar user={user}  />
       <div className="flex flex-col w-full h-full bg-black">
-        <div className="uppercase bg-surface-2 flex justify-between items-center px-4 py-2 w-full border border-border">
+        <div className="uppercase bg-surface-2 flex justify-between items-center px-4 py-2 w-full border border-border-white">
           <span className="text-sm font-bold tracking-widest text-text-primary truncate pr-4">
             Intelligence_wing_metrics
           </span>
@@ -23,7 +23,7 @@ const StatsCard = ({user}) => {
           </span>
         </div>
 
-        <div className="w-full p-4 border border-t-0 border-border flex flex-col gap-5">
+        <div className="w-full p-4 border border-t-0 border-border-white flex flex-col gap-5">
           <div className="text-text-secondary pb-2 text-xs uppercase tracking-widest border-b border-border">
             QUERY_RESOLUTION_DISTRIBUTION
           </div>

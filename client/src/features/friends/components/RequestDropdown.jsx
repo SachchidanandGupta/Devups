@@ -3,7 +3,7 @@ import Avatar from "../../../shared/components/Avatar";
 
 const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
   return (
-    <div ref={dropdownRef} className=" absolute top-1 w-full h-50">
+    <div ref={dropdownRef} className=" absolute top-1 w-full h-50 font-sans">
       {requests.length > 0 ? (
         <div className="w-full h-full">
           <div className="absolute top-12 w-full mt-1 flex flex-col"></div>
@@ -57,7 +57,7 @@ const RequestDropdown = ({ requests, accept, decline, dropdownRef }) => {
             <span className="text-accent text-sm font-bold tracking-wider uppercase">
               no_pending_requests
             </span>
-            <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-mono uppercase">
+            <span className="text-text-muted text-[10px] opacity-70 tracking-widest uppercase">
               SYSTEM_IDLE // UPLINK_CLEAR
             </span>
           </div>

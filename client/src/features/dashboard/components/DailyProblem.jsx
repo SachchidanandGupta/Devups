@@ -36,7 +36,7 @@ const DailyProblem = () => {
            <DailyProblemSkeleton/>
         </div>
       ) : (
-        <div className="border border-border h-full flex flex-col ">
+        <div className="border border-border-white h-full flex flex-col ">
           <div className="  p-2 flex justify-between items-center border-b border-border bg-surface-2">
             <span className="uppercase text-text-primary text-xm ">
               activity_mission_protocol
@@ -53,13 +53,13 @@ const DailyProblem = () => {
               <div className="uppercase text-xl font-semibold">
                 {questionNumber}. {changeString(title)}
               </div>
-              <div className="text-sm text-text-secondary">{description}</div>
+              <div className="text-sm text-text-secondary uppercase">{description}</div>
               <div className="w-1/2 flex gap-5 items-center  ">
                 <div className="flex flex-col flex-start ">
                   <span className="text-xs text-text-muted  uppercase">
                     success_rate
                   </span>
-                  <span className="text-text-primary  font-mono font-bold">
+                  <span className="text-text-primary  font-sans font-bold">
                     {acRate}%
                   </span>
                 </div>
@@ -67,7 +67,7 @@ const DailyProblem = () => {
                   <span className="text-xs text-text-muted  uppercase">
                     avg_exec_time
                   </span>
-                  <span className="text-text-primary  font-mono font-bold">
+                  <span className="text-text-primary  font-sans font-bold">
                     {executionRate}MS
                   </span>
                 </div>

@@ -42,10 +42,10 @@ const SideNavbar = () => {
   };
 
   return (
-    <div className="h-screen w-60 bg-black border-r border-border-white flex flex-col font-mono select-none z-50">
+    <div className="h-screen w-60 bg-black border-r border-border-white flex flex-col font-sans select-none z-50">
       <div className="pl-6 py-2">
-        <p className="text-accent font-mono font-bold text-3xl ">DevUps</p>
-        <p className="text-text-muted font-mono text-sm">Terminal v1.0.4</p>
+        <p className="text-accent  font-bold text-3xl ">DevUps</p>
+        <p className="text-text-secondary  text-sm">Terminal v1.0.4</p>
       </div>
 
       <div className="flex flex-col gap-2 p-3 mt-4 flex-1">
@@ -63,7 +63,7 @@ const SideNavbar = () => {
                 }`}
               >
                 <Icon size={22} className={`${isActive ? "scale-95" : ""}`} />
-                <p className="font-mono uppercase text-sm">{item.name}</p>
+                <p className=" uppercase text-sm">{item.name}</p>
               </div>
             </Link>
           );
@@ -74,7 +74,7 @@ const SideNavbar = () => {
         <div className="flex items-center gap-3 bg-black p-2 rounded-none">
           <button
             onClick={handleLogout}
-            className="p-2 text-text-secondary gap-4 flex w-full items-center justify-items-start cursor-pointer hover:text-danger hover:bg-danger-dim rounded-none transition-colors duration-200"
+            className="p-2 text-text-primary gap-4 flex w-full items-center justify-items-start cursor-pointer hover:text-danger hover:bg-danger-dim rounded-none transition-colors duration-200"
             title="Logout"
           >
              <FiLogOut size={18} />LOGOUT

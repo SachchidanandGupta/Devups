@@ -21,7 +21,7 @@ const AddFriendDrop = ({ close, addRef, search, results, setSearchResult }) => {
   console.log(results);
  
   return (
-    <div className="absolute top-1 right-0 w-[350px] h-[400px] border border-border bg-surface-2 flex flex-col uppercase font-mono z-50 shadow-2xl">
+    <div className="absolute top-1 right-0 w-[350px] h-[400px] border border-border bg-surface-2 flex flex-col uppercase font-sans z-50 shadow-2xl">
       <div className="flex items-center justify-between px-2 py-1.5 bg-text-muted shrink-0 border-b border-border">
         <span className="text-accent text-sm font-bold tracking-widest">
           uplink_new_peer
@@ -63,7 +63,7 @@ const AddFriendDrop = ({ close, addRef, search, results, setSearchResult }) => {
                   <span className="text-text-primary text-sm font-bold tracking-wider">
                     {user.username}
                   </span>
-                  <span className="text-accent text-xs font-mono tracking-widest">
+                  <span className="text-accent text-xs font-sans tracking-widest">
                     LVL: {user.level}
                   </span>
                 </div>

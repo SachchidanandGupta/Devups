@@ -13,15 +13,15 @@ const InputField = ({
 }) => {
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="flex justify-between font-sans">
         <label
           htmlFor={id}
-          className="block text-sm font-mono uppercase text-text-secondary mb-1"
+          className="block text-sm  uppercase text-text-secondary mb-1"
         >
           {label}
         </label>
         {define ? (
-          <span className="uppercase font-mono text-accent-muted text-sm">
+          <span className="uppercase animate-pulse  text-accent text-sm">
             [{define}]
           </span>
         ) : (
@@ -49,7 +49,7 @@ ${
           <PiGreaterThanBold size={20} />
         </div>
         {error && (
-          <p className="mt-1.5 text-xs font-mono text-danger">{error}</p>
+          <p className="mt-1.5 text-xs font-sans text-danger">{error}</p>
         )}
       </div>
     </div>

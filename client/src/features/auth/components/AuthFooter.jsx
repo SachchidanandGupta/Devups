@@ -2,7 +2,7 @@ import React from "react";
 
 const AuthFooter = () => {
   return (
-    <div className="fixed bottom-0 left-0 w-full px-4 py-2 flex flex-col sm:flex-row justify-between items-center gap-3 bg-surface-2 border-t border-border font-mono z-50">
+    <div className="fixed bottom-0 left-0 w-full px-4 py-2 flex flex-col sm:flex-row justify-between items-center gap-3 bg-surface-2 border-t border-border font-sans z-50">
       <div className="flex flex-wrap justify-center sm:justify-start items-center gap-4 sm:gap-6 w-full sm:w-auto">
         <span className="text-accent font-bold text-xs sm:text-sm tracking-widest shrink-0">
           DEVUPS_OS

@@ -69,7 +69,7 @@ const BellDropdown = ({ contest, requests }) => {
             no_active_notification
           </span>
 
-          <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-mono">
+          <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-sans text-nowrap">
             system_idle // all_uplink_stable
           </span>
         </div>

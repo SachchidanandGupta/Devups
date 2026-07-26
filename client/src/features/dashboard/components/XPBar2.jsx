@@ -7,9 +7,9 @@ const XPbar = ({ user }) => {
   const xpToNextLevel = requiredXP - currentXP;
 
   return (
-    <div className="w-full flex flex-col font-mono gap-2 p-4 border border-border bg-black">
+    <div className="w-full flex flex-col font-sans gap-2 p-4 border border-border-white bg-black">
       <div className="flex items-end justify-between gap-4 min-w-0">
-        <span className="uppercase text-accent font-bold text-base sm:text-lg truncate flex-1 block">
+        <span className="uppercase text-accent font-bold text-base sm:text-md truncate flex-1 block">
           LVL {level}_Stability_uplink
         </span>
         <span className="text-xs sm:text-sm text-text-secondary font-bold shrink-0 mb-0.5">

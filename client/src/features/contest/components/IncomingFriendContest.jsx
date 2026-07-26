@@ -13,7 +13,7 @@ const IncomingFriendContest = ({ contest, onAccept, onReject }) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-text-secondary font-bold font-mono text-xl bg-surface-2">
+            <div className="w-full h-full flex items-center justify-center text-text-secondary font-bold font-sans text-xl bg-surface-2">
               {creator.username
                 ? creator.username.charAt(0).toUpperCase()
                 : "U"}

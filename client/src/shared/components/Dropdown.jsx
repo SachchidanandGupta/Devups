@@ -26,7 +26,7 @@ const Dropdown = ({ searchUsers, dropdownRef, user }) => {
                     <span className="text-text-primary text-sm first-letter:uppercase font-bold">
                       {s.username}
                     </span>
-                    <span className="text-[10px] text-accent font-mono uppercase tracking-widest">
+                    <span className="text-[10px] text-accent  uppercase tracking-widest">
                       LVL:{s.level}
                     </span>
                   </div>
@@ -41,7 +41,7 @@ const Dropdown = ({ searchUsers, dropdownRef, user }) => {
           <span className="text-accent text-sm font-bold tracking-wider uppercase">
             user_not_found
           </span>
-          <span className="text-text-muted text-[10px] opacity-70 tracking-widest font-mono uppercase">
+          <span className="text-text-secondary text-[10px] opacity-70 tracking-widest  uppercase">
             ERR_NO_MATCH_IN_DATABASE
           </span>
         </div>

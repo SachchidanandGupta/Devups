@@ -88,7 +88,7 @@ const FriendContestCard = ({ contest, onComplete }) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-text-secondary font-bold font-mono text-xl bg-surface-2">
+              <div className="w-full h-full flex items-center justify-center text-text-secondary font-bold font-sans text-xl bg-surface-2">
                 {creator.username
                   ? creator.username.charAt(0).toUpperCase()
                   : "U"}
@@ -97,7 +97,7 @@ const FriendContestCard = ({ contest, onComplete }) => {
           </div>
 
           <div className="flex flex-col min-w-0 flex-1">
-            <h1 className="font-semibold text-lg sm:text-xl font-mono text-text-primary uppercase truncate group-hover:text-accent transition-colors">
+            <h1 className="font-semibold text-lg sm:text-xl font-sans text-text-primary uppercase truncate group-hover:text-accent transition-colors">
               {creator._id === currentUserId
                 ? participants.length > 2
                   ? `YOUR_CHALLENGE + ${participants.length - 2} OTHERS`
@@ -154,7 +154,7 @@ const FriendContestCard = ({ contest, onComplete }) => {
           return (
             <div
               key={participant._id}
-              className="flex flex-col w-full font-mono"
+              className="flex flex-col w-full font-sans"
             >
               <div className="flex w-full justify-between items-center mb-1">
                 <span className="text-xs sm:text-sm text-text-primary group-hover:text-accent font-medium truncate pr-4">

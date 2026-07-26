@@ -13,7 +13,7 @@ const PlatformCard = ({ platfromUsername, platfrom, style }) => {
   )?.icon;
 
   return (
-    <div className="w-full border border-border uppercase p-4 hover:border-accent flex flex-col justify-start bg-surface-2 font-mono transition-colors min-w-0">
+    <div className="w-full border border-border uppercase p-4 hover:border-accent flex flex-col justify-start bg-surface-2 font-sans transition-colors min-w-0">
       <span className="text-text-secondary text-xs">{platfrom}_id</span>
 
       {platfromUsername ? (

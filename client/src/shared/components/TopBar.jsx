@@ -70,7 +70,7 @@ const TopBar = ({ pageField, searchBar }) => {
   return (
     <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border-white">
       <div className="flex items-center gap-4 ">
-        <h2 className="text-2xl font-semibold sm:text-2xl font-mono text-accent uppercase">
+        <h2 className="text-2xl font-semibold sm:text-2xl font-sans text-accent uppercase">
           {pageField}
         </h2>
       </div>

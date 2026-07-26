@@ -23,7 +23,7 @@ const FriendStatusButton = ({
    */
   const {userId} = useParams(); 
   return (
-    <div className="flex flex-col justify-end items-center sm:items-end shrink-0">
+    <div className="flex flex-col justify-end items-center sm:items-end shrink-0 font-sans">
       {friendStatus === "not_friends" && (
         <button onClick={()=>onAdd(userId)} className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto">
           <span>INITIALIZE_UPLINK</span> <MdPersonAddAlt />

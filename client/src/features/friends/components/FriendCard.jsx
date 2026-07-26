@@ -15,20 +15,20 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 
   return (
-    <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-mono transition-colors">
+    <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-sans transition-colors">
       <div className="flex items-center gap-3 flex-1 overflow-hidden">
         <Avatar data={friend} />
         <div className="flex flex-col flex-start">
-          <span className="text-text-primary text-xl uppercase truncate font-mono ">
+          <span className="text-text-primary text-xl uppercase truncate  ">
             {username}
           </span>
           {isOnline ? (
-            <span className="text-accent text-xs font-light  uppercase font-mono">
-              online
+            <span className="text-accent text-xs font-light  uppercase ">
+             // online
             </span>
           ) : (
-            <span className="text-text-secondary text-xs font-light uppercase font-mono">
-              offline
+            <span className="text-text-secondary text-xs font-light uppercase ">
+             // offline
             </span>
           )}
         </div>
@@ -58,20 +58,20 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
 
       <div className="flex-1 flex gap-2 justify-end">
         <Link to={`/profile/${_id}`}>
-          <button className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-accent font-mono transition-colors">
+          <button className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-accent  transition-colors">
             PROFILE
           </button>
         </Link>
 
         <button
           onClick={() => onUnfriend(_id)}
-          className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-danger font-mono transition-colors"
+          className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-danger  transition-colors"
         >
           REMOVE
         </button>
         <button
           onClick={() => onBlock(_id)}
-          className="border border-border text-danger text-xs px-2 py-1 hover:bg-danger hover:text-text-primary cursor-pointer font-mono transition-colors"
+          className="border border-border text-danger text-xs px-2 py-1 hover:bg-danger hover:text-text-primary cursor-pointer  transition-colors"
         >
           BLOCK
         </button>

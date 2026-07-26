@@ -89,7 +89,7 @@ const Profile = () => {
       : (logEntries = "0" + logEntries);
   }
   return (
-    <div className="flex flex-col bg-black min-h-screen font-mono relative overflow-auto scrollbar-none ">
+    <div className="flex flex-col bg-black min-h-screen font-sans relative overflow-auto scrollbar-none ">
       <TopBar pageField={"system_user_terminal"} searchBar={true} />
       {isEditPopUpOpen && (
         <div>
@@ -101,14 +101,15 @@ const Profile = () => {
           />
         </div>
       )}
-      <div className="w-full p-4 gap-4 flex flex-col font-mono ">
+      <div className="w-full p-4 gap-4 flex flex-col font-sans ">
         {isLoading ? (
           <ProfileSkeleton />
         ) : (
           <div className="flex flex-col w-full gap-4 ">
+            {/* Personal Data // Edit nodes */}
             <div className="w-full flex flex-col lg:grid lg:grid-cols-3 gap-4">
-              <div className="relative lg:col-span-2 flex flex-col justify-end border border-border bg-black ">
-                <div className="absolute right-0 top-0 border-l border-b border-border p-1.5 sm:p-2 text-[10px] sm:text-xs uppercase text-text-secondary tracking-widest bg-black">
+              <div className="relative lg:col-span-2 flex flex-col justify-end border border-border-white bg-black ">
+                <div className="absolute right-0 top-0 border-l border-b border-border-white p-1.5 sm:p-2 text-[10px] sm:text-xs uppercase text-text-secondary tracking-widest bg-black">
                   secure_session_active
                 </div>
 
@@ -151,7 +152,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-1 flex flex-col gap-2 font-mono border border-border p-4 bg-black">
+              <div className="lg:col-span-1 flex flex-col gap-2  border border-border-white p-4 bg-black">
                 <div className="flex p-2 justify-between items-center border-b border-border text-xs sm:text-sm min-w-0">
                   <span className="text-text-secondary shrink-0">_id:</span>
                   <span className="text-text-primary truncate ml-2">
@@ -186,14 +187,14 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-
+            {/* Platfrom Cards */}
             <div className="w-full flex flex-col lg:grid lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 border border-border p-4 sm:p-6 flex flex-col gap-4 bg-black">
+              <div className="lg:col-span-2 border border-border-white p-4 sm:p-6 flex flex-col gap-4 bg-black">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <span className="text-base sm:text-lg text-accent font-bold tracking-widest">
                     EXTERNAL_SYNC_NODES
                   </span>
-                  <span className="text-text-muted text-[10px] sm:text-xs uppercase tracking-widest">
+                  <span className="text-text-secondary text-[10px] sm:text-xs uppercase tracking-widest">
                     STATUS: SYNCHRONIZED
                   </span>
                 </div>
@@ -217,7 +218,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-1 border border-border flex flex-col items-center justify-center p-6 gap-6 bg-black">
+              <div className="lg:col-span-1 border border-border-white flex flex-col items-center justify-center p-6 gap-6 bg-black">
                 <div className="flex flex-col gap-1 items-center justify-center text-center">
                   <span className="text-text-secondary text-sm sm:text-base uppercase tracking-widest">
                     global_ranking
@@ -234,22 +235,25 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-
+            {/* Github HeatMap */}
             <div className="w-full flex flex-col lg:grid lg:grid-cols-4 gap-4 ">
               {profile?.githubUsername ? (
                 <div className="lg:col-span-3  bg-black ">
                   {userId && <GithubHeatmap userId={userId} />}
                 </div>
               ) : (
-                <div className="lg:col-span-3 flex flex-col gap-4 p-4 bg-black border border-border">
+                <div className="lg:col-span-3 flex flex-col gap-4 p-4 bg-black border border-border-white">
                   <div className="text-accent font-bold tracking-widest">
                     COMMIT_VELOCITY // LINK_REQUIRED
                   </div>
-                  <div className="border border-dashed border-accent-dim flex flex-col gap-4 items-center justify-center w-full min-h-[200px]">
+                  <div className="border border-dashed border-accent-muted flex flex-col gap-4 items-center justify-center w-full min-h-[200px]">
                     <span className="text-text-muted animate-pulse font-bold tracking-widest">
                       [NO_DATA_SIGNAL]
                     </span>
-                    <button className="text-accent border flex gap-2 items-center border-accent px-5 py-2 cursor-pointer hover:bg-accent hover:text-black transition-colors uppercase font-bold tracking-wider active:bg-danger active:text-text-primary active:border-danger">
+                    <button
+                      onClick={() => setIsEditPopUpOpen(true)}
+                      className="text-accent border flex gap-2 items-center border-accent px-5 py-2 cursor-pointer hover:bg-accent hover:text-black transition-colors uppercase font-bold tracking-wider active:bg-danger active:text-text-primary active:border-danger"
+                    >
                       <FaGithub size={16} />
                       <span>INITIALIZE_GITHUB_NODE</span>
                     </button>
@@ -257,12 +261,9 @@ const Profile = () => {
                 </div>
               )}
 
-              <div className="lg:col-span-1 border border-border bg-black flex flex-col min-h-[200px] max-h-[300px]">
+              <div className="lg:col-span-1 border border-border-white bg-black flex flex-col max-h-[220px]">
                 <div className="text-accent text-sm sm:text-base font-bold tracking-widest flex items-center justify-between p-3 border-b border-border uppercase">
                   <span>connected_peers</span>
-                  <div className="text-text-secondary hover:bg-accent hover:text-black cursor-pointer transition-colors p-1 border border-transparent hover:border-accent">
-                    <BsThreeDotsVertical />
-                  </div>
                 </div>
 
                 {friends.length > 0 ? (
@@ -286,15 +287,15 @@ const Profile = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="flex-1 p-4 flex items-center justify-center text-text-muted text-xs tracking-widest uppercase">
+                  <div className="flex-1 p-4  flex items-center justify-center text-text-muted text-xs tracking-widest uppercase">
                     NO_PEERS_DETECTED
                   </div>
                 )}
               </div>
             </div>
-
+            {/* Trophy Cases */}
             <div className="w-full flex flex-col gap-4 uppercase">
-              <div className="border border-border p-4 sm:p-6 flex flex-col gap-4 bg-black">
+              <div className="border border-border-white p-4 sm:p-6 flex flex-col gap-4 bg-black">
                 <div className="flex justify-between items-center  pb-4">
                   <div className="text-accent sm:text-lg font-bold tracking-widest">
                     ARCHIVE_PROTOCOL // CONTEST_HISTORY
@@ -363,7 +364,7 @@ const Profile = () => {
                             <span className="col-span-1 text-sm text-text-primary font-bold truncate pr-2">
                               {contest.contestName}
                             </span>
-                            <span className="col-span-1 text-text-muted text-sm font-mono">
+                            <span className="col-span-1 text-text-muted text-sm font-sans">
                               <span className="text-text-primary">
                                 #{contest.userRank}
                               </span>{" "}
@@ -375,7 +376,7 @@ const Profile = () => {
                                 xp
                               </span>
                             </span>
-                            <span className="col-span-1 text-text-primary text-sm font-mono">
+                            <span className="col-span-1 text-text-primary text-sm font-sans">
                               {((highestScore / contest.target) * 100).toFixed(
                                 1,
                               )}
@@ -403,9 +404,11 @@ const Profile = () => {
                           contest protocol
                         </span>
                       </div>
-                      <button className="px-4 py-2 border border-accent text-accent text-xs font-bold tracking-widest hover:bg-accent hover:text-black transition-colors cursor-pointer active:bg-danger active:text-text-primary active:border-danger">
-                        INITIALIZE_FIRST_CONTEST_UPLINK
-                      </button>
+                      <Link to={"/contest/create"}>
+                        <button className="px-4 py-2 border border-accent text-accent text-xs font-bold tracking-widest hover:bg-accent hover:text-black transition-colors cursor-pointer active:bg-danger active:text-text-primary active:border-danger">
+                          INITIALIZE_FIRST_CONTEST_UPLINK
+                        </button>
+                      </Link>
                     </div>
                   )}
                 </div>

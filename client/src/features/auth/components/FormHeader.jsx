@@ -8,11 +8,11 @@ const FormHeader = () => {
       setLatency((Math.random()*20).toFixed(0));
     }
     latency();
-    const interval = setInterval(latency,3000);
+    const interval = setInterval(latency,2000);
     return () => clearInterval(interval);
   },[])
   return (
-    <div className="w-full flex justify-between items-center py-2 px-3 bg-surface-2 border-b border-border">
+    <div className="w-full flex justify-between items-center py-2 px-3 bg-surface-2 border-b border-border font-sans">
           <div className="flex-1 flex items-center gap-3 min-w-0 pr-4">
             <div className="flex gap-1.5 shrink-0">
               <div className="w-3 h-3 bg-accent"></div>

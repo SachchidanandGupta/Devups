@@ -86,7 +86,7 @@ const GithubHeatmap = ({ userId }) => {
       {githubLoading ? (
         <GithubSkeleton />
       ) : (
-        <div className="w-full border border-border p-4 bg-black font-mono flex flex-col gap-4">
+        <div className="w-full border border-border-white p-4 bg-black font-sans flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
             <span className="uppercase text-accent  text-lg font-bold tracking-widest truncate flex items-center gap-2">
                <SiGithub/> commit_velocity_grid
@@ -127,7 +127,7 @@ const GithubHeatmap = ({ userId }) => {
                   y={12}
                   fontSize="10"
                   fill="currentColor"
-                  className="text-text-muted font-mono"
+                  className="text-text-muted font-sans"
                 >
                   {label}
                 </text>

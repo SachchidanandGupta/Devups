@@ -40,7 +40,7 @@ const Register = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4 gap-2 sm:gap-4 bg-black font-mono overflow-hidden relative">
+    <div className="h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4 gap-2 sm:gap-4 bg-black font-sans overflow-hidden relative">
       <BinaryDesign />
 
       <div className="w-full flex flex-col items-center justify-center text-center z-10 px-2 shrink-0">
@@ -178,7 +178,7 @@ const Register = () => {
               </button>
             </form>
 
-            <p className="mt-3 text-center text-[10px] sm:text-xs text-text-secondary tracking-widest shrink-0">
+            <p className="mt-3 text-center text-[10px] sm:text-sm text-text-secondary tracking-widest shrink-0">
               EXISTING_CREDENTIALS?
               <Link
                 to="/login"
@@ -189,7 +189,7 @@ const Register = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-between  gap-1 sm:gap-4 mt-auto pt-3 w-full font-mono text-text-muted uppercase text-[8px] sm:text-[9px] tracking-widest overflow-hidden whitespace-nowrap shrink-0">
+          <div className="flex items-center justify-between  gap-1 sm:gap-4 mt-auto pt-3 w-full font-sans text-text-muted uppercase text-[8px] sm:text-[9px] tracking-widest overflow-hidden whitespace-nowrap shrink-0">
             <span className="shrink-0">STATUS: IDLE_WAITING</span>
             <span className="truncate">VERSION: 1.0.4_REBUILT</span>
             <span className="shrink-0">ENCRYPT: AES_256</span>

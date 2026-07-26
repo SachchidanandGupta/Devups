@@ -49,21 +49,21 @@ const Contest = () => {
   return (
     <div>
       <TopBar pageField="contest_terminal" searchBar={true} />
-      <div className="w-full p-4 flex h-50  flex-col font-mono">
+      <div className="w-full p-4 flex h-50  flex-col font-sans">
         {activeTab === "platform" ? (
           <div className=" text-text-primary flex justify-between font-bold mb-6 ">
             <div className="flex">
               <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
               <div>
-                <h1 className="text-3xl font-mono">EVENT_TERMINAL </h1>
+                <h1 className="text-3xl ">EVENT_TERMINAL </h1>
                 <div className="flex gap-2 py-1">
-                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
+                  <span className="text-accent text-xs border-r-2 border-border-bright pr-2  ">
                     [ SYSTEM_STABLE ]
                   </span>
-                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2  ">
+                  <span className="text-accent text-xs border-r-2 border-border-bright pr-2  ">
                     UTC: {utc}
                   </span>
-                  <span className="text-accent font-mono text-xs  pr-2  ">
+                  <span className="text-accent text-xs  pr-2  ">
                     {" "}
                     CONTEST_COUNT: {activeList.length}{" "}
                   </span>
@@ -84,15 +84,15 @@ const Contest = () => {
             <div className="flex">
               <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
               <div>
-                <h1 className="text-3xl font-mono">FRIENDS_TERMINAL </h1>
+                <h1 className="text-3xl ">FRIENDS_TERMINAL </h1>
                 <div className="flex gap-2 py-1">
-                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
+                  <span className="text-accent  text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
                     [ SYSTEM_STABLE ]
                   </span>
-                  <span className="text-accent font-mono text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
+                  <span className="text-accent  text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
                     UTC: {utc}
                   </span>
-                  <span className="text-accent font-mono text-xs  pr-2 flex items-center justify-center ">
+                  <span className="text-accent  text-xs  pr-2 flex items-center justify-center ">
                     {" "}
                     ACTIVE_CONTEST: {activeList.length}{" "}
                   </span>
@@ -113,7 +113,7 @@ const Contest = () => {
           <div className="flex border-b border-border w-full">
             <button
               onClick={() => setActiveTab("platform")}
-              className={`px-4 py-2 rounded-none text-sm font-mono uppercase font-bold cursor-pointer ${
+              className={`px-4 py-2 rounded-none text-sm  uppercase  cursor-pointer ${
                 activeTab === "platform"
                   ? "text-accent border-b-2 border-accent bg-accent-muted/40 "
                   : "text-text-secondary hover:text-text-primary "
@@ -123,7 +123,7 @@ const Contest = () => {
             </button>
             <button
               onClick={() => setActiveTab("friends")}
-              className={`px-4 py-2 rounded-none text-sm font-mono uppercase font-bold cursor-pointer ${
+              className={`px-4 py-2 rounded-none text-sm  uppercase  cursor-pointer ${
                 activeTab === "friends"
                   ? "text-accent border-b-2 border-accent bg-accent-muted/40 "
                   : "text-text-secondary hover:text-text-primary "
@@ -139,18 +139,18 @@ const Contest = () => {
           </div>
         </div>
         {activeTab == "platform" ? (
-          <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2 font-mono text-text-secondary">
+          <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2  text-text-secondary">
             ACTIVE & UPCOMING PLATFORM EVENTS
           </div>
         ) : (
           <div className="w-full grid grid-cols-3 gap-2">
-            <div className="w-full col-span-2 text-xl flex items-center justify-between pb-1  border-b-2 border-border font-mono text-text-secondary mb-2">
+            <div className="w-full col-span-2 text-xl flex items-center justify-between pb-1  border-b-2 border-border font-bold text-text-secondary mb-2">
               <span> ACTIVE_CONTEST [{activeContests.length}]:</span>
               <span className="text-accent text-xs animate-pulse">
                 ● LIVE_FEED
               </span>
             </div>
-            <div className="w-full col-span-1 text-xl pb-1  border-b-2 border-border font-mono text-text-secondary mb-2">
+            <div className="w-full col-span-1 text-xl pb-1  border-b-2 border-border font-bold  text-text-secondary mb-2">
               PENDING_REQUESTS [{incomingContests.length}]:
             </div>
           </div>
@@ -170,7 +170,7 @@ const Contest = () => {
           ) : (
             <div className="flex flex-col ">
               {activeTab === "platform" ? (
-                <div className="flex items-center px-4 py-2 bg-surface-2 border-b border-border text-text-muted text-sm font-mono uppercase tracking-widest">
+                <div className="flex items-center px-4 py-2 bg-surface-2 border-b border-border text-text-muted text-sm  uppercase tracking-widest">
                   <div className="w-24 shrink-0 font-bold">STATE</div>
 
                   <div className="flex-1 min-w-0 pr-4 font-bold ">TITLE</div>

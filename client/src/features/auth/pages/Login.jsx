@@ -31,7 +31,7 @@ const Login = () => {
   }, [isAuthenticated]);
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 gap-8 bg-black font-mono overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 gap-8 bg-black font-sans overflow-hidden">
       <BinaryDesign/>
       <div className="w-full flex flex-col items-center justify-center text-center z-10 px-4">
         <h1 className="text-accent text-2xl sm:text-3xl font-bold tracking-tight">
@@ -134,7 +134,7 @@ const Login = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-between gap-1 sm:gap-4 mt-5 w-full font-mono text-text-muted uppercase text-[9px] sm:text-[10px] tracking-widest overflow-hidden whitespace-nowrap">
+          <div className="flex items-center justify-between gap-1 sm:gap-4 mt-5 w-full font-sans text-text-muted uppercase text-[9px] sm:text-[10px] tracking-widest overflow-hidden whitespace-nowrap">
             <span className="shrink-0">STATUS: IDLE_WAITING</span>
             <span className="truncate">VERSION: 1.0.4_REBUILT</span>
             <span className="shrink-0">ENCRYPT: AES_256</span>

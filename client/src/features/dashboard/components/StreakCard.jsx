@@ -8,7 +8,7 @@ const StreakCard = () => {
   const filledBoxes = Math.min(streak, 4);
 
   return (
-    <div className="border-t border-border pt-4 mt-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 w-full font-mono min-w-0">
+    <div className="border-t border-border pt-4 mt-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 w-full font-sans min-w-0">
   
   <div className="flex flex-col min-w-0">
     <span className="text-xs text-text-secondary uppercase tracking-widest truncate">

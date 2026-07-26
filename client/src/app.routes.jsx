@@ -12,7 +12,7 @@ import Contest from "./features/contest/pages/Contest";
 import Profile from "./features/profile/pages/Profile";
 import CreateContest from "./features/contest/pages/CreateContest";
 import YourContest from "./features/contest/pages/YourContest";
-import ExploreQuestions from "./features/contest/pages/ExploreQuestions";
+import ScrollToTop from "./shared/components/ScrollToTop";
 
 export const router = createBrowserRouter([
   {
@@ -75,21 +75,14 @@ export const router = createBrowserRouter([
     path:"/contest/create",
     element:(
       <ProtectedRoutes>
+        <ScrollToTop/> 
         <Layout>
           <CreateContest/>
         </Layout>
       </ProtectedRoutes>
     )
-  },{
-    path:"/contest/explore",
-    element:(
-      <ProtectedRoutes>
-        <Layout>
-          <ExploreQuestions/>
-        </Layout>
-      </ProtectedRoutes>
-    )
-  },{
+  },
+  {
     path:"/yourContest",
     element:(
       <ProtectedRoutes>

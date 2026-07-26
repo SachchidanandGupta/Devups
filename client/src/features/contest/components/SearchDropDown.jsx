@@ -4,7 +4,7 @@ const SearchDropDown = ({ data, searchRef, onSelect }) => {
   return (
     <div
       ref={searchRef}
-      className=" absolute mt-1 border border-accent w-full max-h-50 overflow-y-auto bg-surface flex flex-col font-mono  "
+      className=" absolute mt-1 border border-accent w-full max-h-50 overflow-y-auto bg-surface flex flex-col font-sans  "
     >
       {data.map((item, index) => {
         const id = item.questionFrontendId;

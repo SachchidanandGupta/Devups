@@ -21,7 +21,7 @@ const RankCard = ({ rank, user, isCurrentUser }) => {
     <div>
       <Link to={`/profile/${_id}`}>
         <div
-          className={`flex items-center justify-between p-4 border-b hover:border-border transition-all duration-300 group font-mono ${
+          className={`flex items-center justify-between p-4 border-b hover:border-border transition-all duration-300 group font-sans ${
             rank === 1 ? "hover:bg-accent-dim/40" : "hover:bg-text-muted/40"
           } ${
             isCurrentUser
@@ -57,14 +57,14 @@ const RankCard = ({ rank, user, isCurrentUser }) => {
 
               <div className="flex flex-col min-w-0 flex-1">
                 <span
-                  className={`text-base sm:text-lg font-mono truncate transition-colors ${rankColor}`}
+                  className={`text-base sm:text-lg  truncate transition-colors ${rankColor}`}
                 >
                   {username.toUpperCase()}
                 </span>
 
                 {rankTitle && (
                   <span
-                    className={`text-xs font-mono text-text-muted truncate`}
+                    className={`text-xs  text-text-muted truncate`}
                   >
                     {rankTitle}
                   </span>

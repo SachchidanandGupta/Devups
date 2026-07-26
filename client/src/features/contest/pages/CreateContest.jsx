@@ -9,6 +9,7 @@ import { MdPersonAddAlt } from "react-icons/md";
 import InviteFriend from "../components/InviteFriend";
 import useContest from "../hooks/useContest";
 import { useNavigate } from "react-router";
+import ExploreQuestions from "../components/ExploreQuestions";
 const CreateContest = () => {
   const { problemsSearch, searchQuestions, searchLoading } = useLeetcode();
   const { friends, fetchFriends } = useFriend();
@@ -20,6 +21,7 @@ const CreateContest = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProblems, setSelectedProblems] = useState([]);
   const [formError, setFormError] = useState("");
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
   const searchRef = useRef(null);
   const options = ["0.5", "1.5", "2", "3", "4", "6"];
   const [contestData, setContestData] = useState({
@@ -119,7 +121,6 @@ const CreateContest = () => {
 
   const computeEndTime = (startTime, duration) => {
     const StartDate = new Date(startTime);
-    console.log(duration);
     const durationMs = parseFloat(duration) * 60 * 60 * 1000;
     return new Date(StartDate.getTime() + durationMs).toISOString();
   };
@@ -167,14 +168,13 @@ const CreateContest = () => {
   };
 
   return (
-    <div className="font-mono relative min-h-full">
+    <div className="font-sans  min-h-full">
       <TopBar pageField={"create_session"} />
-
       <form
         onSubmit={handleSubmit}
         className="flex flex-col min-h-[calc(100vh-4rem)]"
       >
-        <div className="w-full p-2 sm:p-4 flex flex-col gap-4 font-mono grow">
+        <div className="w-full p-2 sm:p-4 flex flex-col gap-4 font-sans grow">
           <div className="border border-border-white flex flex-col gap-4 p-4 bg-surface">
             <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-2 sm:gap-0 uppercase">
               <div className="flex items-center gap-2">
@@ -262,11 +262,13 @@ const CreateContest = () => {
                 <div className="w-2 h-2 bg-accent"></div>
                 <span className="text-accent">problem_selection_protocol</span>
               </div>
-              <Link to={"/contest/explore"}>
-                <span className="text-text-muted hover:underline hover:text-accent text-xs">
+              
+                <span
+                 onClick={()=>setIsExploreOpen(true)}
+                className="text-text-muted hover:underline hover:text-accent text-xs cursor-pointer">
                   Explore_nodes
                 </span>
-              </Link>
+              
             </div>
             {/* search for questions */}
             <div ref={searchRef} className="relative">
@@ -363,14 +365,15 @@ const CreateContest = () => {
                 <span className="text-text-muted text-xs">
                   ADD_QUESTIONS_NODES
                 </span>
-                <Link to={"/contest/explore"}>
+                
                   <button
                     type="button"
+                    onClick={()=>setIsExploreOpen(true)}
                     className="px-4 py-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors"
                   >
                     EXPLORE_QUESTIONS
                   </button>
-                </Link>
+                
               </div>
             )}
           </div>
@@ -384,9 +387,9 @@ const CreateContest = () => {
                   {inivitedIds?.length} / {friends?.length}{" "}
                 </div>
               </div>
-              <span className="text-text-muted hover:text-accent hover:underline cursor-pointer text-xs">
+              {/* <span className="text-text-muted hover:text-accent hover:underline cursor-pointer text-xs">
                 SELECT_ALL_FRIEND_NODES
-              </span>
+              </span> */}
             </div>
             {friends?.length > 0 ? (
               <InviteFriend
@@ -449,6 +452,7 @@ const CreateContest = () => {
           </div>
         </div>
       </form>
+      {isExploreOpen && <ExploreQuestions />}
     </div>
   );
 };

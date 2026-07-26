@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component {
         return (
         <div className="min-h-screen flex items-center justify-center bg-black text-text-primary">
           <div className="flex flex-col gap-4 text-center">
-            <p className="text-danger font-mono uppercase tracking-wider text-sm">
+            <p className="text-danger font-sans uppercase tracking-wider text-sm">
               SYSTEM_ERROR
             </p>
 
@@ -44,7 +44,7 @@ export class ErrorBoundary extends Component {
 
             <button
               onClick={this.handleReset}
-              className="border border-danger text-danger px-4 py-2 font-mono hover:bg-danger-dim"
+              className="border border-danger text-danger px-4 py-2 font-sans hover:bg-danger-dim"
             >
               REBOOT
             </button>

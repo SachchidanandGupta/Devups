@@ -71,16 +71,16 @@ const Friends = () => {
   }, []);
 
   return (
-    <div className="flex flex-col font-mono w-full min-h-screen bg-black">
+    <div className="flex flex-col font-sans w-full min-h-screen bg-black">
       <TopBar pageField="FRIEND_TERMINAL" />
 
       <div className="w-full p-4  flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-0 border-b border-border pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-0  pb-4">
           <div className="text-text-primary flex font-bold uppercase min-w-0">
             <div className="w-1 bg-accent mr-3 shrink-0"></div>
             <div className="flex flex-col min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-mono truncate">
-                friends ({friends?.length || 0} online)
+              <h1 className="text-2xl sm:text-3xl font-sans truncate">
+                friends_({friends?.length || 0} online)
               </h1>
               <div className="flex items-center gap-2 mt-1 uppercase text-xs sm:text-sm text-accent tracking-widest font-bold">
                 <span className="truncate">
