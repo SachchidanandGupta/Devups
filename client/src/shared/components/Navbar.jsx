@@ -42,7 +42,7 @@ const SideNavbar = () => {
   };
 
   return (
-    <div className="h-screen w-60 bg-black border-r border-border flex flex-col font-mono select-none z-50">
+    <div className="h-screen w-60 bg-black border-r border-border-white flex flex-col font-mono select-none z-50">
       <div className="pl-6 py-2">
         <p className="text-accent font-mono font-bold text-3xl ">DevUps</p>
         <p className="text-text-muted font-mono text-sm">Terminal v1.0.4</p>
@@ -56,10 +56,10 @@ const SideNavbar = () => {
           return (
             <Link to={item.path} key={item.name}>
               <div
-                className={`relative flex items-center gap-3 pr-4 py-3 rounded-none  group overflow-hidden   ${
+                className={`relative flex items-center gap-3 pr-4 py-3 rounded-none  group overflow-hidden active:bg-danger active:text-text-primary   ${
                   isActive
                     ? "text-accent border-l-2 border-accent pl-3"
-                    : "text-text-primary hover:text-text-secondary hover:bg-accent pl-3"
+                    : "text-text-primary hover:text-black hover:bg-accent pl-3"
                 }`}
               >
                 <Icon size={22} className={`${isActive ? "scale-95" : ""}`} />
@@ -70,7 +70,7 @@ const SideNavbar = () => {
         })}
       </div>
 
-      <div className="pb-2 border-t border-border bg-black">
+      <div className="pb-2 border-t border-border-white bg-black">
         <div className="flex items-center gap-3 bg-black p-2 rounded-none">
           <button
             onClick={handleLogout}

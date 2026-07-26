@@ -68,7 +68,7 @@ const TopBar = ({ pageField, searchBar }) => {
       document.removeEventListener("mousedown", handleClickBellOutside);
   }, []);
   return (
-    <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border">
+    <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border-white">
       <div className="flex items-center gap-4 ">
         <h2 className="text-2xl font-semibold sm:text-2xl font-mono text-accent uppercase">
           {pageField}
