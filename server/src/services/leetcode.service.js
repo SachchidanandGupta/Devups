@@ -280,6 +280,21 @@ async function getAllTopicTags() {
     throw error;
   }
 }
+
+async function getExploreQuestions() {
+  try {
+    const exploreQuestions = await problemModel.aggregate([
+      { $addFields: { numericId: { $toInt: "$questionFrontendId" } } },
+      { $sort: { numericId: 1 } },
+      { $limit: 50 },
+      { $project: { numericId: 0 } },
+    ]);
+    return exploreQuestions;
+  } catch (error) {
+    console.error(error.response?.data?.message || error.message);
+    throw error;
+  }
+}
 module.exports = {
   getUserCalender,
   getUserSolved,
@@ -289,4 +304,5 @@ module.exports = {
   getSearchProblemsWithTitleOrNumber,
   getQuestionsWithTags,
   getAllTopicTags,
+  getExploreQuestions,
 };

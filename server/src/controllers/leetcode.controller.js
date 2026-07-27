@@ -3,7 +3,8 @@ const {
   getDailyQuestion,
   getSearchProblemsWithTitleOrNumber,
   getQuestionsWithTags,
-  getAllTopicTags
+  getAllTopicTags,
+  getExploreQuestions
 } = require("../services/leetcode.service");
 const appError = require("../utils/appError");
 
@@ -45,11 +46,20 @@ const getTopicTags = asyncHandler(async function(req,res){
     status:"success",
     topicTags
   })
+});
+
+const exploreQuestionsController = asyncHandler(async function(req,res){
+  const exploreQuestions = await getExploreQuestions();
+  return res.status(200).json({
+    status:"success",
+    exploreQuestions
+  })
 })
 
 module.exports = {
   getDaily,
   searchLeetcodeProblems,
   searchQuestionWithTags,
-  getTopicTags
+  getTopicTags,
+  exploreQuestionsController
 };

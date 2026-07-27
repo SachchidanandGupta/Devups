@@ -5,6 +5,11 @@ export const getDailyQuestions = async function () {
   return response.data;
 };
 
+export const getExploreTabs = async function(){
+   const response = await axiosInstance.get("/leetcode/exploreTab");
+   return response.data;
+}
+
 export const getSearchProblems = async function (q) {
   const response = await axiosInstance.get(`/leetcode/search?q=${q}`);
   return response.data;

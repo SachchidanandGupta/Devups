@@ -3,6 +3,7 @@ import {
   getSearchProblems,
   getExploreProblems,
   getTopicTags,
+  getExploreTabs
 } from "../api/leetcode.api";
 import leetcodeStore from "../store/leetcodeStore";
 
@@ -73,11 +74,26 @@ const useLeetcode = () => {
     }
   };
 
+  const initialExploreProblems = async() =>{
+    leetcodeStore.getState().setExploreLoading(true);
+    try {
+      const data = await getExploreTabs();
+      leetcodeStore.getState().setExploreResults(data.exploreQuestions);
+    } catch (err) {
+      leetcodeStore
+        .getState()
+        .setError(err.response?.data?.message || err.message);
+    } finally {
+      leetcodeStore.getState().setExploreLoading(false);
+    }
+  }
+
   return {
     fetchDaily,
     searchQuestions,
     fetchTags,
     searchExploreProblems,
+    initialExploreProblems,
     searchLoading,
     problemsSearch,
     daily,

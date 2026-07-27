@@ -161,7 +161,7 @@ const CreateContest = () => {
 
     try {
       await initiateContest(payload);
-      navigate("/contest"); 
+      navigate("/contest");
     } catch (error) {
       setFormError("Contest_creation_failed. Try again.");
     }
@@ -262,13 +262,13 @@ const CreateContest = () => {
                 <div className="w-2 h-2 bg-accent"></div>
                 <span className="text-accent">problem_selection_protocol</span>
               </div>
-              
-                <span
-                 onClick={()=>setIsExploreOpen(true)}
-                className="text-text-muted hover:underline hover:text-accent text-xs cursor-pointer">
-                  Explore_nodes
-                </span>
-              
+
+              <span
+                onClick={() => setIsExploreOpen(true)}
+                className="text-text-muted hover:underline hover:text-accent text-xs cursor-pointer"
+              >
+                Explore_nodes
+              </span>
             </div>
             {/* search for questions */}
             <div ref={searchRef} className="relative">
@@ -365,15 +365,14 @@ const CreateContest = () => {
                 <span className="text-text-muted text-xs">
                   ADD_QUESTIONS_NODES
                 </span>
-                
-                  <button
-                    type="button"
-                    onClick={()=>setIsExploreOpen(true)}
-                    className="px-4 py-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors"
-                  >
-                    EXPLORE_QUESTIONS
-                  </button>
-                
+
+                <button
+                  type="button"
+                  onClick={() => setIsExploreOpen(true)}
+                  className="px-4 py-2 border border-accent text-accent hover:text-black font-semibold hover:bg-accent cursor-pointer text-sm active:text-text-primary active:bg-danger active:border-danger transition-colors"
+                >
+                  EXPLORE_QUESTIONS
+                </button>
               </div>
             )}
           </div>
@@ -452,7 +451,14 @@ const CreateContest = () => {
           </div>
         </div>
       </form>
-      {isExploreOpen && <ExploreQuestions />}
+      {isExploreOpen && (
+        <ExploreQuestions
+          selectedProblems={selectedProblems}
+          onAdd={handleSelectProblem}
+          onRemove={handleRemoveProblem}
+          onClose={() => setIsExploreOpen(false)}
+        />
+      )}
     </div>
   );
 };
