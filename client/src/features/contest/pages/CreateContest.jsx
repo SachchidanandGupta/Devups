@@ -444,7 +444,7 @@ const CreateContest = () => {
             </Link>
             <button
               type="submit"
-              className="flex-1 sm:flex-none uppercase bg-accent text-text-secondary text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-white text-center font-bold"
+              className="flex-1 sm:flex-none uppercase bg-accent text-black text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-white text-center font-bold"
             >
               INITIALISE_CONTEST_UPLINK
             </button>

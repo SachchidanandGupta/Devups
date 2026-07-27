@@ -59,7 +59,6 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
       ? searchFiltered
       : searchFiltered.filter((p) => p.difficulty === selectedValue);
 
-  console.log("filter", filteredByDifficulty);
 
   const getDifficultyStyle = (tier) => {
     switch (tier) {
