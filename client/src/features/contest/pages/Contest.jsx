@@ -9,6 +9,7 @@ import useUtcTime from "../../../shared/hooks/useUtcTime";
 import { useNavigate } from "react-router";
 import HostContestButton from "../components/HostContestButton";
 import ContestHeader from "../components/ContestHeader";
+import HostContestCard from "../components/HostContestCard";
 const Contest = () => {
   const {
     contest: fetchPlatformContests,
@@ -56,7 +57,6 @@ const Contest = () => {
     activeList = hostedContests;
   }
 
-  // console.log(hostedContests)
   return (
     <div>
       <TopBar pageField="contest_terminal" searchBar={true} />
@@ -227,7 +227,18 @@ const Contest = () => {
                     </div>
                   </div>
                 )}
-                {activeTab === "hosted" && <div></div>}
+                {activeTab === "hosted" && (
+                  <div className="flex flex-col gap-2 w-full ">
+                    {hostedContests?.length > 0 ? (
+                      <HostContestCard contests={hostedContests} />
+                    ) : (
+                      <div className=" uppercase flex flex-col gap-2 items-center justify-center w-full min-h-74 border border-border border-dashed">
+                             <span className="text-text-secondary text-sm text-nowrap">NO_CONTEST_INITIATED_YET</span>
+                             <HostContestButton />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
