@@ -143,6 +143,10 @@ const getFriendContest = asyncHandler(async function (req, res) {
       $or: [{ creator: userID }, { participants: userID }],
       status: "completed",
     };
+  } else if (type === "hosted") {
+    query = {
+      creator: userID,
+    };
   }
   const friendContest = await contestModel.find(query).populate([
     { path: "creator", select: "username avatar level" },

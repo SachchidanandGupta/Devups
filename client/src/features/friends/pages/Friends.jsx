@@ -95,7 +95,7 @@ const Friends = () => {
               <button
                 onClick={() => setIsAddOpen((prev) => !prev)}
                 ref={dropdownRef}
-                className="uppercase border border-border text-text-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black transition-colors"
+                className="uppercase border border-accent text-accent text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer hover:bg-accent hover:border-accent hover:text-black active:bg-danger active:border-danger active:text-text-primary  transition-colors"
               >
                 Add Friend
               </button>
@@ -116,13 +116,13 @@ const Friends = () => {
                 onClick={() => setIsOpen((prev) => !prev)}
                 className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
                   isOpen || pendingFriendRequests.length > 0
-                    ? "border-accent text-accent hover:bg-accent hover:text-black"
-                    : "border-border text-text-primary hover:bg-text-primary hover:text-black"
+                    ? "bg-accent text-black"
+                    : "border-border-white text-text-primary hover:bg-text-primary hover:text-black"
                 }`}
               >
                 Requests
                 {pendingFriendRequests?.length > 0 && (
-                  <span className="ml-1.5">
+                  <span className="ml-1.5 text-black">
                     [{pendingFriendRequests.length}]
                   </span>
                 )}

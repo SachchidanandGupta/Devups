@@ -63,12 +63,12 @@ const contestSchema = new mongoose.Schema(
       default: 100,
     },
     startTime: { type: Date, required: true },
-    endTime: { type: Date, required: true },
-    status: {
+   status: {
       type: String,
       enum: ["pending", "active", "completed"],
       default: "pending",
-    },
+    }, endTime: { type: Date, required: true },
+    
     winner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

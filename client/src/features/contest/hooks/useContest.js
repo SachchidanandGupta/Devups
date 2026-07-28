@@ -14,6 +14,7 @@ const useContest = () => {
   const incomingContests = useContestStore((state) => state.incomingContests);
   const activeContests = useContestStore((state) => state.activeContests);
   const completedContests = useContestStore((state) => state.completedContests);
+  const hostedContests = useContestStore((state)=>state.hostedContests);
   const isLoading = useContestStore((state) => state.isLoading);
   const error = useContestStore((state) => state.error);
   const contest = async () => {
@@ -33,10 +34,11 @@ const useContest = () => {
   const friendContest = async () => {
     useContestStore.getState().setIsLoading(true);
     try {
-      const [incoming, active, completed] = await Promise.all([
+      const [incoming, active, completed,hosted] = await Promise.all([
         getFriendContests("incoming"),
         getFriendContests("active"),
         getFriendContests("completed"),
+        getFriendContests("hosted"),
       ]);
       useContestStore
         .getState()
@@ -45,6 +47,7 @@ const useContest = () => {
       useContestStore
         .getState()
         .setCompletedContests(completed.friendContest || []);
+      useContestStore.getState().setHostedContests(hosted.friendContest || []);
     } catch (error) {
       useContestStore
         .getState()
@@ -139,6 +142,7 @@ const useContest = () => {
     error,
     incomingContests,
     completedContests,
+    hostedContests,
     isLoading,
   };
 };

@@ -18,7 +18,6 @@ const AddFriendDrop = ({ close, addRef, search, results, setSearchResult }) => {
 
     return () => clearTimeout(timer);
   }, [query]);
-  console.log(results);
  
   return (
     <div className="absolute top-1 right-0 w-[350px] h-[400px] border border-border bg-surface-2 flex flex-col uppercase font-sans z-50 shadow-2xl">

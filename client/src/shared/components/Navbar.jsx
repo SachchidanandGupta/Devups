@@ -63,7 +63,7 @@ const SideNavbar = () => {
                 }`}
               >
                 <Icon size={22} className={`${isActive ? "scale-95" : ""}`} />
-                <p className=" uppercase text-sm">{item.name}</p>
+                <p className=" uppercase text-sm font-bold">{item.name}</p>
               </div>
             </Link>
           );

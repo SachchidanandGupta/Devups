@@ -7,6 +7,8 @@ import { ContestSkeleton } from "../../../shared/ui/Skeleton";
 import IncomingFriendContest from "../components/IncomingFriendContest";
 import useUtcTime from "../../../shared/hooks/useUtcTime";
 import { useNavigate } from "react-router";
+import HostContestButton from "../components/HostContestButton";
+import ContestHeader from "../components/ContestHeader";
 const Contest = () => {
   const {
     contest: fetchPlatformContests,
@@ -17,6 +19,7 @@ const Contest = () => {
     platformContests,
     activeContests,
     incomingContests,
+    hostedContests,
     isLoading,
   } = useContest();
   const utc = useUtcTime();
@@ -39,75 +42,45 @@ const Contest = () => {
     await rejectInvite(contestId);
   };
 
-  const activeList =
-    activeTab === "platform"
-      ? platformContests
-      : activeContests.length > 0
-        ? activeContests
-        : incomingContests;
+  let activeList = [];
 
+  if (activeTab === "platform") {
+    activeList = platformContests;
+  } else if (activeTab === "friends") {
+    if (activeContests.length > 0) {
+      activeList = activeContests;
+    } else {
+      activeList = incomingContests;
+    }
+  } else if (activeTab === "hosted") {
+    activeList = hostedContests;
+  }
+
+  // console.log(hostedContests)
   return (
     <div>
       <TopBar pageField="contest_terminal" searchBar={true} />
       <div className="w-full p-4 flex h-50  flex-col font-sans">
-        {activeTab === "platform" ? (
-          <div className=" text-text-primary flex justify-between font-bold mb-6 ">
-            <div className="flex">
-              <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
-              <div>
-                <h1 className="text-3xl ">EVENT_TERMINAL </h1>
-                <div className="flex gap-2 py-1">
-                  <span className="text-accent text-xs border-r-2 border-border-bright pr-2  ">
-                    [ SYSTEM_STABLE ]
-                  </span>
-                  <span className="text-accent text-xs border-r-2 border-border-bright pr-2  ">
-                    UTC: {utc}
-                  </span>
-                  <span className="text-accent text-xs  pr-2  ">
-                    {" "}
-                    CONTEST_COUNT: {activeList.length}{" "}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center">
-              <button
-                onClick={() => navigate("/contest/create")}
-                className="uppercase text-sm border border-border px-4 py-2 cursor-pointer hover:bg-accent hover:text-black "
-              >
-                host_contest
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className=" text-text-primary flex justify-between font-bold mb-6 ">
-            <div className="flex">
-              <div className="text-text-primary h-full w-1 bg-accent mr-2"></div>
-              <div>
-                <h1 className="text-3xl ">FRIENDS_TERMINAL </h1>
-                <div className="flex gap-2 py-1">
-                  <span className="text-accent  text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
-                    [ SYSTEM_STABLE ]
-                  </span>
-                  <span className="text-accent  text-xs border-r-2 border-border-bright pr-2 flex items-center justify-center ">
-                    UTC: {utc}
-                  </span>
-                  <span className="text-accent  text-xs  pr-2 flex items-center justify-center ">
-                    {" "}
-                    ACTIVE_CONTEST: {activeList.length}{" "}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center">
-              <button
-                onClick={() => navigate("/contest/create")}
-                className="uppercase text-text-primay border border-border px-4 py-2 cursor-pointer hover:bg-accent hover:text-black "
-              >
-                host_contest
-              </button>
-            </div>
-          </div>
+        {activeTab === "platform" && (
+          <ContestHeader
+            count={activeList?.length}
+            pageTitle={"EVENT_TERMINAL"}
+            contestType={"CONTEST_COUNT"}
+          />
+        )}
+        {activeTab === "friends" && (
+          <ContestHeader
+            count={activeList?.length}
+            pageTitle={"FRIENDS_TERMINAL"}
+            contestType={"ACTIVE_CONTEST"}
+          />
+        )}
+        {activeTab === "hosted" && (
+          <ContestHeader
+            count={activeList?.length}
+            pageTitle={"HOST_TERMINAL"}
+            contestType={"HOSTED_CONTEST"}
+          />
         )}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 ">
           <div className="flex border-b border-border w-full">
@@ -136,13 +109,24 @@ const Contest = () => {
                 ""
               )}
             </button>
+            <button
+              onClick={() => setActiveTab("hosted")}
+              className={`px-4 py-2 rounded-none text-sm  uppercase  cursor-pointer ${
+                activeTab === "hosted"
+                  ? "text-accent border-b-2 border-accent bg-accent-muted/40 "
+                  : "text-text-secondary hover:text-text-primary "
+              }`}
+            >
+              user_contest
+            </button>
           </div>
         </div>
-        {activeTab == "platform" ? (
+        {activeTab == "platform" && (
           <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2  text-text-secondary">
             ACTIVE & UPCOMING PLATFORM EVENTS
           </div>
-        ) : (
+        )}
+        {activeTab == "friends" && (
           <div className="w-full grid grid-cols-3 gap-2">
             <div className="w-full col-span-2 text-xl flex items-center justify-between pb-1  border-b-2 border-border font-bold text-text-secondary mb-2">
               <span> ACTIVE_CONTEST [{activeContests.length}]:</span>
@@ -155,17 +139,23 @@ const Contest = () => {
             </div>
           </div>
         )}
+        {activeTab == "hosted" && (
+          <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2  text-text-secondary">
+            USER CREATED CONTEST & EVENTS
+          </div>
+        )}
 
         <div className="flex flex-col gap-4 ">
           {isLoading ? (
             <ContestSkeleton />
           ) : activeList && activeList.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 bg-surface  border border-border border-dashed">
-              <p className="text-text-secondary font-semibold text-center max-w-sm">
+            <div className="flex flex-col gap-2 items-center justify-center py-24 bg-surface  border border-border border-dashed">
+              <p className="text-text-secondary font-semibold text-center max-w-sm uppercase text-sm">
                 {activeTab === "platform"
                   ? "No upcoming platform contests found at the moment."
                   : "No active friend contests. Challenge a friend to get started!"}
               </p>
+              <HostContestButton />
             </div>
           ) : (
             <div className="flex flex-col ">
@@ -195,26 +185,49 @@ const Contest = () => {
                 {activeTab === "friends" && (
                   <div className="grid grid-cols-3 gap-4">
                     <div className="col-span-2 flex flex-col gap-2">
-                      {activeContests.map((contest, index) => (
-                        <FriendContestCard
-                          key={contest._id || index}
-                          contest={contest}
-                          onComplete={handleComplete}
-                        />
-                      ))}
+                      {activeContests?.length > 0 ? (
+                        <div>
+                          {activeContests.map((contest, index) => (
+                            <FriendContestCard
+                              key={contest._id || index}
+                              contest={contest}
+                              onComplete={handleComplete}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="w-full min-h-73 flex flex-col gap-2 items-center justify-center border border-border border-dashed uppercase">
+                          <span className="text-text-secondary text-sm">
+                            NO_ACTIVE_CONTEST_FOUND
+                          </span>
+                          <HostContestButton />
+                        </div>
+                      )}
                     </div>
                     <div className="col-span-1 flex flex-col gap-2">
-                      {incomingContests.map((contest, index) => (
-                        <IncomingFriendContest
-                          key={contest._id || index}
-                          contest={contest}
-                          onAccept={handleAcceptInvite}
-                          onReject={handleRejectInvite}
-                        />
-                      ))}
+                      {incomingContests?.length > 0 ? (
+                        <div>
+                          {incomingContests.map((contest, index) => (
+                            <IncomingFriendContest
+                              key={contest._id || index}
+                              contest={contest}
+                              onAccept={handleAcceptInvite}
+                              onReject={handleRejectInvite}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="w-full min-h-73 flex flex-col gap-2 items-center justify-center border border-border border-dashed uppercase">
+                          <span className="text-text-secondary text-sm">
+                            NO_CONTEST_INVITE_FOUND
+                          </span>
+                          <HostContestButton />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
+                {activeTab === "hosted" && <div></div>}
               </div>
             </div>
           )}
