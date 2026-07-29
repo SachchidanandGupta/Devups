@@ -13,23 +13,23 @@ const userModel = require("../models/user.model");
 const { determineWinner } = require("../services/contest.service");
 const { awardContestXp } = require("../services/xp.service");
 const { contestXpRewards } = require("../constants/xpRewards");
-// async function getCodeforcesContest() {
-//   const response = await axios.get(
-//     "https://codeforces.com/api/contest.list?gym=false",
-//     {
-//       headers: {
-//         "User-Agent": "Mozilla/5.0",
-//       },
-//     },
-//   );
+async function getCodeforcesContest() {
+  const response = await axios.get(
+    "https://codeforces.com/api/contest.list?gym=false",
+    {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    },
+  );
 
-//   return response.data.result;
-// }
+  return response.data.result;
+}
 
 const getContest = asyncHandler(async function (req, res) {
   const [leetContest, codeContest = []] = await Promise.all([
     getLeetCodeContest(),
-    // getCodeforcesContest(),
+    getCodeforcesContest(),
   ]);
 
   const codeForcesContest = (codeContest ?? [])
