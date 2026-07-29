@@ -87,6 +87,7 @@ const CreateContest = () => {
         title: problem.title,
         difficulty: problem.difficulty,
         platform: "leetcode",
+        url:problem.url,
       },
     ]);
     setQuery("");
@@ -156,6 +157,7 @@ const CreateContest = () => {
         titleSlug: p.titleSlug,
         title: p.title,
         difficulty: p.difficulty,
+        url:p.url
       })),
     };
 
@@ -166,7 +168,6 @@ const CreateContest = () => {
       setFormError("Contest_creation_failed. Try again.");
     }
   };
-
   return (
     <div className="font-sans  min-h-full">
       <TopBar pageField={"create_session"} />

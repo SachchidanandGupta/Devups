@@ -87,6 +87,7 @@ const createContest = asyncHandler(async function (req, res) {
       title: p.title,
       difficulty,
       xpReward,
+      url: p.url,
     };
   });
 
@@ -130,8 +131,9 @@ const getFriendContest = asyncHandler(async function (req, res) {
   };
   if (type === "incoming") {
     query = {
-      "invitations.userId": userID,
-      "invitations.status": "pending",
+      invitations: {
+        $elemMatch: { userId: userID, status: "pending" },
+      },
     };
   } else if (type === "active") {
     query = {
@@ -151,6 +153,7 @@ const getFriendContest = asyncHandler(async function (req, res) {
   const friendContest = await contestModel.find(query).populate([
     { path: "creator", select: "username avatar level" },
     { path: "participants", select: "username avatar level" },
+    { path: "invitations.userId", select: "username avatar level" },
     { path: "winner", select: "username avatar level" },
   ]);
 

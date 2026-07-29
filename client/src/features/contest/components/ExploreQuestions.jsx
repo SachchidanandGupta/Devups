@@ -77,7 +77,7 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
     setSelectedValue(option);
     setIsOpen(false);
   };
-  // console.log(selectedTags);
+  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
@@ -202,7 +202,6 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
                   } else if (items.difficulty === "Hard") {
                     textColor = "text-danger";
                   }
-
                   return (
                     <div
                       key={items.titleSlug}

@@ -234,7 +234,7 @@ async function getSearchProblemsWithTitleOrNumber(query) {
         ],
       })
       .select(
-        "questionFrontendId title titleSlug  difficulty acRate topicTags -_id",
+        "questionFrontendId title titleSlug  difficulty acRate topicTags url -_id",
       )
       .limit(10)
       .lean();
