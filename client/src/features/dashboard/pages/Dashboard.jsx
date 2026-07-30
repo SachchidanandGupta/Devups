@@ -3,7 +3,6 @@ import StreakCard from "../components/StreakCard";
 import StatsCard from "../components/StatsCard";
 import useAuth from "../../auth/hooks/useAuth";
 import ActivityFeedPanel from "../../activityLog/components/ActivityFeedPanel";
-import TopBar from "../../../shared/components/TopBar";
 import GithubHeatmap from "../../user/components/GithubHeatmap";
 import DailyProblem from "../components/DailyProblem";
 import { FaGithub } from "react-icons/fa";
@@ -12,7 +11,7 @@ const Dashboard = () => {
   const { user, isLoading } = useAuth();
   return (
     <div>
-      <TopBar pageField={"Dashboard"} searchBar={true} />
+      
 
       {isLoading ? (
         <DashboardSkeleton />

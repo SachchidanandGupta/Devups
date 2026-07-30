@@ -59,7 +59,6 @@ const Contest = () => {
 
   return (
     <div>
-      <TopBar pageField="contest_terminal" searchBar={true} />
       <div className="w-full p-4 flex h-50  flex-col font-sans">
         {activeTab === "platform" && (
           <ContestHeader

@@ -90,7 +90,6 @@ const Profile = () => {
   }
   return (
     <div className="flex flex-col bg-black min-h-screen font-sans relative overflow-auto scrollbar-none ">
-      <TopBar pageField={"system_user_terminal"} searchBar={true} />
       {isEditPopUpOpen && (
         <div>
           <EditPopupForm

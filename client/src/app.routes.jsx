@@ -11,7 +11,6 @@ import Friends from "./features/friends/pages/Friends";
 import Contest from "./features/contest/pages/Contest";
 import Profile from "./features/profile/pages/Profile";
 import CreateContest from "./features/contest/pages/CreateContest";
-import YourContest from "./features/contest/pages/YourContest";
 import ScrollToTop from "./shared/components/ScrollToTop";
 
 export const router = createBrowserRouter([
@@ -82,14 +81,5 @@ export const router = createBrowserRouter([
       </ProtectedRoutes>
     )
   },
-  {
-    path:"/yourContest",
-    element:(
-      <ProtectedRoutes>
-        <Layout>
-          <YourContest/>
-        </Layout>
-      </ProtectedRoutes>
-    )
-  }
+  
 ]);

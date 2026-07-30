@@ -27,7 +27,6 @@ const Leaderboard = () => {
 
   return (
     <div>
-      <TopBar pageField="leaderboard_terminal" searchBar={true} />
       <div className=" w-full p-4 flex flex-col h-50 font-sans">
         {activeTab === "global" ? (
           <div className=" text-text-primary flex font-bold mb-6 ">

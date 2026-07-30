@@ -72,7 +72,7 @@ const Friends = () => {
 
   return (
     <div className="flex flex-col font-sans w-full min-h-screen bg-black">
-      <TopBar pageField="FRIEND_TERMINAL" />
+     
 
       <div className="w-full p-4  flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-0  pb-4">

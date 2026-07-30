@@ -170,7 +170,6 @@ const CreateContest = () => {
   };
   return (
     <div className="font-sans  min-h-full">
-      <TopBar pageField={"create_session"} />
       <form
         onSubmit={handleSubmit}
         className="flex flex-col min-h-[calc(100vh-4rem)]"

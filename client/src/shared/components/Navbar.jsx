@@ -50,7 +50,15 @@ const SideNavbar = () => {
 
       <div className="flex flex-col gap-2 p-3 mt-4 flex-1">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const currentPath = location.pathname;
+          let isActive = false;
+          if(currentPath === item.path) {
+            isActive = true;
+          }
+          if(currentPath !== "/" && currentPath.startsWith(`${item.path}/`)){
+            isActive = true;
+          }
+          
           const Icon = isActive ? item.activeIcon : item.icon;
 
           return (

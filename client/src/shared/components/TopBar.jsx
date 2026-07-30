@@ -12,7 +12,15 @@ import BellDropdown from "./BellDropdown";
 import { getSocket } from "../hooks/useSocket";
 import { MdOutlineTerminal } from "react-icons/md";
 import Terminal from "./Terminal";
-const TopBar = ({ pageField, searchBar }) => {
+const pageFields = [
+  { path: "/contest/create", pageField: "create_session" },
+  { path: "/contest", pageField: "contest_terminal" },
+  { path: "/leaderboard", pageField: "leaderboard_terminal" },
+  { path: "/profile", pageField: "system_user_terminal" },
+  { path: "/friends", pageField: "friend_terminal" },
+  { path: "/", pageField: "Dashboard" },
+];
+const TopBar = () => {
   const { user } = useAuth();
   const { search, searchResult, setSearchResult } = useUser();
   const { friendContest, incomingContests } = useContest();
@@ -20,7 +28,6 @@ const TopBar = ({ pageField, searchBar }) => {
   const searchUsers = searchResult;
   const pendingRequests = pendingFriendRequests;
   const location = useLocation();
-
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
@@ -67,38 +74,44 @@ const TopBar = ({ pageField, searchBar }) => {
     return () =>
       document.removeEventListener("mousedown", handleClickBellOutside);
   }, []);
+  const matchedItem = pageFields.find((item) => {
+    const currentPath = location.pathname;
+    if (currentPath === item.path) return true;
+    if (item.path !== "/" && currentPath.startsWith(`${item.path}/`))
+      return true;
+    return false;
+  });
   return (
     <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border-white">
       <div className="flex items-center gap-4 ">
-        <h2 className="text-2xl font-semibold sm:text-2xl font-sans text-accent uppercase">
-          {pageField}
-        </h2>
+        {matchedItem && (
+          <h2 className="text-2xl font-semibold sm:text-2xl font-sans text-accent uppercase">
+            {matchedItem.pageField}
+          </h2>
+        )}
       </div>
       <div className="flex items-center gap-4">
-        {searchBar ? (
-          <div className="relative">
-            <input
-              onChange={(e) => {
-                setIsBellOpen(false);
-                setQuery(e.target.value);
-              }}
-              value={query}
-              type="text"
-              placeholder="SEARCH_TERMINAL..."
-              className=" text-sm text-text-primary bg-surface-2 pl-2 pr-6 py-2 border border-border-bright focus:outline-none focus:border-accent"
-            />
+        <div className="relative">
+          <input
+            onChange={(e) => {
+              setIsBellOpen(false);
+              setQuery(e.target.value);
+            }}
+            value={query}
+            type="text"
+            placeholder="SEARCH_TERMINAL..."
+            className=" text-sm text-text-primary bg-surface-2 pl-2 pr-6 py-2 border border-border-bright focus:outline-none focus:border-accent"
+          />
 
-            {isOpen && searchUsers && (
-              <Dropdown
-                dropdownRef={dropdownRef}
-                searchUsers={searchUsers}
-                user={user}
-              />
-            )}
-          </div>
-        ) : (
-          ""
-        )}
+          {isOpen && searchUsers && (
+            <Dropdown
+              dropdownRef={dropdownRef}
+              searchUsers={searchUsers}
+              user={user}
+            />
+          )}
+        </div>
+
         <div className="relative" ref={bellDropRef}>
           <CiBellOn
             size={36}
