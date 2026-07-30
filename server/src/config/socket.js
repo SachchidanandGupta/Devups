@@ -2,6 +2,7 @@ const { Server } = require("socket.io");
 const appError = require("../utils/appError");
 
 let io;
+const onlineUsers = new Map();
 function intializeSocket(server) {
   io = new Server(server, {
     cors: {
@@ -11,12 +12,18 @@ function intializeSocket(server) {
     },
   });
   io.on("connection", (socket) => {
+    
     console.log("user is connected", socket.id);
     socket.on("disconnect", () => {
+      onlineUsers.delete(socket.data.userId);
+      io.emit("user:offline",socket.data.userId);
       console.log("User disconnected", socket.id);
     });
     socket.on("join_room", (userId) => {
+      socket.data.userId = userId
+      onlineUsers.set(userId,socket.id)
       socket.join(userId);
+      io.emit("user:online",userId)
       console.log(`User ${userId} joined room `);
     });
   });
@@ -29,7 +36,13 @@ function getIo() {
   return io;
 }
 
+function isUserOnline(userId){
+  if(onlineUsers.has(userId))return true;
+  return false;
+}
+
 module.exports = {
   intializeSocket,
   getIo,
+  isUserOnline
 };

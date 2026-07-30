@@ -128,7 +128,13 @@ const CreateContest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if(contestData.contestName.trim() === ""){
+      setFormError("Enter_contest_name_to_continue");
+      return;
+    }
+    if(contestData.startTime.trim() === ""){
+      setFormError("Select_start_time_to_continue");
+    }
     if (selectedProblems.length === 0) {
       setFormError("Select_at_least_one_problem_to_continue.");
       return;
@@ -202,7 +208,7 @@ const CreateContest = () => {
                   placeholder="ENTER_NAME..."
                   value={contestData.contestName}
                   onChange={handleInput}
-                  required
+                  
                   className="border border-border py-3 px-2 focus:border-accent focus:outline-none text-accent placeholder:text-text-muted w-full
                   [&:-webkit-autofill]:border-accent
                 [&:-webkit-autofill]:ring-2
@@ -437,14 +443,14 @@ const CreateContest = () => {
             <Link to={"/contest"} className="flex-1 sm:flex-none">
               <button
                 type="button"
-                className="w-full sm:w-auto uppercase text-danger border border-danger text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-danger hover:text-text-primary text-center"
+                className="w-full sm:w-auto uppercase text-danger border border-danger text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-danger hover:text-text-primary text-center active:scale-95"
               >
                 abort_session
               </button>
             </Link>
             <button
               type="submit"
-              className="flex-1 sm:flex-none uppercase bg-accent text-black text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-white text-center font-bold"
+              className="flex-1 sm:flex-none uppercase bg-accent text-black text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-white text-center font-bold active:bg-danger active:text-text-primary"
             >
               INITIALISE_CONTEST_UPLINK
             </button>

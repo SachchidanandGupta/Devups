@@ -9,7 +9,6 @@ import useFriend from "../../features/friends/hooks/useFriend";
 import Dropdown from "./Dropdown";
 import Avatar from "./Avatar";
 import BellDropdown from "./BellDropdown";
-import { getSocket } from "../hooks/useSocket";
 import { MdOutlineTerminal } from "react-icons/md";
 import Terminal from "./Terminal";
 const pageFields = [
@@ -28,15 +27,6 @@ const TopBar = () => {
   const searchUsers = searchResult;
   const pendingRequests = pendingFriendRequests;
   const location = useLocation();
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-    socket.on("friend:activity", () => {
-      requestsPending();
-      friendContest();
-    });
-    return () => socket.off("friend:activity");
-  }, []);
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -64,6 +54,10 @@ const TopBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  useEffect(()=>{
+    requestsPending();
+    friendContest();
+  },[]);
 
   useEffect(() => {
     function handleClickBellOutside(event) {
@@ -108,6 +102,7 @@ const TopBar = () => {
               dropdownRef={dropdownRef}
               searchUsers={searchUsers}
               user={user}
+              setIsOpen={setIsOpen}
             />
           )}
         </div>
@@ -129,6 +124,7 @@ const TopBar = () => {
           )}
           {isBellOpen && (
             <BellDropdown
+             setIsBellOpen={setIsBellOpen}
               ref={bellDropRef}
               contest={incomingContests}
               requests={pendingRequests}

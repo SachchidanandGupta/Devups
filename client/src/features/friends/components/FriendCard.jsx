@@ -11,8 +11,11 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
     level = 1,
     currentXP,
     requiredXP,
+    onlineStatus
   } = friend || {};
+  
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
+  // console.log(onlineStatus,username);
 
   return (
     <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-sans transition-colors">
@@ -22,7 +25,7 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
           <span className="text-text-primary text-xl uppercase truncate  ">
             {username}
           </span>
-          {isOnline ? (
+          {onlineStatus ? (
             <span className="text-accent text-xs font-light  uppercase ">
              // online
             </span>

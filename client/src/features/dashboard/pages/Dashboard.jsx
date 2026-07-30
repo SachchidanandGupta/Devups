@@ -7,8 +7,13 @@ import GithubHeatmap from "../../user/components/GithubHeatmap";
 import DailyProblem from "../components/DailyProblem";
 import { FaGithub } from "react-icons/fa";
 import { DashboardSkeleton } from "../../../shared/ui/Skeleton";
+import useFriend from "../../friends/hooks/useFriend";
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
+  const {fetchFriends } = useFriend();
+  useEffect(()=>{
+     fetchFriends();
+  },[])
   return (
     <div>
       

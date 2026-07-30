@@ -83,7 +83,6 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="fixed inset-0 bg-surface-2/20 backdrop-blur-xs"></div>
 
-      {/* 1. MAIN WRAPPER: Added overflow-hidden to strictly enforce boundaries */}
       <div className="relative flex flex-col w-full max-w-5xl h-[95vh] md:h-[700px] bg-surface border border-border z-10 overflow-hidden">
         {/* Header */}
         <div className="uppercase text-accent flex items-center gap-2 border-b border-border p-3 sm:p-4 shrink-0 text-sm sm:text-base">
@@ -93,15 +92,12 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
           </span>
         </div>
 
-        {/* 2. BODY GRID: Must have min-h-0 so it doesn't stretch to content size */}
         <div className="flex-1 min-h-0 flex flex-col md:grid md:grid-cols-6 font-sans">
-          {/* TAGS COLUMN: Added min-h-0 and flex-1 so it handles scroll bounds properly */}
           <div className="md:col-span-2 h-40 md:h-full w-full flex flex-col border-b md:border-b-0 md:border-r border-border p-3 sm:p-4 min-h-0">
             <div className="w-full flex items-center p-1 sm:p-2 text-text-secondary shrink-0 mb-1 sm:mb-2 text-sm sm:text-base">
               ALGORITHM_TAGS
             </div>
 
-            {/* Scrollable Tags List - Added flex-1 and min-h-0 */}
             <div className="flex-1 min-h-0 flex gap-2 flex-wrap content-start overflow-y-auto pr-1 pb-4">
               {allTags.map((item) => {
                 const isActive = selectedTags.includes(item);
@@ -113,7 +109,7 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
                       isActive
                         ? "bg-accent text-black"
                         : "text-text-secondary hover:text-accent"
-                    } border border-border hover:border-accent text-nowrap text-xs sm:text-sm uppercase font-sans cursor-pointer px-2 py-1 transition-colors`}
+                    } border border-border hover:border-accent text-nowrap text-xs sm:text-sm uppercase font-sans cursor-pointer px-2 py-1 transition-colors active:bg-danger active:text-text-primary`}
                   >
                     {item}
                   </button>
@@ -122,9 +118,7 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
             </div>
           </div>
 
-          {/* QUESTIONS COLUMN: Added min-h-0 */}
           <div className="md:col-span-4 flex flex-col flex-1 min-h-0 h-full">
-            {/* TopBar */}
             <div className="p-3 sm:p-4 w-full flex flex-wrap justify-between items-center gap-2 font-sans border-b border-border shrink-0">
               <span className="text-text-secondary font-bold text-sm sm:text-base">
                 {filteredByDifficulty?.length} NODES_ONLINE
@@ -139,9 +133,7 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
               </div>
             </div>
 
-            {/* Scrollable Main Area - Added min-h-0 */}
             <div className="bg-surface-2 w-full flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto p-3 sm:p-4 relative">
-              {/* Search & Difficulty Filter - shrink-0 ensures they don't get squished by the list */}
               <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-4 shrink-0 mb-2">
                 <input
                   type="text"
@@ -181,7 +173,6 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
                 </div>
               </div>
 
-              {/* Question List - Removed h-full so it naturally sizes to its content inside the overflow area */}
               <div className="w-full bg-surface flex flex-col gap-2 shrink-0">
                 {filteredByDifficulty.map((items) => {
                   const isSelected = selectedProblems.some(
@@ -260,11 +251,10 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end items-center border-t border-border p-3 sm:p-4 shrink-0 bg-surface z-10">
           <button
             onClick={() => onClose()}
-            className="w-full sm:w-auto px-6 py-2 sm:py-3 bg-accent text-black font-sans font-bold cursor-pointer hover:bg-white hover:text-text-secondary text-sm sm:text-base transition-colors"
+            className="w-full sm:w-auto px-6 py-2 sm:py-3 bg-accent text-black font-sans font-bold cursor-pointer hover:bg-white hover:text-text-secondary text-sm sm:text-base transition-colors active:bg-danger active:text-text-primary"
           >
             COMMIT_SESSION
           </button>

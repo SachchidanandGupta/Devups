@@ -2,7 +2,7 @@ import React from "react";
 import Avatar from "./Avatar";
 import { FaBellSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router";
-const BellDropdown = ({ contest, requests }) => {
+const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
   const navigate = useNavigate();
   const notification = contest?.length + requests?.length;
   return (
@@ -11,7 +11,10 @@ const BellDropdown = ({ contest, requests }) => {
         <div>
           {requests.length > 0 && (
             <div
-              onClick={() => navigate("/friends")}
+              onClick={() => {
+                setIsBellOpen(false);
+                navigate("/friends");
+              }}
               className="flex flex-col w-full cursor-pointer"
             >
               <div className="text-accent  font-bold text-xs px-2 py-1  border-0 border-border uppercase bg-accent-dim w-full ">
@@ -25,7 +28,7 @@ const BellDropdown = ({ contest, requests }) => {
                   <Avatar data={s.requester} />
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm">
-                      {s.requester.username}{" "}//
+                      {s.requester.username} //
                     </span>
                     <span className="text-accent text-xs font-semibold">
                       lvl:{s.requester.level}
@@ -37,7 +40,9 @@ const BellDropdown = ({ contest, requests }) => {
           )}
           {contest.length > 0 && (
             <div
-              onClick={() => navigate("/contest")}
+              onClick={() => {
+                setIsBellOpen(false);
+                navigate("/contest")}}
               className="flex flex-col w-full cursor-pointer"
             >
               <div className="text-accent  font-bold text-xs px-2 py-1  border-0 border-border uppercase bg-accent-dim w-full ">

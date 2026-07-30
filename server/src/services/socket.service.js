@@ -26,8 +26,16 @@ function emitContestReminder(data) {
   handleSocket(null, data, "contest:reminder");
 }
 
+function emitContestInvite(userId,data){
+  handleSocket(userId,data,"contest:invite");
+}
+
 function emitFriendActivity(userId, data) {
   handleSocket(userId, data, "friend:activity");
+}
+
+function emitFriendRequest(userId,data){
+  handleSocket(userId,data,"friend:friend_Request");
 }
 
 function emitGlobalActivity(userId, data) {
@@ -45,4 +53,6 @@ module.exports = {
   emitFriendActivity,
   emitGlobalActivity,
   emitNotification,
+  emitFriendRequest,
+  emitContestInvite
 };

@@ -10,7 +10,6 @@ import useContest from "../../features/contest/hooks/useContest";
     useEffect(()=>{
          fetchMe(),
          requestsPending()
-         
     },[])
 }
 

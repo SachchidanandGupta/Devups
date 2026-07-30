@@ -17,6 +17,7 @@ const useFriend = () => {
   );
   const isLoading = useFriendStore((state) => state.isLoading);
   const error = useFriendStore((state) => state.error);
+  const setFriends = useFriendStore((state)=>state.setFriends);
   const request = async (receiverId) => {
     useFriendStore.getState().setIsLoading(true);
     try {
@@ -117,6 +118,7 @@ const useFriend = () => {
     block,
     response,
     requestsPending,
+    setFriends,
     friends,
     pendingFriendRequests,
     error,

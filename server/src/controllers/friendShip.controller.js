@@ -2,7 +2,11 @@ const asyncHandler = require("../utils/asyncHandler");
 const appError = require("../utils/appError");
 const userModel = require("../models/user.model");
 const friendModel = require("../models/friends.model");
-const { emitFriendActivity } = require("../services/socket.service");
+const { isUserOnline } = require("../config/socket");
+const {
+  emitFriendActivity,
+  emitFriendRequest,
+} = require("../services/socket.service");
 const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
@@ -45,8 +49,7 @@ const sendRequest = asyncHandler(async function (req, res) {
     receiver: receiverId,
     status: "pending",
   });
-  emitFriendActivity(receiverId, { type: "friend_request" });
-
+  emitFriendRequest(receiverId, friendShip);
   return res.status(201).json({
     message: "Friend request sent successfully",
     friendShip,
@@ -189,7 +192,6 @@ const unblockUser = asyncHandler(async function (req, res) {
     ],
     status: "blocked",
   });
-  
 });
 
 const getFriends = asyncHandler(async function (req, res) {
@@ -218,8 +220,10 @@ const getFriends = asyncHandler(async function (req, res) {
         : friendship.requester;
 
     const { currentXP, requiredXP } = getLevelProgress(friend.xp);
+    const onlineStatus = isUserOnline(friend._id.toString());
     return {
       ...friend.toObject(),
+      onlineStatus,
       currentXP,
       requiredXP,
     };

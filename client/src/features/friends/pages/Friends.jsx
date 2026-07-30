@@ -25,7 +25,6 @@ const Friends = () => {
     fetchFriends();
     requestsPending();
   }, []);
-
   const [isOpen, setIsOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   useEffect(() => {
@@ -114,7 +113,7 @@ const Friends = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsOpen((prev) => !prev)}
-                className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors ${
+                className={`uppercase border text-xs sm:text-sm px-3 sm:px-4 py-1.5 font-bold cursor-pointer transition-colors active:bg-danger active:text-text-primary ${
                   isOpen || pendingFriendRequests.length > 0
                     ? "bg-accent text-black"
                     : "border-border-white text-text-primary hover:bg-text-primary hover:text-black"

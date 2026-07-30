@@ -2,6 +2,9 @@ import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import useAuth from "../../features/auth/hooks/useAuth";
 import useAuthStore from "../../features/auth/store/authStore";
+import useFriend from "../../features/friends/hooks/useFriend";
+import useContest from "../../features/contest/hooks/useContest";
+import useFriendStore from "../../features/friends/store/useFriendStore";
 let socketInstance = null;
 
 export const getSocket = () => socketInstance;
@@ -9,6 +12,8 @@ export const getSocket = () => socketInstance;
 const useSocket = () => {
   const initialized = useRef(false);
   const { user, isAuthenticated, setUser } = useAuth();
+  const { requestsPending, setFriends } = useFriend();
+  const { friendContest } = useContest();
 
   useEffect(() => {
     if (!isAuthenticated || !user?._id) return;
@@ -21,6 +26,11 @@ const useSocket = () => {
     socketInstance.on("connect", () => {
       socketInstance.emit("join_room", user._id);
     });
+
+    socketInstance.on("user:online", async (userId) => {
+     
+    });
+    socketInstance.on("user:offline", async (userId) => {});
 
     socketInstance.on(
       "xp:updated",
@@ -36,9 +46,14 @@ const useSocket = () => {
     );
 
     socketInstance.on("leaderboard:refresh", () => {});
+    socketInstance.on("friend:friend_Request", async (data) => {
+      await requestsPending();
+    });
 
     socketInstance.on("friend:activity", () => {});
-
+    socketInstance.on("contest:invite", async (data) => {
+      await friendContest();
+    });
     socketInstance.on("disconnect", () => {
       console.log("Socket disconnected");
     });

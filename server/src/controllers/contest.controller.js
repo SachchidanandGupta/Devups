@@ -4,7 +4,7 @@ const contestModel = require("../models/contest.model");
 const axios = require("axios");
 const appError = require("../utils/appError");
 const { getIo } = require("../config/socket");
-const { emitFriendActivity } = require("../services/socket.service");
+const { emitFriendActivity, emitContestInvite } = require("../services/socket.service");
 const { logActivity } = require("../services/activityLog.service");
 const {
   createResponseNotification,
@@ -107,7 +107,7 @@ const createContest = asyncHandler(async function (req, res) {
   });
 
   participantIds.forEach((id) =>
-    emitFriendActivity(id, { type: "contest_invite" }),
+    emitContestInvite(id, newContest),
   );
   logActivity(
     creatorID,
