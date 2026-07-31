@@ -20,7 +20,7 @@ const AddFriendDrop = ({ close, addRef, search, results, setSearchResult }) => {
   }, [query]);
  
   return (
-    <div className="absolute top-1 right-0 w-[350px] h-[400px] border border-border bg-surface-2 flex flex-col uppercase font-sans z-50 shadow-2xl">
+    <div className=" w-[350px] h-[400px] border border-border bg-surface-2 flex flex-col uppercase font-sans z-50 shadow-2xl">
       <div className="flex items-center justify-between px-2 py-1.5 bg-text-muted shrink-0 border-b border-border">
         <span className="text-accent text-sm font-bold tracking-widest">
           uplink_new_peer

@@ -107,15 +107,16 @@ const useProfile = () => {
     }
   };
   const refetchFriendStatus = async (userId) => {
-    
-  try {
-    const data = await getFriendStatus(userId);
-    useProfileStore.getState().setFriendStatus(data.friendStatus);
-  } catch (error) {
-    useProfileStore.getState().setError(error.response?.data?.message || error.message);
-  }
-};
-  
+    try {
+      const data = await getFriendStatus(userId);
+      useProfileStore.getState().setFriendStatus(data.friendStatus);
+    } catch (error) {
+      useProfileStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    }
+  };
+
   return {
     fetchProfileData,
     refetchFriendStatus,
@@ -129,7 +130,7 @@ const useProfile = () => {
     heatMap,
     contestHistory,
     friendStatus,
-    isOwnProfile
+    isOwnProfile,
   };
 };
 

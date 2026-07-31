@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { FiDatabase } from "react-icons/fi";
 import { IoRadio } from "react-icons/io5";
+import { BiShieldQuarter } from "react-icons/bi";
+import { TbExclamationMark } from "react-icons/tb";
 import Avatar from "../../../shared/components/Avatar";
-
-const HostContestDetails = ({ contestData, getProgressPercentage }) => {
+import useAuth from "../../auth/hooks/useAuth";
+import { changeSpace } from "../../../shared/hooks/space";
+import useUtcTime from "../../../shared/hooks/useUtcTime";
+import useContest from "../hooks/useContest";
+const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
   const { problems = [], invitations = [] } = contestData || {};
   const [, forceUpdate] = useState(0);
+  const [confirmPopUp, setConfirmPopUp] = useState(false);
+  const { user } = useAuth();
+  const utc = useUtcTime();
+  const { abortContest, concludeContest } = useContest();
+  // console.log(contestData);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -16,7 +26,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage }) => {
 
   const progressPercentage = getProgressPercentage(
     contestData.startTime,
-    contestData.endTime
+    contestData.endTime,
   );
 
   function getContestDuration(startTime, endTime) {
@@ -29,13 +39,13 @@ const HostContestDetails = ({ contestData, getProgressPercentage }) => {
 
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
       2,
-      "0"
+      "0",
     )}:${String(seconds).padStart(2, "0")}`;
   }
 
   const duration = getContestDuration(
     contestData.startTime,
-    contestData.endTime
+    contestData.endTime,
   );
 
   let nodes = contestData.problems?.length || 0;
@@ -46,22 +56,36 @@ const HostContestDetails = ({ contestData, getProgressPercentage }) => {
   if (inviteNodes < 10 && inviteNodes > 0) {
     inviteNodes = "0" + inviteNodes;
   }
-
-  function changeSpace(str) {
-    return str.replaceAll(" ", "_");
-  }
-
+//  console.log(contestData?.scores?.length);
   return (
-    <div className="flex flex-col gap-4">
+    <div className=" relative flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <div className="md:col-span-2 flex flex-col items-start justify-start gap-1 p-4 border border-border-white">
           <span className="text-text-muted ">CURRENT_FOCUS //</span>
           <h1 className="text-3xl font-bold">
             {changeSpace(contestData.contestName)}
           </h1>
-          <div className="w-full flex justify-end">
-            <button className="text-danger border border-danger hover:text-text-primary hover:bg-danger cursor-pointer p-2">ABORT_CONTEST</button>
-          </div>
+          {String(user._id) === String(contestData.creator._id) ? (
+            <div className="w-full flex justify-end">
+              {contestData?.scores?.length > 0 ? (
+                <button
+                  onClick={() => setConfirmPopUp(true)}
+                  className="text-accent border border-accent hover:text-black hover:bg-accent font-bold active:bg-danger active:border-danger active:text-text-primary cursor-pointer p-2"
+                >
+                  ABORT_CONTEST
+                </button>
+              ) : (
+                <button
+                  onClick={() => setConfirmPopUp(true)}
+                  className="text-danger border border-danger hover:text-text-primary hover:bg-danger cursor-pointer p-2 font-bold text-sm active:scale-95"
+                >
+                  ABORT_CONTEST
+                </button>
+              )}
+            </div>
+          ) : (
+            <div></div>
+          )}
         </div>
         <div className="col-span-1 border border-border-white p-4 flex flex-col">
           <div className="flex items-center justify-between border-b-2 border-border pb-2 ">
@@ -92,7 +116,6 @@ const HostContestDetails = ({ contestData, getProgressPercentage }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
@@ -103,7 +126,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage }) => {
               total_nodes: {nodes}
             </span>
           </div>
-          
+
           <div className="flex flex-col max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {problems.map((items, index) => {
               let difficultyColor = "";
@@ -206,13 +229,97 @@ const HostContestDetails = ({ contestData, getProgressPercentage }) => {
             </div>
 
             <div className="w-full shrink-0 flex items-center justify-between p-2 bg-surface-2">
-              <span className="text-text-muted text-sm font-bold">SYNC_STATUS: 100%</span>
+              <span className="text-text-muted text-sm font-bold">
+                SYNC_STATUS: 100%
+              </span>
               <span className="text-accent text-sm font-bold">AES_256</span>
             </div>
           </div>
         </div>
-
       </div>
+      {confirmPopUp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-1">
+          <div className="fixed inset-0 bg-surface-2/40 backdrop-blur-xs"></div>
+          <div className="w-full bg-transparent backdrop-blur-xl absolute right-0 top-0 h-screen max-h-screen z-10 flex items-center justify-center scrollbar-none font-sans ">
+            <div className="flex flex-col gap-8 border border-border uppercase p-3 relative max-w-[600px] bg-surface-2">
+              <div className="flex gap-2 items-center ">
+                <div className="absolute border-l border-t -top-1 -left-1 border-accent h-4 w-4"></div>
+                <div className="absolute border-r border-t -top-1 -right-1 border-accent h-4 w-4"></div>
+                <div className="absolute border-b border-l -bottom-1 -left-1 border-accent h-4 w-4"></div>
+                <div className="absolute border-b border-r -bottom-1 -right-1 border-accent h-4 w-4"></div>
+                <div className="flex gap-2 items-center border-b border-border py-2">
+                  <BiShieldQuarter className="text-accent " size={26} />
+                  <span className="text-text-primary">
+                    confirmation_protocol //
+                  </span>
+                  <span className="text-accent">action_required</span>
+                </div>
+                <div className="flex items-center justify-center border border-border bg-black text-xs text-text-muted p-1">
+                  protocol_id:{code}
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex flex-col justify-start">
+                  <div className="text-accent border border-accent p-2">
+                    {" "}
+                    <TbExclamationMark size={26} />{" "}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <p className=" text-sm">
+                    A critical state change has been requested. Proceeding will
+                    finalize the current session parameters. This operation
+                    cannot be rolled back once committed.
+                  </p>
+                  <div className="w-full flex bg-accent-dim/40 items-center gap-2 ">
+                    <div className="h-full w-1 bg-accent-muted"></div>
+                    <div className="flex flex-col justify-center items-start p-4 text-sm">
+                      <span className="text-accent ">system_notice</span>
+                      <span className="text-text-secondary ">
+                        entity_target:{changeSpace(contestData.contestName)}
+                      </span>
+                      <span className="text-text-secondary">
+                        universal_time: {utc}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col  gap-4 border-t border-border pt-4">
+                <div className="flex justify-between ">
+                  <span className="text-text-muted text-xs">
+                    integrity_check
+                  </span>
+                  <span className="text-accent text-xs">STABLE 90%</span>
+                </div>
+                <div className="w-full h-1 bg-surface">
+                  <div className=" w-[90%] h-full bg-accent"></div>
+                </div>
+                <div className="w-full flex justify-end gap-4">
+                  <button
+                    onClick={() => setConfirmPopUp(false)}
+                    className="p-2 text-danger border border-danger hover:text-text-primary hover:bg-danger cursor-pointer active:scale-95 font-bold text-sm"
+                  >
+                    ABORT_SESSION
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (contestData?.scores?.length === 0) {
+                        abortContest(String(contestData.id));
+                      } else {
+                        concludeContest(String(contestData.id));
+                      }
+                    }}
+                    className="p-2 text-black border border-accent bg-accent hover:text-accent hover:bg-surface-2 cursor-pointer active:scale-95 font-bold text-sm"
+                  >
+                    COMMIT_SESSION
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

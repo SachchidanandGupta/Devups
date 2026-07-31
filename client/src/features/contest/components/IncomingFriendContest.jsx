@@ -3,7 +3,7 @@ import React from "react";
 const IncomingFriendContest = ({ contest, onAccept, onReject }) => {
   const { _id, creator, contestName, endTime } = contest || {};
   return (
-    <div className="border border-border gap-2 p-4 flex flex-col min-w-0">
+    <div className=" border border-border gap-2 p-4 flex flex-col min-w-0">
       <div className="flex items-center justify-start gap-2 min-w-0">
         <div className="relative w-10 h-10 overflow-hidden bg-surface-2 border border-border group-hover:border-accent shrink-0">
           {creator.avatar ? (
@@ -34,13 +34,13 @@ const IncomingFriendContest = ({ contest, onAccept, onReject }) => {
       <div className="grid grid-cols-5 gap-1 mt-1">
         <button
           onClick={() => onAccept?.(_id)}
-          className="col-span-4 bg-accent px-1 py-2 border border-border font-bold text-text-muted cursor-pointer active:scale-95 hover:bg-text-primary hover:border-border transition-colors truncate"
+          className="col-span-4 bg-accent px-1 py-2 border border-border font-bold text-text-muted cursor-pointer active:scale-95 hover:bg-text-primary hover:border-border transition-colors active:bg-danger active:text-text-primary active:border-danger truncate"
         >
           Accept
         </button>
         <button
           onClick={() => onReject?.(_id)}
-          className="col-span-1 bg-surface border border-border cursor-pointer hover:border-danger hover:text-danger flex items-center justify-center transition-colors"
+          className="col-span-1 bg-surface border border-border cursor-pointer hover:border-danger hover:text-danger flex items-center justify-center transition-colors active:scale-95 active:text-text-primary active:bg-danger"
         >
           x
         </button>

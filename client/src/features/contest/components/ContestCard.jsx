@@ -91,7 +91,7 @@ const ContestCard = ({ contest }) => {
           href={contestUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="border border-text-primary text-text-primary text-xs font-bold flex justify-center items-center h-8 w-20 hover:border-accent hover:bg-accent hover:text-text-secondary transition-colors"
+          className="border border-text-primary text-text-primary text-xs font-bold flex justify-center items-center h-8 w-20 hover:border-accent hover:bg-accent hover:text-black transition-colors"
         >
           OPEN →
         </a>

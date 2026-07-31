@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "../../../shared/components/Avatar";
 import { Link } from "react-router";
 
@@ -11,9 +11,9 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
     level = 1,
     currentXP,
     requiredXP,
-    onlineStatus
+    onlineStatus,
   } = friend || {};
-  
+
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 
   return (
@@ -60,7 +60,7 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
 
       <div className="flex-1 flex gap-2 justify-end">
         <Link to={`/profile/${_id}`}>
-          <button className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-accent  transition-colors">
+          <button className="border border-border text-text-primary text-xs px-2 py-1 cursor-pointer hover:bg-accent hover:text-black active:bg-danger active:border-danger active:text-text-primary  transition-colors">
             PROFILE
           </button>
         </Link>

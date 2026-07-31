@@ -2,6 +2,7 @@ import React from "react";
 import Avatar from "./Avatar";
 import { FaBellSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router";
+import { changeSpace } from "../../shared/hooks/space";
 const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
   const navigate = useNavigate();
   const notification = contest?.length + requests?.length;
@@ -27,8 +28,8 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
                 >
                   <Avatar data={s.requester} />
                   <div className="flex flex-col">
-                    <span className="font-semibold text-sm">
-                      {s.requester.username} //
+                    <span className="font-semibold uppercase text-sm">
+                      {changeSpace(s.requester.username)} //
                     </span>
                     <span className="text-accent text-xs font-semibold">
                       lvl:{s.requester.level}
@@ -42,7 +43,8 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
             <div
               onClick={() => {
                 setIsBellOpen(false);
-                navigate("/contest")}}
+                navigate("/contest");
+              }}
               className="flex flex-col w-full cursor-pointer"
             >
               <div className="text-accent  font-bold text-xs px-2 py-1  border-0 border-border uppercase bg-accent-dim w-full ">
@@ -55,10 +57,10 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
                 >
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm uppercase">
-                      {s.contestName}//
+                      {changeSpace(s.contestName)}//
                     </span>
                     <span className="text-accent text-xs font-semibold">
-                      lvl:{s.creator.username}
+                      creator:{changeSpace(s.creator.username)}
                     </span>
                   </div>
                 </div>

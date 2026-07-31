@@ -183,12 +183,12 @@ const blockUser = asyncHandler(async function (req, res) {
 });
 
 const unblockUser = asyncHandler(async function (req, res) {
-  const blockUserId = req.params.blockUserId;
+  const unBlockUserId = req.params.unBlockUserId;
   const userId = req.user.id;
   await friendModel.findOneAndDelete({
     $or: [
-      { receiver: userId, requester: blockUserId },
-      { receiver: blockUserId, requester: userId },
+      { receiver: userId, requester: unBlockUserId },
+      { receiver: unBlockUserId, requester: userId },
     ],
     status: "blocked",
   });
@@ -336,6 +336,7 @@ module.exports = {
   unFriend,
   getFriends,
   blockUser,
+  unblockUser,
   getFriendStatusWithLoggedInUser,
   getFriendStatus,
 };

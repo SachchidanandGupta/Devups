@@ -22,7 +22,7 @@ import EditPopupForm from "../components/EditPopupForm";
 const Profile = () => {
   const { userId } = useParams();
   const { user } = useAuth();
-  const { request, removeFriend, response } = useFriend();
+  const { request, removeFriend, response,unblock } = useFriend();
   const { userContestHistory, completedContests } = useContest();
   const { globalRankings, fetchGlobal } = useLeaderboard();
   const { updateUserProfile } = useUser();
@@ -71,6 +71,11 @@ const Profile = () => {
     await removeFriend(userId);
     await refetchFriendStatus(userId);
   };
+
+  const handleUnBlockUser = async()=>{
+    await unblock(userId);
+    await refetchFriendStatus(userId);
+  }
 
   const handleAccept = async () => {
     await response(userId, "accepted");
@@ -146,6 +151,7 @@ const Profile = () => {
                       onRemove={handleRemoveFriend}
                       onAccept={handleAccept}
                       onReject={handleReject}
+                      onUnBlock = {handleUnBlockUser}
                     />
                   )}
                 </div>

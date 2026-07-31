@@ -3,6 +3,7 @@ import {
   respondRequest,
   getFriends,
   blockUser,
+  unblockUser,
   unFriend,
   pendingRequests,
 } from "../api/friend.api";
@@ -17,7 +18,7 @@ const useFriend = () => {
   );
   const isLoading = useFriendStore((state) => state.isLoading);
   const error = useFriendStore((state) => state.error);
-  const setFriends = useFriendStore((state)=>state.setFriends);
+  const setFriends = useFriendStore((state) => state.setFriends);
   const request = async (receiverId) => {
     useFriendStore.getState().setIsLoading(true);
     try {
@@ -102,6 +103,16 @@ const useFriend = () => {
     }
   };
 
+  const unblock = async (unBlockUserId) => {
+    try {
+      await unblockUser(unBlockUserId);
+    } catch (err) {
+      useFriendStore
+        .getState()
+        .setError(err.response?.data?.message || err.message);
+    }
+  };
+
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
@@ -116,6 +127,7 @@ const useFriend = () => {
     fetchFriends,
     removeFriend,
     block,
+    unblock,
     response,
     requestsPending,
     setFriends,

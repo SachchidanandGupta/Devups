@@ -7,6 +7,7 @@ import {
   acceptContest,
   rejectContest,
   getUserContestHistory,
+  deleteContest
 } from "../api/contest.api";
 
 const useContest = () => {
@@ -71,6 +72,21 @@ const useContest = () => {
       useContestStore.getState().setIsLoading(false);
     }
   };
+
+  const abortContest = async(contestId)=>{
+    useContestStore.getState().setIsLoading(true);
+    try{
+      await deleteContest(contestId);
+      await friendContest();
+    }catch (error) {
+      useContestStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+    } finally {
+      useContestStore.getState().setIsLoading(false);
+    }
+
+  }
 
   const concludeContest = async (contestId) => {
     useContestStore.getState().setIsLoading(true);
@@ -137,6 +153,7 @@ const useContest = () => {
     acceptInvite,
     rejectInvite,
     userContestHistory,
+    abortContest,
     platformContests,
     activeContests,
     error,

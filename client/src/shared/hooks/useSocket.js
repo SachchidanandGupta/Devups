@@ -56,6 +56,9 @@ const useSocket = () => {
     socketInstance.on("contest:invite", async (data) => {
       await friendContest();
     });
+    socketInstance.on("contest:deleted",async(data)=>{
+      await friendContest();
+    })
     socketInstance.on("disconnect", () => {
       console.log("Socket disconnected");
     });

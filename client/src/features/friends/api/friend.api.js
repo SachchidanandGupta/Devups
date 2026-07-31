@@ -27,6 +27,11 @@ export const blockUser = async(blockUserId) =>{
     return response.data
 }
 
+export const unblockUser = async(unBlockUserId) => {
+    const response = await axiosInstance.put(`/friends/unblock/${unBlockUserId}`);
+    return response.data
+}
+
 export const getFriends = async() =>{
     const response = await axiosInstance.get("/friends/");
     return response.data;

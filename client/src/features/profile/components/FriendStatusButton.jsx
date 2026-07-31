@@ -13,6 +13,7 @@ const FriendStatusButton = ({
   onRemove,
   onAccept,
   onReject,
+  onUnBlock,
 }) => {
   /**
    * not_friends
@@ -21,16 +22,22 @@ const FriendStatusButton = ({
    * request_received
    * blocked
    */
-  const {userId} = useParams(); 
+  const { userId } = useParams();
   return (
     <div className="flex flex-col justify-end items-center sm:items-end shrink-0 font-sans">
       {friendStatus === "not_friends" && (
-        <button onClick={()=>onAdd(userId)} className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto">
+        <button
+          onClick={() => onAdd(userId)}
+          className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
+        >
           <span>INITIALIZE_UPLINK</span> <MdPersonAddAlt />
         </button>
       )}
       {friendStatus === "friends" && (
-        <button onClick={()=>onRemove(userId)} className="  cursor-pointer flex items-center gap-3 border border-danger text-danger text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-text-primary hover:bg-danger transition-colors w-full sm:w-auto">
+        <button
+          onClick={() => onRemove(userId)}
+          className="  cursor-pointer flex items-center gap-3 border border-danger text-danger text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-text-primary hover:bg-danger transition-colors w-full sm:w-auto"
+        >
           <span>DISCONNECT_UPLINK</span> <FaRegEyeSlash />
         </button>
       )}
@@ -40,13 +47,19 @@ const FriendStatusButton = ({
         </button>
       )}
       {friendStatus === "request_received" && (
-        <button onClick={()=>onAccept(userId)} className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto">
+        <button
+          onClick={() => onAccept(userId)}
+          className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
+        >
           <span>ACCEPT_HANDSHAKE</span> <MdCheck />
         </button>
       )}
       {friendStatus === "blocked" && (
-        <button className="  flex items-center gap-3 bg-surface text-text-muted text-xs sm:text-sm font-bold tracking-widest px-4 py-2  transition-colors w-full sm:w-auto">
-          <span>NODE_RESTRICTED</span> <MdBlockFlipped />
+        <button
+          onClick={() => onUnBlock(userId)}
+          className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
+        >
+          <span>UNBAN</span> <MdBlockFlipped />
         </button>
       )}
     </div>

@@ -30,6 +30,10 @@ function emitContestInvite(userId,data){
   handleSocket(userId,data,"contest:invite");
 }
 
+function emitContestDeleted(userId,data){
+  handleSocket(userId,data,"contest:deleted")
+}
+
 function emitFriendActivity(userId, data) {
   handleSocket(userId, data, "friend:activity");
 }
@@ -54,5 +58,6 @@ module.exports = {
   emitGlobalActivity,
   emitNotification,
   emitFriendRequest,
-  emitContestInvite
+  emitContestInvite,
+  emitContestDeleted
 };

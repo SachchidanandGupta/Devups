@@ -35,6 +35,11 @@ export async function completeFriendContest(contestId) {
   return response.data;
 }
 
+export async function deleteContest(contestId){
+  const response = await axiosInstance.delete(`/contest/delete/${contestId}`);
+  return response.data;
+}
+
 export async function acceptContest(contestId) {
   const response = await axiosInstance.put(
     `/contest/invite/accept/${contestId}`,

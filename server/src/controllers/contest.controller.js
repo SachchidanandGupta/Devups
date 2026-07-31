@@ -4,7 +4,11 @@ const contestModel = require("../models/contest.model");
 const axios = require("axios");
 const appError = require("../utils/appError");
 const { getIo } = require("../config/socket");
-const { emitFriendActivity, emitContestInvite } = require("../services/socket.service");
+const {
+  emitFriendActivity,
+  emitContestInvite,
+  emitContestDeleted
+} = require("../services/socket.service");
 const { logActivity } = require("../services/activityLog.service");
 const {
   createResponseNotification,
@@ -106,9 +110,7 @@ const createContest = asyncHandler(async function (req, res) {
     problems: mappedProblems,
   });
 
-  participantIds.forEach((id) =>
-    emitContestInvite(id, newContest),
-  );
+  participantIds.forEach((id) => emitContestInvite(id, newContest));
   logActivity(
     creatorID,
     "contest_created",
@@ -164,8 +166,25 @@ const getFriendContest = asyncHandler(async function (req, res) {
   });
 });
 
+const deleteContest = asyncHandler(async function (req, res) {
+  const contestId = req.params.contestId;
+  const contest = await contestModel.findById(contestId);
+  if(!contest){
+   throw new appError("contest not found",404);
+  }
+  if (contest.creator.toString() !== req.user.id) {
+    throw new appError("Unauthorized", 401);
+  }
+ const deletedContest = await contestModel.findByIdAndDelete(contestId);
+  contest.participants.map((id)=>emitContestDeleted(id.toString(),deletedContest));
+  return res.status(200).json({
+    message:"contest deleted",
+    status:"success"
+  })
+});
+
 const completeFriendContest = asyncHandler(async function (req, res) {
-  const contestId = req.params.contestid;
+  const contestId = req.params.contestId;
   const contest = await contestModel.findById(contestId);
   if (!contest) {
     throw new appError("contest not found", 404);
@@ -302,4 +321,5 @@ module.exports = {
   acceptContestInvite,
   rejectContestInvite,
   getUserContestHistory,
+  deleteContest
 };

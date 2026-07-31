@@ -60,27 +60,13 @@ const Contest = () => {
   return (
     <div>
       <div className="w-full p-4 flex h-50  flex-col font-sans">
-        {activeTab === "platform" && (
-          <ContestHeader
-            count={activeList?.length}
-            pageTitle={"EVENT_TERMINAL"}
-            contestType={"CONTEST_COUNT"}
-          />
-        )}
-        {activeTab === "friends" && (
-          <ContestHeader
-            count={activeList?.length}
-            pageTitle={"FRIENDS_TERMINAL"}
-            contestType={"ACTIVE_CONTEST"}
-          />
-        )}
-        {activeTab === "hosted" && (
-          <ContestHeader
-            count={activeList?.length}
-            pageTitle={"HOST_TERMINAL"}
-            contestType={"HOSTED_CONTEST"}
-          />
-        )}
+        <ContestHeader
+          activeTab={activeTab}
+          count={activeList?.length}
+          incomingContests={incomingContests}
+          handleAcceptInvite={handleAcceptInvite}
+          handleRejectInvite={handleRejectInvite}
+        />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 ">
           <div className="flex border-b border-border w-full">
             <button
@@ -102,8 +88,8 @@ const Contest = () => {
               }`}
             >
               Friends
-              {incomingContests.length > 0 ? (
-                <span>[{incomingContests.length}]</span>
+              {activeContests.length > 0 ? (
+                <span>[{activeContests.length}]</span>
               ) : (
                 ""
               )}
@@ -126,16 +112,11 @@ const Contest = () => {
           </div>
         )}
         {activeTab == "friends" && (
-          <div className="w-full grid grid-cols-3 gap-2">
-            <div className="w-full col-span-2 text-xl flex items-center justify-between pb-1  border-b-2 border-border font-bold text-text-secondary mb-2">
-              <span> ACTIVE_CONTEST [{activeContests.length}]:</span>
-              <span className="text-accent text-xs animate-pulse">
-                ● LIVE_FEED
-              </span>
-            </div>
-            <div className="w-full col-span-1 text-xl pb-1  border-b-2 border-border font-bold  text-text-secondary mb-2">
-              PENDING_REQUESTS [{incomingContests.length}]:
-            </div>
+          <div className="w-full  text-xl flex items-center justify-between pb-1  border-b-2 border-border font-bold text-text-secondary mb-2">
+            <span> ACTIVE_CONTEST {activeContests.length > 0 ? <span>: [{activeContests.length}]</span> : <span></span> }</span>
+            <span className="text-accent text-xs animate-pulse">
+              ● LIVE_FEED
+            </span>
           </div>
         )}
         {activeTab == "hosted" && (
@@ -182,18 +163,10 @@ const Contest = () => {
                   ))}
 
                 {activeTab === "friends" && (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2 flex flex-col gap-2">
+                 
+                    <div className="w-full flex flex-col gap-2">
                       {activeContests?.length > 0 ? (
-                        <div>
-                          {activeContests.map((contest, index) => (
-                            <FriendContestCard
-                              key={contest._id || index}
-                              contest={contest}
-                              onComplete={handleComplete}
-                            />
-                          ))}
-                        </div>
+                        <HostContestCard contests={activeContests}/>
                       ) : (
                         <div className="w-full min-h-73 flex flex-col gap-2 items-center justify-center border border-border border-dashed uppercase">
                           <span className="text-text-secondary text-sm">
@@ -203,28 +176,7 @@ const Contest = () => {
                         </div>
                       )}
                     </div>
-                    <div className="col-span-1 flex flex-col gap-2">
-                      {incomingContests?.length > 0 ? (
-                        <div>
-                          {incomingContests.map((contest, index) => (
-                            <IncomingFriendContest
-                              key={contest._id || index}
-                              contest={contest}
-                              onAccept={handleAcceptInvite}
-                              onReject={handleRejectInvite}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="w-full min-h-73 flex flex-col gap-2 items-center justify-center border border-border border-dashed uppercase">
-                          <span className="text-text-secondary text-sm">
-                            NO_CONTEST_INVITE_FOUND
-                          </span>
-                          <HostContestButton />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  
                 )}
                 {activeTab === "hosted" && (
                   <div className="flex flex-col gap-2 w-full ">
@@ -232,8 +184,10 @@ const Contest = () => {
                       <HostContestCard contests={hostedContests} />
                     ) : (
                       <div className=" uppercase flex flex-col gap-2 items-center justify-center w-full min-h-74 border border-border border-dashed">
-                             <span className="text-text-secondary text-sm text-nowrap">NO_CONTEST_INITIATED_YET</span>
-                             <HostContestButton />
+                        <span className="text-text-secondary text-sm text-nowrap">
+                          NO_CONTEST_INITIATED_YET
+                        </span>
+                        <HostContestButton />
                       </div>
                     )}
                   </div>
