@@ -109,7 +109,7 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
                       isActive
                         ? "bg-accent text-black"
                         : "text-text-secondary hover:text-accent"
-                    } border border-border hover:border-accent text-nowrap text-xs sm:text-sm uppercase font-sans cursor-pointer px-2 py-1 transition-colors active:bg-danger active:text-text-primary`}
+                    } border border-border hover:border-accent text-nowrap text-xs sm:text-sm uppercase font-sans cursor-pointer px-2 py-1  transition-colors  active:bg-danger active:text-text-primary active:border-danger`}
                   >
                     {item}
                   </button>

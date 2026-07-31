@@ -3,7 +3,6 @@ import Avatar from "../../../shared/components/Avatar";
 
 const InviteFriend = ({ friendList, removeInvite, addInvite }) => {
   const totalRecords = friendList.length;
-
   return (
     <div
       className={`
@@ -23,9 +22,13 @@ const InviteFriend = ({ friendList, removeInvite, addInvite }) => {
               <Avatar data={item} />
               <div className="flex flex-col">
                 <span>{item.username}</span>
-                <span className="text-xs text-text-secondary">
-                  lvl {item.level} //{" "}
-                </span>
+                {item.onlineStatus ? (
+                  <span className="text-xs text-accent">online // </span>
+                ) : (
+                  <span className="text-xs text-text-secondary">
+                    offline //{" "}
+                  </span>
+                )}
               </div>
             </div>
 

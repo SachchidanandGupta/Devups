@@ -392,9 +392,7 @@ const CreateContest = () => {
                   {inivitedIds?.length} / {friends?.length}{" "}
                 </div>
               </div>
-              {/* <span className="text-text-muted hover:text-accent hover:underline cursor-pointer text-xs">
-                SELECT_ALL_FRIEND_NODES
-              </span> */}
+              
             </div>
             {friends?.length > 0 ? (
               <InviteFriend

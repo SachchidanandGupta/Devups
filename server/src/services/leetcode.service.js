@@ -261,7 +261,7 @@ async function getQuestionsWithTags(tags, query) {
     const questionList = await problemModel
       .find(filter)
       .select(
-        "questionFrontendId title titleSlug difficulty acRate topicTags -_id",
+        "questionFrontendId title titleSlug difficulty acRate topicTags url -_id",
       )
       .lean();
     return questionList;
