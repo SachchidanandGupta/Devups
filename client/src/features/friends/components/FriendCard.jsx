@@ -15,23 +15,22 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
   } = friend || {};
   
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
-  // console.log(onlineStatus,username);
 
   return (
     <div className="flex justify-between items-center border border-border py-3 px-4 hover:bg-surface-2 font-sans transition-colors">
       <div className="flex items-center gap-3 flex-1 overflow-hidden">
         <Avatar data={friend} />
         <div className="flex flex-col flex-start">
-          <span className="text-text-primary text-xl uppercase truncate  ">
+          <span className="text-text-primary text-xl uppercase truncate font-bold  ">
             {username}
           </span>
           {onlineStatus ? (
             <span className="text-accent text-xs font-light  uppercase ">
-             // online
+              online //
             </span>
           ) : (
             <span className="text-text-secondary text-xs font-light uppercase ">
-             // offline
+              offline //
             </span>
           )}
         </div>

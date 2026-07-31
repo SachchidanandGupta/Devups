@@ -206,13 +206,7 @@ const getFriends = asyncHandler(async function (req, res) {
     })
     .populate("requester", "username avatar xp level")
     .populate("receiver", "username avatar xp level");
-  // const friends = friendships.map(function (friendship) {
-  //   if (friendship.requester._id.toString() === userId) {
-  //     const {currentXP,level,requiredXP} = getLevelProgress(friendship.receiver.xp);
-  //     return friendship.receiver;
-  //   }
-  //   return friendship.requester;
-  // });
+
   const friends = friendships.map(function (friendship) {
     const friend =
       friendship.requester._id.toString() === userId

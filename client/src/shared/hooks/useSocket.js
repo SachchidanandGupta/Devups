@@ -12,7 +12,7 @@ export const getSocket = () => socketInstance;
 const useSocket = () => {
   const initialized = useRef(false);
   const { user, isAuthenticated, setUser } = useAuth();
-  const { requestsPending, setFriends } = useFriend();
+  const { requestsPending } = useFriend();
   const { friendContest } = useContest();
 
   useEffect(() => {
@@ -27,10 +27,12 @@ const useSocket = () => {
       socketInstance.emit("join_room", user._id);
     });
 
-    socketInstance.on("user:online", async (userId) => {
-     
+    socketInstance.on("user:online", (userId) => {
+      useFriendStore.getState().setFriendOnlineStatus(userId, true);
     });
-    socketInstance.on("user:offline", async (userId) => {});
+    socketInstance.on("user:offline", (userId) => {
+      useFriendStore.getState().setFriendOnlineStatus(userId, false);
+    });
 
     socketInstance.on(
       "xp:updated",
