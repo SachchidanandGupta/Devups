@@ -18,6 +18,11 @@ const friendSchema = new mongoose.Schema(
       default: "pending",
       required: true,
     },
+    blockedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default:null
+    },
   },
   {
     timestamps: true,

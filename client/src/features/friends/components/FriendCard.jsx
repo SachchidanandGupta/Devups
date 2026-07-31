@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Avatar from "../../../shared/components/Avatar";
 import { Link } from "react-router";
-
+import { changeSpace } from "../../../shared/hooks/space";
 const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
   const {
     _id,
@@ -22,7 +22,7 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
         <Avatar data={friend} />
         <div className="flex flex-col flex-start">
           <span className="text-text-primary text-xl uppercase truncate font-bold  ">
-            {username}
+            {changeSpace(username)}
           </span>
           {onlineStatus ? (
             <span className="text-accent text-xs font-light  uppercase ">

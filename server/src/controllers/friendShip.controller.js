@@ -163,7 +163,7 @@ const blockUser = asyncHandler(async function (req, res) {
   if (isFriendShipExists) {
     const blockUser = await friendModel.findByIdAndUpdate(
       isFriendShipExists.id,
-      { status: "blocked" },
+      { status: "blocked", blockedBy: userId },
       { returnDocument: "after", runValidators: true },
     );
     return res.status(200).json({
@@ -185,12 +185,20 @@ const blockUser = asyncHandler(async function (req, res) {
 const unblockUser = asyncHandler(async function (req, res) {
   const unBlockUserId = req.params.unBlockUserId;
   const userId = req.user.id;
-  await friendModel.findOneAndDelete({
+  const unBlocked = await friendModel.findOneAndDelete({
     $or: [
       { receiver: userId, requester: unBlockUserId },
       { receiver: unBlockUserId, requester: userId },
     ],
     status: "blocked",
+    blockedBy: userId,
+  });
+  if (!unBlocked) {
+    throw new appError("Action not allowed", 400);
+  }
+  return res.status(200).json({
+    message: " user unblocked successfully",
+    success: true,
   });
 });
 
