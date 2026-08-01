@@ -24,7 +24,7 @@ const HostContestCard = ({ contests }) => {
   let code ;
   return (
     <div className="flex flex-col items-center uppercase ">
-      <div className="grid grid-cols-4 gap-2 w-full">
+      <div className="lg:grid lg:grid-cols-4 flex flex-col gap-2 w-full">
         <div className="col-span-1 flex flex-col  border border-border overflow-y-auto">
           <div className="flex items-center justify-between p-4 border-b border-border-white ">
             <span className="text-text-secondary">ACTIVE_SESSIONS</span>

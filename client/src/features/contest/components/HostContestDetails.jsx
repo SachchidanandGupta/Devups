@@ -9,14 +9,47 @@ import { changeSpace } from "../../../shared/hooks/space";
 import useUtcTime from "../../../shared/hooks/useUtcTime";
 import useContest from "../hooks/useContest";
 const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
-  const { problems = [], invitations = [] } = contestData || {};
+  const { problems = [], invitations = [],startTime,endTime } = contestData || {};
   const [, forceUpdate] = useState(0);
   const [confirmPopUp, setConfirmPopUp] = useState(false);
   const { user } = useAuth();
   const utc = useUtcTime();
   const { abortContest, concludeContest } = useContest();
-  // console.log(contestData);
-
+  const [timeLeft, setTimeLeft] = useState("");
+  const [timeRemaining, setTimeRemaining] = useState("");
+ 
+  useEffect(() => {
+    const calc = () => {
+      const diff = new Date(startTime) - new Date();
+      if (diff <= 0) {
+        setTimeLeft("LIVE_NOW");
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setTimeLeft(`${h}h ${m}m ${s}s`);
+    };
+    calc();
+    const interval = setInterval(calc, 1000);
+    return () => clearInterval(interval);
+  }, [startTime]);
+  useEffect(() => {
+    const remainedTime = () => {
+      const left = new Date(endTime) - new Date();
+      if (left <= 0) {
+        setTimeRemaining("COMPLETED");
+        return;
+      }
+      const h = Math.floor(left / 3600000);
+      const m = Math.floor((left % 3600000) / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      setTimeRemaining(`${h}h ${m}m ${s}s`);
+    };
+    remainedTime();
+    const interval = setInterval(remainedTime, 1000);
+    return () => clearInterval(interval);
+  }, [endTime]);
   useEffect(() => {
     const interval = setInterval(() => {
       forceUpdate((prev) => prev + 1);
@@ -24,6 +57,8 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
     return () => clearInterval(interval);
   }, []);
 
+  // console.log("Left",timeLeft);
+  // console.log("remaining",timeRemaining);
   const progressPercentage = getProgressPercentage(
     contestData.startTime,
     contestData.endTime,
@@ -56,7 +91,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
   if (inviteNodes < 10 && inviteNodes > 0) {
     inviteNodes = "0" + inviteNodes;
   }
-//  console.log(contestData?.scores?.length);
+  //  console.log(contestData?.scores?.length);
   return (
     <div className=" relative flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -122,7 +157,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
               <FiDatabase className="text-accent" size={26} />
               <span className="font-bold text-lg">Challenge_manifest</span>
             </div>
-            <span className="text-text-muted text-nowrap">
+            <span className="text-text-muted text-sm text-nowrap">
               total_nodes: {nodes}
             </span>
           </div>
@@ -180,7 +215,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
               <IoRadio className="text-accent" size={26} />
               <span className="font-bold text-lg">active_telementry</span>
             </div>
-            <span className="text-text-muted text-nowrap">
+            <span className="text-text-muted text-nowrap text-sm">
               connected: {inviteNodes}
             </span>
           </div>

@@ -42,7 +42,7 @@ const SideNavbar = () => {
   };
 
   return (
-    <div className="h-screen w-60 bg-black border-r border-border-white flex flex-col font-sans select-none z-50">
+    <div className=" h-screen w-60 bg-black border-r border-border-white flex flex-col font-sans select-none z-50">
       <div className="pl-6 py-2">
         <p className="text-accent  font-bold text-3xl ">DevUps</p>
         <p className="text-text-secondary  text-sm">Terminal v1.0.4</p>

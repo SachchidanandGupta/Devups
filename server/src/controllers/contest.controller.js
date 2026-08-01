@@ -7,7 +7,7 @@ const { getIo } = require("../config/socket");
 const {
   emitFriendActivity,
   emitContestInvite,
-  emitContestDeleted
+  emitContestDeleted,
 } = require("../services/socket.service");
 const { logActivity } = require("../services/activityLog.service");
 const {
@@ -140,7 +140,9 @@ const getFriendContest = asyncHandler(async function (req, res) {
   } else if (type === "active") {
     query = {
       $or: [{ creator: userID }, { participants: userID }],
-      status: "active",
+      status: {
+        $in: ["active", "pending"],
+      },
     };
   } else if (type === "completed") {
     query = {
@@ -169,18 +171,20 @@ const getFriendContest = asyncHandler(async function (req, res) {
 const deleteContest = asyncHandler(async function (req, res) {
   const contestId = req.params.contestId;
   const contest = await contestModel.findById(contestId);
-  if(!contest){
-   throw new appError("contest not found",404);
+  if (!contest) {
+    throw new appError("contest not found", 404);
   }
   if (contest.creator.toString() !== req.user.id) {
     throw new appError("Unauthorized", 401);
   }
- const deletedContest = await contestModel.findByIdAndDelete(contestId);
-  contest.participants.map((id)=>emitContestDeleted(id.toString(),deletedContest));
+  const deletedContest = await contestModel.findByIdAndDelete(contestId);
+  contest.participants.map((id) =>
+    emitContestDeleted(id.toString(), deletedContest),
+  );
   return res.status(200).json({
-    message:"contest deleted",
-    status:"success"
-  })
+    message: "contest deleted",
+    status: "success",
+  });
 });
 
 const completeFriendContest = asyncHandler(async function (req, res) {
@@ -238,7 +242,7 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
   const contest = await contestModel.findOneAndUpdate(
     { _id: contestId, "invitations.userId": userId },
     {
-      $set: { "invitations.$.status": "accepted", status: "active" },
+      $set: { "invitations.$.status": "accepted" },
       $push: { participants: userId },
     },
     { returnDocument: "after", runValidators: true },
@@ -321,5 +325,5 @@ module.exports = {
   acceptContestInvite,
   rejectContestInvite,
   getUserContestHistory,
-  deleteContest
+  deleteContest,
 };

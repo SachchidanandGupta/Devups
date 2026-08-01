@@ -1,5 +1,6 @@
 import React from "react";
 import Avatar from "../../../shared/components/Avatar";
+import { changeSpace } from "../../../shared/hooks/space";
 
 const InviteFriend = ({ friendList, removeInvite, addInvite }) => {
   const totalRecords = friendList.length;
@@ -21,7 +22,7 @@ const InviteFriend = ({ friendList, removeInvite, addInvite }) => {
             <div className="flex items-center gap-4">
               <Avatar data={item} />
               <div className="flex flex-col">
-                <span>{item.username}</span>
+                <span>{changeSpace(item.username)}</span>
                 {item.onlineStatus ? (
                   <span className="text-xs text-accent">online // </span>
                 ) : (

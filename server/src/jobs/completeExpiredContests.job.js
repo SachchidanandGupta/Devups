@@ -42,7 +42,31 @@ async function startContestSync() {
     }
   });
 }
+async function startActiveContestSync() {
+  cron.schedule("* * * * *", async () => {
+  try {
+    const contests = await contestModel.find({
+      status: "pending",
+      startTime: { $lte: new Date() },
+    });
 
+    if (!contests.length) return;
+
+    await contestModel.updateMany(
+      {
+        _id: { $in: contests.map(c => c._id) },
+      },
+      {
+        $set: { status: "active" },
+      }
+    );
+    console.log(`Activated ${contests.length} contests`);
+  } catch (err) {
+    console.error(err);
+  }
+});
+}
 module.exports = {
   startContestSync,
+  startActiveContestSync
 };

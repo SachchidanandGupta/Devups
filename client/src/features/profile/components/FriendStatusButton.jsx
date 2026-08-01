@@ -23,7 +23,6 @@ const FriendStatusButton = ({
    * blocked
    */
   const { userId } = useParams();
-  console.log(friendStatus);
   return (
     <div className="flex flex-col justify-end items-center sm:items-end shrink-0 font-sans">
       {friendStatus === "not_friends" && (

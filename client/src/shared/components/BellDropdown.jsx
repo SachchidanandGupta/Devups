@@ -55,11 +55,12 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
                   key={s._id || index}
                   className="flex gap-2 flex-start p-2 border-b border-t border-border items-center bg-surface-2"
                 >
+                  <Avatar data={s.creator}/>
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm uppercase">
                       {changeSpace(s.contestName)}//
                     </span>
-                    <span className="text-accent text-xs font-semibold">
+                    <span className="text-accent text-xs font-semibold uppercase">
                       creator:{changeSpace(s.creator.username)}
                     </span>
                   </div>

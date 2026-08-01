@@ -103,6 +103,11 @@ const Contest = () => {
               }`}
             >
               user_contest
+               {hostedContests.length > 0 ? (
+                <span>[{hostedContests.length}]</span>
+              ) : (
+                ""
+              )}
             </button>
           </div>
         </div>
