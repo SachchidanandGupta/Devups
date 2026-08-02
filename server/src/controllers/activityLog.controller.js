@@ -2,24 +2,14 @@ const activityLogModel = require("../models/activityLog.model");
 const userModel = require("../models/user.model");
 const appError = require("../utils/appError");
 const friendModel = require("../models/friends.model");
+const { getFriendIds } = require("../services/friendship.service");
 const asyncHandler = require("../utils/asyncHandler");
 
 const getRecentActivity = asyncHandler(async function (req, res) {
   const scope = req.query.scope;
   const userId = req.user.id;
   if (scope === "friends") {
-    const friends = await friendModel.find({
-      $or: [{ requester: userId }, { receiver: userId }],
-      status: "accepted",
-    });
-    const friendIds = friends.map((f) => {
-      console.log(f);
-      if (f.receiver.toString() === userId) {
-        return f.requester;
-      } else {
-        return f.receiver;
-      }
-    });
+    const friendIds = await getFriendIds(userId);
     const friendActivitys = await activityLogModel
       .find({
         userId: { $in: friendIds },
@@ -30,6 +20,17 @@ const getRecentActivity = asyncHandler(async function (req, res) {
     return res.status(200).json({
       success: true,
       activities: friendActivitys,
+    });
+  } else if (scope === "contest") {
+    const contestId = req.query.contestId;
+    const contestActivities = await activityLogModel
+      .find({ contestId })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .populate("userId", "username");
+    return res.status(200).json({
+      success: true,
+      activities: contestActivities,
     });
   } else {
     const activities = await activityLogModel

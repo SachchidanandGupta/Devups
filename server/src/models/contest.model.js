@@ -56,10 +56,10 @@ const contestSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
-        url:{
-          type:String,
-          required:true
-        }
+        url: {
+          type: String,
+          required: true,
+        },
       },
     ],
     target: {
@@ -67,12 +67,13 @@ const contestSchema = new mongoose.Schema(
       default: 100,
     },
     startTime: { type: Date, required: true },
-   status: {
+    status: {
       type: String,
       enum: ["pending", "active", "completed"],
       default: "pending",
-    }, endTime: { type: Date, required: true },
-    
+    },
+    endTime: { type: Date, required: true },
+
     winner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -86,7 +87,7 @@ const contestSchema = new mongoose.Schema(
           type: Date,
           default: null,
         },
-        solvedCount: { type: Number, default: 0 }, 
+        solvedCount: { type: Number, default: 0 },
         lastUpdatedAt: { type: Date, default: null },
       },
     ],
@@ -106,5 +107,7 @@ contestSchema.set("toJSON", { virtuals: true });
 contestSchema.index({ creator: 1 });
 contestSchema.index({ participants: 1 });
 contestSchema.index({ status: 1 });
+contestSchema.index({ status: 1, startTime: 1 });
+contestSchema.index({ status: 1, endTime: 1 });
 
 module.exports = mongoose.model("Contest", contestSchema);

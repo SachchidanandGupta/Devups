@@ -71,6 +71,7 @@ async function startLeetcodeSync() {
                   user._id,
                   contestQuestion._id,
                   xpReward,
+                  newSub.titleSlug, 
                 );
               }
             }

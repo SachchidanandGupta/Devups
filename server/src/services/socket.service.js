@@ -34,6 +34,10 @@ function emitContestDeleted(userId,data){
   handleSocket(userId,data,"contest:deleted")
 }
 
+function emitContestProgress(contestId, data) {
+  handleSocket(`contest:${contestId}`, data, "contest:progress");
+}
+
 function emitFriendActivity(userId, data) {
   handleSocket(userId, data, "friend:activity");
 }
@@ -42,8 +46,8 @@ function emitFriendRequest(userId,data){
   handleSocket(userId,data,"friend:friend_Request");
 }
 
-function emitGlobalActivity(userId, data) {
-  handleSocket(userId, data, "activity:new");
+function emitGlobalActivity( activityData) {
+  handleSocket(null, activityData, "activity:new");
 }
 
 function emitNotification(userId, data) {
@@ -59,5 +63,7 @@ module.exports = {
   emitNotification,
   emitFriendRequest,
   emitContestInvite,
-  emitContestDeleted
+  emitContestDeleted,
+  emitContestProgress,
+  
 };

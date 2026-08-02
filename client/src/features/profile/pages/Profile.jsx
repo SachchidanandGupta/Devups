@@ -344,7 +344,7 @@ const Profile = () => {
                           </div>
                           <div className="flex flex-col justify-start">
                             <span className="text-accent text-sm font-bold uppercase tracking-wider">
-                              {item.username}
+                              {changeSpace(item.username)}
                             </span>
                             <span className="text-text-primary text-[10px] uppercase tracking-widest">
                               LVL {item.level}
@@ -437,7 +437,7 @@ const Profile = () => {
                             className="w-full grid grid-cols-5 items-center border-b border-border py-3 px-2 hover:bg-surface-2 transition-colors"
                           >
                             <span className="col-span-1 text-sm text-text-primary font-bold truncate pr-2">
-                              {contest.contestName}
+                              {changeSpace(contest.contestName)}
                             </span>
                             <span className="col-span-1 text-text-muted text-sm font-sans">
                               <span className="text-text-primary">
