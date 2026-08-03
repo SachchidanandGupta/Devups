@@ -26,7 +26,6 @@ export async function createContest(contestData) {
 export async function getFriendContests(type) {
   const url = type ? `/contest/friends?type=${type}` : "/contest/friends";
   const response = await axiosInstance.get(url);
-
   return response.data;
 }
 

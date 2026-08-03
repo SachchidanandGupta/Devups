@@ -147,7 +147,8 @@ const Profile = () => {
                     </div>
                   ) : (
                     <FriendStatusButton
-                      friendStatus={friendStatus}
+                      userId={user._id}
+                      friendStatusData={friendStatus}
                       onAdd={handleAddFriend}
                       onRemove={handleRemoveFriend}
                       onAccept={handleAccept}
@@ -161,7 +162,7 @@ const Profile = () => {
               <div className="lg:col-span-1 flex flex-col gap-2  border border-border-white p-4 bg-black">
                 <div className="flex p-2 justify-between items-center border-b border-border text-xs sm:text-sm min-w-0">
                   <span className="text-text-secondary shrink-0">_id:</span>
-                  {friendStatus !== "blocked" ? (
+                  {friendStatus?.status !== "blocked" ? (
                     <span className="text-text-primary truncate ml-2">
                       {usercode}
                     </span>
@@ -173,7 +174,7 @@ const Profile = () => {
                 </div>
                 <div className="flex p-2 justify-between items-center border-b border-border text-xs sm:text-sm">
                   <span className="text-text-secondary">joined:</span>
-                  {friendStatus !== "blocked" ? (
+                  {friendStatus?.status !== "blocked" ? (
                     <span className="text-text-primary truncate ml-2">
                       {joinedAt}
                     </span>
@@ -185,7 +186,7 @@ const Profile = () => {
                 </div>
                 <div className="flex p-2 justify-between items-center border-b border-border text-xs sm:text-sm">
                   <span className="text-text-secondary">uplink:</span>
-                  {friendStatus !== "blocked" ? (
+                  {friendStatus?.status !== "blocked" ? (
                     <span className="text-accent truncate ml-2 font-bold">
                       ACTIVE_SECURE
                     </span>
@@ -222,19 +223,25 @@ const Profile = () => {
                     STATUS: SYNCHRONIZED
                   </span>
                 </div>
-                {friendStatus !== "blocked" ? (
+                {friendStatus?.status !== "blocked" ? (
                   <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <PlatformCard
+                      setIsEditPopUpOpen={setIsEditPopUpOpen}
+                      isOwnProfile={isOwnProfile}
                       platfrom={"github"}
                       platfromUsername={githubUsername}
                       style={"text-accent"}
                     />
                     <PlatformCard
+                      setIsEditPopUpOpen={setIsEditPopUpOpen}
+                      isOwnProfile={isOwnProfile}
                       platfrom={"leetcode"}
                       platfromUsername={leetcodeUsername}
                       style={"text-warning"}
                     />
                     <PlatformCard
+                      setIsEditPopUpOpen={setIsEditPopUpOpen}
+                      isOwnProfile={isOwnProfile}
                       platfrom={"codeforces"}
                       platfromUsername={codeforcesHandle}
                       style={"text-danger"}
@@ -255,7 +262,7 @@ const Profile = () => {
                 )}
               </div>
 
-              {friendStatus !== "blocked" ? (
+              {friendStatus?.status !== "blocked" ? (
                 <div className="lg:col-span-1 border border-border-white flex flex-col items-center justify-center p-6 gap-6 bg-black">
                   <div className="flex flex-col gap-1 items-center justify-center text-center">
                     <span className="text-text-secondary text-sm sm:text-base uppercase tracking-widest">
@@ -287,7 +294,7 @@ const Profile = () => {
             </div>
             {/* Github HeatMap */}
             <div className="w-full flex flex-col lg:grid lg:grid-cols-4 gap-4 ">
-              {profile?.githubUsername ? (
+              {profile?.githubUsername && friendStatus?.status !== "blocked" ? (
                 <div className="lg:col-span-3  bg-black ">
                   {userId && <GithubHeatmap userId={userId} />}
                 </div>
@@ -334,7 +341,7 @@ const Profile = () => {
                   <span>connected_peers</span>
                 </div>
 
-                {friends.length > 0 && friendStatus !== "blocked" ? (
+                {friends.length > 0 && friendStatus?.status !== "blocked" ? (
                   <div className=" overflow-y-auto scrollbar-none">
                     {friends.map((item) => (
                       <Link key={item._id} to={`/profile/${item._id}`}>
@@ -381,7 +388,7 @@ const Profile = () => {
 
                 <div>
                   {completedContests?.length > 0 &&
-                  friendStatus !== "blocked" ? (
+                  friendStatus?.status !== "blocked" ? (
                     <div>
                       <div className="w-full grid grid-cols-5 items-start border-b border-border py-2 mb-4 bg-surface-2 px-2">
                         <span className="col-span-1 text-text-muted text-xs tracking-widest">

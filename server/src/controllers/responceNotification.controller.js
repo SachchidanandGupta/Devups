@@ -6,11 +6,10 @@ const getNotifications = asyncHandler(async function (req, res) {
   const recipientId = req.user.id;
   const notification = await responseNotificationModel
     .find({
-      status: "unread",
+      status: {$in :["unread","read"]},
       recipientId: recipientId,
     })
-    .sort({ createdAt: -1 })
-    .limit(5);
+    .sort({ createdAt: -1 });
 
   return res.status(200).json({
     success: true,
@@ -18,12 +17,11 @@ const getNotifications = asyncHandler(async function (req, res) {
   });
 });
 
-const clearNotification = asyncHandler(async function (req, res) {
-  const notificationId = req.params.notificationId;
+const readNotification = asyncHandler(async function (req, res) {
   const recipientId = req.user.id;
-  const notification = await responseNotificationModel.findOneAndUpdate(
-    { _id: notificationId, recipientId },
-    { status: "cleared" },
+  const notification = await responseNotificationModel.updateMany(
+    { recipientId },
+    { status: "read" },
   );
   if (!notification) {
     throw new appError("notification not found", 400);
@@ -36,9 +34,8 @@ const clearNotification = asyncHandler(async function (req, res) {
 
 const clearAllNotifications = asyncHandler(async function (req, res) {
   const recipientId = req.user.id;
-
   const notification = await responseNotificationModel.updateMany(
-    { recipientId, status: "unread" },
+    { recipientId:recipientId, status:{$in:["unread","read"]} },
     { status: "cleared" },
   );
   return res.status(200).json({
@@ -49,6 +46,6 @@ const clearAllNotifications = asyncHandler(async function (req, res) {
 
 module.exports = {
   getNotifications,
-  clearNotification,
+  readNotification,
   clearAllNotifications,
 };

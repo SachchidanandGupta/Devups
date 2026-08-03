@@ -5,8 +5,8 @@ export const getNotifications = async () => {
   return response.data;
 };
 
-export const clearNotification = async (notificationId) => {
-  const response = await axiosInstance.put(`/notifications/${notificationId}`);
+export const readNotification = async () => {
+  const response = await axiosInstance.put("/notifications/read");
   return response.data;
 };
 

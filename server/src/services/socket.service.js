@@ -26,12 +26,12 @@ function emitContestReminder(data) {
   handleSocket(null, data, "contest:reminder");
 }
 
-function emitContestInvite(userId,data){
-  handleSocket(userId,data,"contest:invite");
+function emitContestInvite(userId, data) {
+  handleSocket(userId, data, "contest:invite");
 }
 
-function emitContestDeleted(userId,data){
-  handleSocket(userId,data,"contest:deleted")
+function emitContestDeleted(userId, data) {
+  handleSocket(userId, data, "contest:deleted");
 }
 
 function emitContestProgress(contestId, data) {
@@ -42,11 +42,11 @@ function emitFriendActivity(userId, data) {
   handleSocket(userId, data, "friend:activity");
 }
 
-function emitFriendRequest(userId,data){
-  handleSocket(userId,data,"friend:friend_Request");
+function emitFriendRequest(userId, data) {
+  handleSocket(userId, data, "friend:friend_Request");
 }
 
-function emitGlobalActivity( activityData) {
+function emitGlobalActivity(activityData) {
   handleSocket(null, activityData, "activity:new");
 }
 
@@ -65,5 +65,4 @@ module.exports = {
   emitContestInvite,
   emitContestDeleted,
   emitContestProgress,
-  
 };

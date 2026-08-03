@@ -8,7 +8,8 @@ import {
 } from "react-icons/md";
 import { FaRegEyeSlash } from "react-icons/fa";
 const FriendStatusButton = ({
-  friendStatus,
+  userId,
+  friendStatusData,
   onAdd,
   onRemove,
   onAccept,
@@ -22,46 +23,55 @@ const FriendStatusButton = ({
    * request_received
    * blocked
    */
-  const { userId } = useParams();
+  const { status, blockedBy } = friendStatusData || {};
+  const { profileId } = useParams();
   return (
     <div className="flex flex-col justify-end items-center sm:items-end shrink-0 font-sans">
-      {friendStatus === "not_friends" && (
+      {status === "not_friends" && (
         <button
-          onClick={() => onAdd(userId)}
+          onClick={() => onAdd(profileId)}
           className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
         >
           <span>INITIALIZE_UPLINK</span> <MdPersonAddAlt />
         </button>
       )}
-      {friendStatus === "friends" && (
+      {status === "friends" && (
         <button
-          onClick={() => onRemove(userId)}
+          onClick={() => onRemove(profileId)}
           className="  cursor-pointer flex items-center gap-3 border border-danger text-danger text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-text-primary hover:bg-danger transition-colors w-full sm:w-auto"
         >
           <span>DISCONNECT_UPLINK</span> <FaRegEyeSlash />
         </button>
       )}
-      {friendStatus === "request_sent" && (
+      {status === "request_sent" && (
         <button className="  flex items-center gap-3 border border-border text-text-muted text-xs sm:text-sm font-bold tracking-widest px-4 py-2  transition-colors w-full sm:w-auto">
           <span>UPLINK_PENDING</span> <MdOutlinePending />
         </button>
       )}
-      {friendStatus === "request_received" && (
+      {status === "request_received" && (
         <button
-          onClick={() => onAccept(userId)}
+          onClick={() => onAccept(profileId)}
           className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
         >
           <span>ACCEPT_HANDSHAKE</span> <MdCheck />
         </button>
       )}
-      {friendStatus === "blocked" && (
-        <button
-          onClick={() => onUnBlock(userId)}
-          className="  cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
-        >
-          <span>UNBAN</span> <MdBlockFlipped />
-        </button>
-      )}
+      {status === "blocked" ? (
+        blockedBy === userId ? (
+          <button
+            onClick={() => onUnBlock(profileId)}
+            className="cursor-pointer flex items-center gap-3 border border-accent text-accent text-xs sm:text-sm font-bold tracking-widest px-4 py-2 hover:text-black hover:bg-accent transition-colors w-full sm:w-auto"
+          >
+            <span>UNBAN</span>
+            <MdBlockFlipped />
+          </button>
+        ) : (
+          <button className="cursor-pointer flex items-center gap-3 border border-border text-text-muted text-xs sm:text-sm font-bold tracking-widest px-4 py-2 w-full sm:w-auto">
+            <span>NODE_RESTRICTED</span>
+            <MdBlockFlipped />
+          </button>
+        )
+      ) : null}
     </div>
   );
 };

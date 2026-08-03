@@ -6,6 +6,7 @@ import useAuth from "../../features/auth/hooks/useAuth";
 import useUser from "../../features/user/hooks/useUser";
 import useContest from "../../features/contest/hooks/useContest";
 import useFriend from "../../features/friends/hooks/useFriend";
+import useNotification from "../../features/notifications/hooks/useNotification";
 import Dropdown from "./Dropdown";
 import Avatar from "./Avatar";
 import BellDropdown from "./BellDropdown";
@@ -24,6 +25,8 @@ const TopBar = () => {
   const { search, searchResult, setSearchResult } = useUser();
   const { friendContest, incomingContests } = useContest();
   const { requestsPending, pendingFriendRequests } = useFriend();
+  const { clearNotifications, notifications, fetchNotifications, read } =
+    useNotification();
   const searchUsers = searchResult;
   const pendingRequests = pendingFriendRequests;
   const location = useLocation();
@@ -31,8 +34,18 @@ const TopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const bellDropRef = useRef(null);
+  const prevBellState = useRef(false);
   const [isBellOpen, setIsBellOpen] = useState(false);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+   const activeNotifications = notifications.filter(
+    (s) => s.status === "unread",
+  );
+  useEffect(() => {
+    requestsPending();
+    friendContest();
+    fetchNotifications();
+  }, []);
+
   useEffect(() => {
     if (!query.trim()) {
       setSearchResult([]);
@@ -46,6 +59,7 @@ const TopBar = () => {
 
     return () => clearTimeout(timer);
   }, [query]);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target))
@@ -54,10 +68,6 @@ const TopBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  useEffect(()=>{
-    requestsPending();
-    friendContest();
-  },[]);
 
   useEffect(() => {
     function handleClickBellOutside(event) {
@@ -68,6 +78,17 @@ const TopBar = () => {
     return () =>
       document.removeEventListener("mousedown", handleClickBellOutside);
   }, []);
+
+  useEffect(() => {
+    async function updateRead() {
+      if ((prevBellState.current && !isBellOpen) && activeNotifications?.length > 0) {
+        await read();
+      }
+      prevBellState.current = isBellOpen;
+    }
+    updateRead();
+  }, [isBellOpen]);
+ 
   const matchedItem = pageFields.find((item) => {
     const currentPath = location.pathname;
     if (currentPath === item.path) return true;
@@ -117,17 +138,22 @@ const TopBar = () => {
             className={`cursor-pointer p-2 rounded-full transition-colors hover:bg-accent-dim hover:text-accent ${isBellOpen ? "text-accent bg-accent-dim" : "text-text-primary"}`}
           />
 
-          {incomingContests.length + pendingRequests.length > 0 ? (
+          {incomingContests?.length +
+            pendingRequests?.length +
+            activeNotifications?.length >
+          0 ? (
             <div className="absolute top-0 right-0 h-2 w-2 m-1 text-sm rounded-full bg-accent  text-text-primary"></div>
           ) : (
             ""
           )}
           {isBellOpen && (
             <BellDropdown
-             setIsBellOpen={setIsBellOpen}
+             clearAll={clearNotifications}
+              setIsBellOpen={setIsBellOpen}
               ref={bellDropRef}
               contest={incomingContests}
               requests={pendingRequests}
+              notifications={notifications}
             />
           )}
         </div>

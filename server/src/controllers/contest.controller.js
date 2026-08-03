@@ -8,8 +8,9 @@ const {
   emitFriendActivity,
   emitContestInvite,
   emitContestDeleted,
+  emitNotification,
 } = require("../services/socket.service");
-const { logActivity } = require("../services/activityLog.service");
+const { createActivityLog } = require("../services/activityLog.service");
 const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
@@ -111,12 +112,17 @@ const createContest = asyncHandler(async function (req, res) {
   });
 
   participantIds.forEach((id) => emitContestInvite(id, newContest));
-  logActivity(
-    creatorID,
-    "contest_created",
-    "devups",
-    `${req.user.username} initiated a contest: ${contestName}`,
-  );
+  await createActivityLog({
+    userId: creatorID,
+    type: "contest_created",
+    platform: "devups",
+    message: `${req.user.username} created a contest: ${contestName}`,
+    contestId: newContest._id,
+    metaData: {
+      contestName,
+      problemCount: mappedProblems.length,
+    },
+  });
 
   return res.status(201).json({
     message: "Contest created successfully.",
@@ -154,12 +160,14 @@ const getFriendContest = asyncHandler(async function (req, res) {
       creator: userID,
     };
   }
-  const friendContest = await contestModel.find(query).populate([
-    { path: "creator", select: "username avatar level" },
-    { path: "participants", select: "username avatar level" },
-    { path: "invitations.userId", select: "username avatar level" },
-    { path: "winner", select: "username avatar level" },
-  ]);
+  const friendContest = await contestModel
+    .find(query)
+    .populate([
+      { path: "creator", select: "username avatar level" },
+      { path: "participants", select: "username avatar level" },
+      { path: "invitations.userId", select: "username avatar level" },
+      { path: "winner", select: "username avatar level" },
+    ]);
 
   res.status(200).json({
     message: "friends contest fetched",
@@ -250,7 +258,7 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
 
   if (!contest) throw new appError("Contest or invitation not found", 404);
   createResponseNotification(
-    contest.creator,
+    contest.creator.toString(),
     "contest_invite_accepted",
     `${req.user.username} accepted your invite to ${contest.contestName}`,
   );
@@ -272,7 +280,7 @@ const rejectContestInvite = asyncHandler(async function (req, res) {
 
   if (!contest) throw new appError("Contest or invitation not found", 404);
   createResponseNotification(
-    contest.creator,
+    contest.creator.toString(),
     "contest_invite_rejected",
     `${req.user.username} rejected your invite to ${contest.contestName}`,
   );

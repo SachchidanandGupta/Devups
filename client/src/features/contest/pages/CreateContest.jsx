@@ -13,7 +13,7 @@ import ExploreQuestions from "../components/ExploreQuestions";
 const CreateContest = () => {
   const { problemsSearch, searchQuestions, searchLoading } = useLeetcode();
   const { friends, fetchFriends } = useFriend();
-  const { initiateContest } = useContest();
+  const { initiateContest,isLoading } = useContest();
   const navigate = useNavigate();
   const [selected, setSelected] = useState("2");
   const [query, setQuery] = useState("");
@@ -448,6 +448,7 @@ const CreateContest = () => {
             </Link>
             <button
               type="submit"
+              disabled={isLoading}
               className="flex-1 sm:flex-none uppercase bg-accent text-black text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-white text-center font-bold active:bg-danger active:text-text-primary"
             >
               INITIALISE_CONTEST_UPLINK

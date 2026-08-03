@@ -1,12 +1,7 @@
 const contestModel = require("../models/contest.model");
 const appError = require("../utils/appError");
-const { getFriendIds } = require("./friendship.service");
 const { createActivityLog } = require("./activityLog.service");
-const {
-  emitGlobalActivity,
-  emitFriendActivity,
-  emitContestProgress,
-} = require("./socket.service");
+
 
 async function updateContestScores(userId, contestId, xpReward, titleSlug) {
   const contest = await contestModel.findById(contestId);
@@ -39,10 +34,11 @@ async function updateContestScores(userId, contestId, xpReward, titleSlug) {
     entry.reachedTargetAt = new Date();
 
   await contest.save();
+
   const problem = contest.problems.find((p) => p.titleSlug === titleSlug);
   const message = `solved ${problem ? problem.title : titleSlug} in ${contest.contestName}`;
 
-  const activity = await createActivityLog({
+  await createActivityLog({
     userId,
     type: "problem_solved",
     platform: "leetcode",
@@ -55,17 +51,9 @@ async function updateContestScores(userId, contestId, xpReward, titleSlug) {
     },
   });
 
-  emitContestProgress(contestId, activity);
-
-  const friendIds = await getFriendIds(userId);
-  for (const friendId of friendIds) {
-    emitFriendActivity(friendId, activity);
-  }
-
-  emitGlobalActivity(activity);
-
   return entry;
 }
+
 
 function determineWinner(contest) {
   const { computedTarget, scores } = contest || {};

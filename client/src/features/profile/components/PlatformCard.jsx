@@ -1,7 +1,7 @@
 import React from "react";
 import { SiLeetcode, SiCodeforces, SiGithub } from "react-icons/si";
 
-const PlatformCard = ({ platfromUsername, platfrom, style }) => {
+const PlatformCard = ({ platfromUsername, platfrom, style,setIsEditPopUpOpen,isOwnProfile }) => {
   const platfromIcon = [
     { platfromName: "github", icon: SiGithub },
     { platfromName: "codeforces", icon: SiCodeforces },
@@ -13,7 +13,11 @@ const PlatformCard = ({ platfromUsername, platfrom, style }) => {
   )?.icon;
 
   return (
-    <div className="w-full border border-border uppercase p-4 hover:border-accent flex flex-col justify-start bg-surface-2 font-sans transition-colors min-w-0">
+    <div 
+     onClick={()=>{
+      if(isOwnProfile) setIsEditPopUpOpen(true)
+     }}
+    className="w-full border border-border uppercase p-4 hover:border-accent flex flex-col justify-start bg-surface-2 font-sans transition-colors min-w-0">
       <span className="text-text-secondary text-xs">{platfrom}_id</span>
 
       {platfromUsername ? (

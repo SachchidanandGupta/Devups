@@ -317,23 +317,24 @@ const getFriendStatus = asyncHandler(async function (req, res) {
       { receiver: userId, requester: loggedInUserId },
     ],
   });
-  let friendStatus = "not_friends";
+  let friendStatus = { status: "not_friends", blockedBy: null };
   if (!friendDoc) {
-    return res
-      .status(200)
-      .json({ status: "success", friendStatus: "not_friends" });
+    return res.status(200).json({ status: "success", friendStatus });
   }
-  if (friendDoc.status === "accepted") friendStatus = "friends";
+  if (friendDoc.status === "accepted") friendStatus.status = "friends";
   else if (friendDoc.status === "pending")
-    friendStatus =
+    friendStatus.status =
       friendDoc.requester.toString() === loggedInUserId
         ? "request_sent"
         : "request_received";
-  else if (friendDoc.status === "blocked") friendStatus = "blocked";
+  else if (friendDoc.status === "blocked") {
+    friendStatus.status = "blocked";
+    friendStatus.blockedBy = friendDoc.blockedBy.toString();
+  }
 
   return res.status(200).json({
     status: "success",
-    friendStatus,
+    friendStatus
   });
 });
 

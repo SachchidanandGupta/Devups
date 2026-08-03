@@ -5,6 +5,7 @@ import useAuthStore from "../../features/auth/store/authStore";
 import useFriend from "../../features/friends/hooks/useFriend";
 import useContest from "../../features/contest/hooks/useContest";
 import useFriendStore from "../../features/friends/store/useFriendStore";
+import useNotification from "../../features/notifications/hooks/useNotification";
 let socketInstance = null;
 
 export const getSocket = () => socketInstance;
@@ -14,6 +15,7 @@ const useSocket = () => {
   const { user, isAuthenticated, setUser } = useAuth();
   const { requestsPending } = useFriend();
   const { friendContest } = useContest();
+  const { prependNotification,fetchNotifications } = useNotification();
 
   useEffect(() => {
     if (!isAuthenticated || !user?._id) return;
@@ -56,9 +58,13 @@ const useSocket = () => {
     socketInstance.on("contest:invite", async (data) => {
       await friendContest();
     });
-    socketInstance.on("contest:deleted",async(data)=>{
+    socketInstance.on("contest:deleted", async (data) => {
       await friendContest();
-    })
+    });
+    socketInstance.on("notification:new", async (data) => {
+    
+      prependNotification(data);
+    });
     socketInstance.on("disconnect", () => {
       console.log("Socket disconnected");
     });

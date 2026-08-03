@@ -1,9 +1,7 @@
 const activityLogModel = require("../models/activityLog.model");
 const { emitGlobalActivity, emitContestProgress } = require("./socket.service");
 
-async function createActivityLog(logData) {
-  const { userId, type, platform, message, contestId, metaData } =
-    logData || {};
+async function createActivityLog({ userId, type, platform, message, contestId, metaData }) {
 
   const activity = await activityLogModel.create({
     userId,

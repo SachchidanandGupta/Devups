@@ -104,13 +104,13 @@ const EditPopupForm = ({ setIsEditPopUpOpen, userData, update, userID }) => {
               <button
                 onClick={handleSubmit}
                 type="submit"
-                className="col-span-2 py-2 px-4 text-black bg-accent hover:bg-white uppercase cursor-pointer"
+                className="col-span-2 py-2 px-4 text-black bg-accent hover:bg-white uppercase cursor-pointer active:scale-95"
               >
-                save_changes
+                commit_changes
               </button>
               <button
                 onClick={() => setIsEditPopUpOpen(false)}
-                className="col-span-1 py-2 px-4 text-danger border border-danger hover:text-text-primary hover:bg-danger hover:border-danger uppercase cursor-pointer"
+                className="col-span-1 py-2 px-4 text-danger border border-danger hover:text-text-primary hover:bg-danger hover:border-danger uppercase cursor-pointer active:scale-95"
               >
                 abort_session
               </button>

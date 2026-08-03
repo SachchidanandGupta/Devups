@@ -1,6 +1,6 @@
 import {
   clearAllNotifications,
-  clearNotification,
+  readNotification,
   getNotifications,
 } from "../api/notification.api";
 
@@ -11,7 +11,6 @@ const useNotification = () => {
   const isLoading = useNotificationStore((state)=>state.isLoading);
   const error = useNotificationStore((state)=>state.error);
   const prependNotification = useNotificationStore((state)=>state.prependNotification);
-  const removeNotification = useNotificationStore((state)=>state.removeNotification);
   const clearAll = useNotificationStore((state)=>state.clearAll);
   const fetchNotifications = async () => {
     useNotificationStore.getState().setIsLoading(true);
@@ -28,11 +27,11 @@ const useNotification = () => {
     }
   };
 
-  const clear = async (id) => {
+  const read = async () => {
     useNotificationStore.getState().setIsLoading(true);
     try {
-      const data = await clearNotification(id);
-      useNotificationStore.getState().removeNotification(id);
+       await readNotification();
+       await fetchNotifications();
     } catch (error) {
       useNotificationStore
         .getState()
@@ -42,7 +41,7 @@ const useNotification = () => {
     }
   };
 
-  const clearFriendTerminal = async () => {
+  const clearNotifications = async () => {
     useNotificationStore.getState().setIsLoading(true);
     try {
       const data = await clearAllNotifications();
@@ -57,10 +56,9 @@ const useNotification = () => {
   };
   return {
     fetchNotifications,
-    clear,
-    clearFriendTerminal,
+    read,
+    clearNotifications,
     notifications,
-    removeNotification,
     prependNotification,
     isLoading,
     error,

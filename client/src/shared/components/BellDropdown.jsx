@@ -3,11 +3,12 @@ import Avatar from "./Avatar";
 import { FaBellSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router";
 import { changeSpace } from "../../shared/hooks/space";
-const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
+const BellDropdown = ({ contest, requests, setIsBellOpen, notifications,clearAll }) => {
   const navigate = useNavigate();
-  const notification = contest?.length + requests?.length;
+  const notification =
+    contest?.length + requests?.length + notifications?.length;
   return (
-    <div className="absolute z-10 w-40 overflow-y-auto scrollbar-none top-12 sm:w-70  bg-surface-2 flex flex-col right-0 mt-1 border border-accent-muted ">
+    <div className="absolute z-10 w-40 max-h-[300px] overflow-y-auto scrollbar-none top-12 sm:w-70  bg-surface-2 flex flex-col right-0 mt-1 border border-accent-muted ">
       {notification > 0 ? (
         <div>
           {requests.length > 0 && (
@@ -19,7 +20,7 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
               className="flex flex-col w-full cursor-pointer"
             >
               <div className="text-accent  font-bold text-xs px-2 py-1  border-0 border-border uppercase bg-accent-dim w-full ">
-                friend_requests
+                friend: requests
               </div>
               {requests.map((s, index) => (
                 <div
@@ -48,14 +49,14 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
               className="flex flex-col w-full cursor-pointer"
             >
               <div className="text-accent  font-bold text-xs px-2 py-1  border-0 border-border uppercase bg-accent-dim w-full ">
-                contest_invite
+                contest: invite
               </div>
               {contest.map((s, index) => (
                 <div
                   key={s._id || index}
                   className="flex gap-2 flex-start p-2 border-b border-t border-border items-center bg-surface-2"
                 >
-                  <Avatar data={s.creator}/>
+                  <Avatar data={s.creator} />
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm uppercase">
                       {changeSpace(s.contestName)}//
@@ -64,6 +65,23 @@ const BellDropdown = ({ contest, requests, setIsBellOpen }) => {
                       creator:{changeSpace(s.creator.username)}
                     </span>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {notifications.length > 0 && (
+            <div className="flex flex-col w-full">
+              <div className="text-accent flex items-center justify-between font-bold text-xs px-2 py-1  border-0 border-border uppercase bg-accent-dim w-full ">
+                <span>notifications</span>
+                <span onClick={()=>clearAll()} className="hover:underline cursor-pointer">clearAll</span>
+              </div>
+              {notifications.map((s, index) => (
+                <div
+                  key={s._id || index}
+                  className="flex gap-2 flex-start p-2 border-b border-t border-border items-center bg-surface-2 "
+                >
+                  {s.status === "unread" && <div className="flex items-center justify-center h-full"><div className="h-2 w-2 bg-accent animate-pulse"></div></div>  }
+                  <span className={`text-xs ${s.status === "unread" ? "text-accent" : "text-text-secondary"} uppercase`}>{s.message}</span>
                 </div>
               ))}
             </div>
