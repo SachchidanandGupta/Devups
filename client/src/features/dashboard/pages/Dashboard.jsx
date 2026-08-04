@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import StreakCard from "../components/StreakCard";
 import StatsCard from "../components/StatsCard";
 import useAuth from "../../auth/hooks/useAuth";
-import ActivityFeedPanel from "../../activityLog/components/ActivityFeedPanel";
 import GithubHeatmap from "../../user/components/GithubHeatmap";
 import DailyProblem from "../components/DailyProblem";
 import { FaGithub } from "react-icons/fa";

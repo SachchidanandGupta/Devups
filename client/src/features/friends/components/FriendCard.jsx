@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Avatar from "../../../shared/components/Avatar";
 import { Link } from "react-router";
 import { changeSpace } from "../../../shared/hooks/space";
-const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
+const FriendCard = ({ friend, onUnfriend, onBlock }) => {
   const {
     _id,
     username = "Unknown",
@@ -13,6 +13,7 @@ const FriendCard = ({ friend, onUnfriend, onBlock, isOnline }) => {
     requiredXP,
     onlineStatus,
   } = friend || {};
+  // console.log(friend)
 
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 

@@ -9,7 +9,13 @@ import { changeSpace } from "../../../shared/hooks/space";
 import useUtcTime from "../../../shared/hooks/useUtcTime";
 import useContest from "../hooks/useContest";
 const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
-  const { problems = [], invitations = [],startTime,endTime } = contestData || {};
+  const {
+    problems = [],
+    invitations = [],
+    startTime,
+    endTime,
+  } = contestData || {};
+
   const [, forceUpdate] = useState(0);
   const [confirmPopUp, setConfirmPopUp] = useState(false);
   const { user } = useAuth();
@@ -17,7 +23,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
   const { abortContest, concludeContest } = useContest();
   const [timeLeft, setTimeLeft] = useState("");
   const [timeRemaining, setTimeRemaining] = useState("");
- 
+
   useEffect(() => {
     const calc = () => {
       const diff = new Date(startTime) - new Date();
@@ -244,9 +250,11 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
                   >
                     <div className="col-span-2 flex items-center gap-2">
                       <Avatar data={items.userId} />
-                      <span className="font-bold text-sm truncate">
-                        {items.userId?.username}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm truncate">
+                          {items.userId?.username}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex justify-end w-full">
                       <div className="w-20 border border-border text-sm py-1 bg-text-muted text-nowrap text-center text-text-primary font-semibold flex-shrink-0">

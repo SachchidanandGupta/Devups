@@ -16,12 +16,12 @@ function intializeSocket(server) {
     const rawCookie = socket.handshake.headers.cookie;
     if (!rawCookie) return next(new Error("Token not provided"));
     const parsed = cookie.parseCookie(rawCookie);
-    const token = parsed.token; 
+    const token = parsed.token;
     if (!token) return next(new Error("Token not provided"));
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      socket.data.userId = decoded.id; 
+      socket.data.userId = decoded.id;
       next();
     } catch (err) {
       next(new Error("invalid token"));
@@ -42,15 +42,23 @@ function intializeSocket(server) {
       console.log("User disconnected", socket.id);
     });
     socket.on("join_room", () => {
-     const userId = socket.data.userId
+      const userId = socket.data.userId;
       if (!onlineUsers.has(userId)) onlineUsers.set(userId, new Set());
       onlineUsers.get(userId).add(socket.id);
       socket.join(userId);
       const sockets = onlineUsers.get(userId);
-      if(sockets.size === 1){
+      if (sockets.size === 1) {
         io.emit("user:online", userId);
       }
       console.log(`User ${userId} joined room ++++++++ `);
+    });
+
+    socket.on("join_contest", (contestId) => {
+      socket.join(`contest:${contestId}`);
+    });
+
+    socket.on("leave_contest", (contestId) => {
+      socket.leave(`contest:${contestId}`);
     });
   });
   return io;

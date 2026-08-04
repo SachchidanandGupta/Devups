@@ -14,6 +14,7 @@ const responseNotificationSchema = new mongoose.Schema(
         "friend_request_rejected",
         "contest_invite_accepted",
         "contest_invite_rejected",
+        "contest_deleted"
       ],
       required: true,
     },

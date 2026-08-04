@@ -353,9 +353,11 @@ const Profile = () => {
                             <span className="text-accent text-sm font-bold uppercase tracking-wider">
                               {changeSpace(item.username)}
                             </span>
-                            <span className="text-text-primary text-[10px] uppercase tracking-widest">
-                              LVL {item.level}
-                            </span>
+                            <div className="flex gap-2">
+                              <span className="text-text-primary text-[10px] uppercase tracking-widest">
+                                LVL {item.level}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </Link>

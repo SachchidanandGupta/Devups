@@ -160,14 +160,12 @@ const getFriendContest = asyncHandler(async function (req, res) {
       creator: userID,
     };
   }
-  const friendContest = await contestModel
-    .find(query)
-    .populate([
-      { path: "creator", select: "username avatar level" },
-      { path: "participants", select: "username avatar level" },
-      { path: "invitations.userId", select: "username avatar level" },
-      { path: "winner", select: "username avatar level" },
-    ]);
+  const friendContest = await contestModel.find(query).populate([
+    { path: "creator", select: "username avatar level" },
+    { path: "participants", select: "username avatar level" },
+    { path: "invitations.userId", select: "username avatar level" },
+    { path: "winner", select: "username avatar level" },
+  ]);
 
   res.status(200).json({
     message: "friends contest fetched",
@@ -186,9 +184,14 @@ const deleteContest = asyncHandler(async function (req, res) {
     throw new appError("Unauthorized", 401);
   }
   const deletedContest = await contestModel.findByIdAndDelete(contestId);
-  contest.participants.map((id) =>
-    emitContestDeleted(id.toString(), deletedContest),
-  );
+  contest.invitations.forEach((id) => {
+    emitContestDeleted(id?.userId?.toString(), deletedContest);
+    createResponseNotification(
+      id?.userId?.toString(),
+      "contest_deleted",
+      `${req.user.username} deleted the contest ${deletedContest.contestName}`,
+    );
+  });
   return res.status(200).json({
     message: "contest deleted",
     status: "success",
@@ -262,6 +265,7 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
     "contest_invite_accepted",
     `${req.user.username} accepted your invite to ${contest.contestName}`,
   );
+  
   return res.status(200).json({
     message: "Contest invitation accepted",
     status: "success",
