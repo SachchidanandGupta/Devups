@@ -8,6 +8,8 @@ import useAuth from "../../auth/hooks/useAuth";
 import { changeSpace } from "../../../shared/hooks/space";
 import useUtcTime from "../../../shared/hooks/useUtcTime";
 import useContest from "../hooks/useContest";
+import ContestRanks from "./ContestRanks";
+
 const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
   const {
     problems = [],
@@ -18,6 +20,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
 
   const [, forceUpdate] = useState(0);
   const [confirmPopUp, setConfirmPopUp] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const { user } = useAuth();
   const utc = useUtcTime();
   const { abortContest, concludeContest } = useContest();
@@ -40,6 +43,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
     const interval = setInterval(calc, 1000);
     return () => clearInterval(interval);
   }, [startTime]);
+
   useEffect(() => {
     const remainedTime = () => {
       const left = new Date(endTime) - new Date();
@@ -56,6 +60,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
     const interval = setInterval(remainedTime, 1000);
     return () => clearInterval(interval);
   }, [endTime]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       forceUpdate((prev) => prev + 1);
@@ -63,8 +68,6 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // console.log("Left",timeLeft);
-  // console.log("remaining",timeRemaining);
   const progressPercentage = getProgressPercentage(
     contestData.startTime,
     contestData.endTime,
@@ -97,7 +100,6 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
   if (inviteNodes < 10 && inviteNodes > 0) {
     inviteNodes = "0" + inviteNodes;
   }
-  //  console.log(contestData?.scores?.length);
   return (
     <div className=" relative flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -106,26 +108,57 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
           <h1 className="text-3xl font-bold">
             {changeSpace(contestData.contestName)}
           </h1>
+          
           {String(user._id) === String(contestData.creator._id) ? (
             <div className="w-full flex justify-end">
-              {contestData?.scores?.length > 0 ? (
+              {contestData.status === "completed" ? (
                 <button
-                  onClick={() => setConfirmPopUp(true)}
-                  className="text-accent border border-accent hover:text-black hover:bg-accent font-bold active:bg-danger active:border-danger active:text-text-primary cursor-pointer p-2"
+                 onClick={() => setLeaderboardOpen(true)}
+                 className="text-accent border border-accent bg-black p-2 cursor-pointer font-bold hover:bg-accent hover:text-black active:bg-danger active:border-danger active:text-text-primary active:scale-95"
                 >
-                  ABORT_CONTEST
+                 LEADERBOARD
                 </button>
               ) : (
-                <button
-                  onClick={() => setConfirmPopUp(true)}
-                  className="text-danger border border-danger hover:text-text-primary hover:bg-danger cursor-pointer p-2 font-bold text-sm active:scale-95"
-                >
-                  ABORT_CONTEST
-                </button>
+                <div>
+                  {contestData?.scores?.length > 0 ? (
+                    <button
+                      onClick={() => setConfirmPopUp(true)}
+                      className="text-danger border border-danger hover:text-text-primary hover:bg-danger cursor-pointer p-2 font-bold text-sm active:scale-95"
+                    >
+                      CONCLUDE_CONTEST
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmPopUp(true)}
+                      className="text-danger border border-danger hover:text-text-primary hover:bg-danger cursor-pointer p-2 font-bold text-sm active:scale-95"
+                    >
+                      ABORT_CONTEST
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           ) : (
-            <div></div>
+            <div className="w-full flex justify-end">
+              {contestData.status === "pending" && (
+                <span className="text-warning border border-warning bg-warning/10 p-2 font-bold text-sm">
+                  STARTING IN: {timeLeft}
+                </span>
+              )}
+              {contestData.status === "active" && (
+                <span className="text-accent border border-accent bg-accent/10 p-2 font-bold text-sm animate-pulse">
+                  LIVE NOW
+                </span>
+              )}
+              {contestData.status === "completed" && (
+                <button
+                  onClick={() => setLeaderboardOpen(true)}
+                  className="text-accent border border-accent bg-black p-2 cursor-pointer font-bold hover:bg-accent hover:text-black active:bg-danger active:border-danger active:text-text-primary active:scale-95"
+                >
+                  LEADERBOARD
+                </button>
+              )}
+            </div>
           )}
         </div>
         <div className="col-span-1 border border-border-white p-4 flex flex-col">
@@ -143,10 +176,16 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
               </span>
             </div>
           </div>
+          
           <div className="flex items-center justify-between pt-2">
-            <span className="text-text-muted">duration</span>
-            <span className="text-text-primary font-bold">{duration}</span>
+            <span className="text-text-muted">
+              {contestData.status === "active" ? "time_remaining" : "duration"}
+            </span>
+            <span className="text-text-primary font-bold">
+              {contestData.status === "active" ? timeRemaining : duration}
+            </span>
           </div>
+
           <div className="w-full h-2 sm:h-2.5 bg-surface-2 overflow-hidden mt-2">
             <div
               className="h-full bg-accent transition-all duration-500"
@@ -280,6 +319,7 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
           </div>
         </div>
       </div>
+      
       {confirmPopUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-1">
           <div className="fixed inset-0 bg-surface-2/40 backdrop-blur-xs"></div>
@@ -362,6 +402,14 @@ const HostContestDetails = ({ contestData, getProgressPercentage, code }) => {
             </div>
           </div>
         </div>
+      )}
+      
+      {leaderboardOpen && (
+        <ContestRanks 
+          contest={contestData} 
+          code={code} 
+          setLeaderBoardOpen={setLeaderboardOpen}
+        />
       )}
     </div>
   );

@@ -81,7 +81,7 @@ const contestSchema = new mongoose.Schema(
     },
     scores: [
       {
-        userId: { type: mongoose.Schema.Types.ObjectId },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         xpEarned: { type: Number },
         reachedTargetAt: {
           type: Date,

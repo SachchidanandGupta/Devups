@@ -9,12 +9,19 @@ const activityLogSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["contest_created", "problem_solved", "contest_ranked","contest_joined","contest_declined"],
+      enum: [
+        "contest_created",
+        "problem_solved",
+        "contest_ranked",
+        "contest_joined",
+        "contest_declined",
+      ],
       required: true,
     },
     platform: {
       type: String,
       enum: ["leetcode", "codeforces", "github", "devups"],
+      default: "devups",
       required: true,
     },
     message: {
@@ -38,7 +45,7 @@ const activityLogSchema = new mongoose.Schema(
 
 activityLogSchema.index({ createdAt: -1 });
 activityLogSchema.index({ contestId: 1, createdAt: -1 });
-
+activityLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
 const activityLogModel = mongoose.model("ActivityLog", activityLogSchema);
 
 module.exports = activityLogModel;

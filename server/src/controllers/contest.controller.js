@@ -165,6 +165,7 @@ const getFriendContest = asyncHandler(async function (req, res) {
     { path: "participants", select: "username avatar level" },
     { path: "invitations.userId", select: "username avatar level" },
     { path: "winner", select: "username avatar level" },
+    { path: "scores.userId", select: "username avatar level" },
   ]);
 
   res.status(200).json({
@@ -265,7 +266,7 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
     "contest_invite_accepted",
     `${req.user.username} accepted your invite to ${contest.contestName}`,
   );
-  
+
   return res.status(200).json({
     message: "Contest invitation accepted",
     status: "success",
