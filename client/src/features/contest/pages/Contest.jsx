@@ -21,6 +21,7 @@ const Contest = () => {
     activeContests,
     incomingContests,
     hostedContests,
+    completedContests,
     isLoading,
   } = useContest();
   const utc = useUtcTime();
@@ -55,6 +56,8 @@ const Contest = () => {
     }
   } else if (activeTab === "hosted") {
     activeList = hostedContests;
+  } else if(activeTab === "history"){
+    activeList = completedContests
   }
 
   return (
@@ -109,6 +112,17 @@ const Contest = () => {
                 ""
               )}
             </button>
+            <button
+              onClick={() => setActiveTab("history")}
+              className={`px-4 py-2 rounded-none text-sm  uppercase  cursor-pointer ${
+                activeTab === "history"
+                  ? "text-accent border-b-2 border-accent bg-accent-muted/40 "
+                  : "text-text-secondary hover:text-text-primary "
+              }`}
+            >
+              contest_histroy
+               
+            </button>
           </div>
         </div>
         {activeTab == "platform" && (
@@ -127,6 +141,11 @@ const Contest = () => {
         {activeTab == "hosted" && (
           <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2  text-text-secondary">
             USER CREATED CONTEST & EVENTS
+          </div>
+        )}
+        {activeTab == "history" && (
+          <div className="w-full text-xl font-bold border-b-2 pb-1 border-border mb-2  text-text-secondary">
+            USER CONTEST HISTORY
           </div>
         )}
 
@@ -171,7 +190,7 @@ const Contest = () => {
                  
                     <div className="w-full flex flex-col gap-2">
                       {activeContests?.length > 0 ? (
-                        <HostContestCard contests={activeContests}/>
+                        <HostContestCard contests={activeContests} activeTab={activeTab}/>
                       ) : (
                         <div className="w-full min-h-73 flex flex-col gap-2 items-center justify-center border border-border border-dashed uppercase">
                           <span className="text-text-secondary text-sm">
@@ -186,7 +205,21 @@ const Contest = () => {
                 {activeTab === "hosted" && (
                   <div className="flex flex-col gap-2 w-full ">
                     {hostedContests?.length > 0 ? (
-                      <HostContestCard contests={hostedContests} />
+                      <HostContestCard contests={hostedContests} activeTab={activeTab} />
+                    ) : (
+                      <div className=" uppercase flex flex-col gap-2 items-center justify-center w-full min-h-74 border border-border border-dashed">
+                        <span className="text-text-secondary text-sm text-nowrap">
+                          NO_CONTEST_INITIATED_YET
+                        </span>
+                        <HostContestButton />
+                      </div>
+                    )}
+                  </div>
+                )}
+                {activeTab === "history" && (
+                  <div className="flex flex-col gap-2 w-full ">
+                    {completedContests?.length > 0 ? (
+                      <HostContestCard contests={completedContests} activeTab={activeTab} />
                     ) : (
                       <div className=" uppercase flex flex-col gap-2 items-center justify-center w-full min-h-74 border border-border border-dashed">
                         <span className="text-text-secondary text-sm text-nowrap">

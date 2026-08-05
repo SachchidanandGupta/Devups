@@ -158,6 +158,9 @@ const getFriendContest = asyncHandler(async function (req, res) {
   } else if (type === "hosted") {
     query = {
       creator: userID,
+      status: {
+        $in: ["active", "pending"],
+      },
     };
   }
   const friendContest = await contestModel.find(query).populate([

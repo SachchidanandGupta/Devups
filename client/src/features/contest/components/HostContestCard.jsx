@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import HostContestDetails from "./HostContestDetails";
 import { changeSpace } from "../../../shared/hooks/space";
-const HostContestCard = ({ contests }) => {
+const HostContestCard = ({ contests,activeTab }) => {
   // console.log(contests)
   let nodes = contests?.length || 0;
   if (nodes < 10 && nodes > 0) {
@@ -76,7 +76,7 @@ const HostContestCard = ({ contests }) => {
 
         {/* RIGHT COLUMN: Selected Contest Details */}
         <div className="col-span-3   ">
-           <HostContestDetails contestData={selectedContest} getProgressPercentage={getProgressPercentage} code={code} />
+           <HostContestDetails contestData={selectedContest} getProgressPercentage={getProgressPercentage} code={code} activeTab={activeTab} />
         </div>
       </div>
     </div>

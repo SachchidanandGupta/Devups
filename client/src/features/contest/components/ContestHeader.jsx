@@ -16,6 +16,7 @@ const fields = [
     contestType: "ACTIVE_CONTEST",
   },
   { tab: "hosted", pageTitle: "HOST_TERMINAL", contestType: "HOSTED_CONTEST" },
+  {tab:"history",pageTitle:"HISTORY_TERMINAL",contestType:"CONTEST_HISTORY"}
 ];
 const ContestHeader = ({
   count,
