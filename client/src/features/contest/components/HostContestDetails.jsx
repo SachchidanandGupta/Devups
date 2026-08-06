@@ -105,7 +105,6 @@ const HostContestDetails = ({
   if (inviteNodes < 10 && inviteNodes > 0) {
     inviteNodes = "0" + inviteNodes;
   }
-  // console.log(activeTab)
   return (
     <div className=" relative flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -114,7 +113,6 @@ const HostContestDetails = ({
           <h1 className="text-3xl font-bold">
             {changeSpace(contestData.contestName)}
           </h1>
-          <span></span>
 
           {String(user._id) === String(contestData.creator._id) ? (
             <div className="w-full flex justify-end">
@@ -343,7 +341,6 @@ const HostContestDetails = ({
           </div>
         </div>
       </div>
-      <div className="w-full flex items-center "></div>
      
 
 

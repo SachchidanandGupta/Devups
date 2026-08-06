@@ -1,18 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import HostContestDetails from "./HostContestDetails";
 import { changeSpace } from "../../../shared/hooks/space";
-const HostContestCard = ({ contests,activeTab }) => {
-  // console.log(contests)
+import useContestUIStore from "../hooks/useContestUIStore";
+
+const HostContestCard = ({ contests, activeTab }) => {
   let nodes = contests?.length || 0;
   if (nodes < 10 && nodes > 0) {
     nodes = "0" + nodes;
   }
-  const [selectedContest, setSelectedContest] = useState(contests?.[0] || null);
-  useEffect(()=>{
-    if (contests?.length > 0 && !selectedContest) {
-      setSelectedContest(contests[0]);
+
+  const selectedContestId = useContestUIStore(
+    (state) => state.selectedContestId,
+  );
+  const setSelectedContestId = useContestUIStore(
+    (state) => state.setSelectedContestId,
+  );
+
+  const selectedContest =
+    contests?.find((c) => c.id === selectedContestId) || contests?.[0] || null;
+
+  useEffect(() => {
+    if (contests?.length > 0 && !selectedContestId) {
+      setSelectedContestId(contests[0].id);
     }
-  },[contests, selectedContest]);
+  }, [contests, selectedContestId]);
+
   function getProgressPercentage(startTime, endTime) {
     const now = Date.now();
     const start = new Date(startTime).getTime();
@@ -21,7 +33,7 @@ const HostContestCard = ({ contests,activeTab }) => {
     if (now >= end) return 100;
     return ((now - start) / (end - start)) * 100;
   }
-  let code ;
+  let code;
   return (
     <div className="flex flex-col items-center uppercase ">
       <div className="lg:grid lg:grid-cols-4 flex flex-col gap-2 w-full">
@@ -36,28 +48,33 @@ const HostContestCard = ({ contests,activeTab }) => {
               return str.substring(0, 7);
             }
             const inviteNumber = (items.invitations?.length || 0) + 1;
-             code = trim(items.id);
+            code = trim(items.id);
             const progressPercentage = getProgressPercentage(
               items.startTime,
               items.endTime,
             );
-            
-            
-            const isSelected = selectedContest?.id === items.id;
+
+            const isSelected = selectedContestId === items.id;
 
             return (
-              <div 
-                key={items.id} 
-                onClick={() => setSelectedContest(items)} 
+              <div
+                key={items.id}
+                onClick={() => setSelectedContestId(items.id)}
                 className={`flex flex-col items-start p-4 gap-1 cursor-pointer transition-colors ${
-                  isSelected ? "bg-accent-dim/40 border-l-2 border-accent" : "bg-surface hover:bg-surface-2"
+                  isSelected
+                    ? "bg-accent-dim/40 border-l-2 border-accent"
+                    : "bg-surface hover:bg-surface-2"
                 }`}
               >
                 <div className="w-full flex items-center justify-between">
                   <span className="text-accent text-xs">ID: {code}</span>
-                  {isSelected && <span className="w-1 h-1 bg-accent animate-pulse"></span>}
+                  {isSelected && (
+                    <span className="w-1 h-1 bg-accent animate-pulse"></span>
+                  )}
                 </div>
-                <span className="text-xl font-bold">{changeSpace(items.contestName)}</span>
+                <span className="text-xl font-bold">
+                  {changeSpace(items.contestName)}
+                </span>
                 <div className="flex w-full items-center justify-between gap-2">
                   <span className="text-text-muted text-xs text-nowrap w-full">
                     NODES: {items.participants?.length || 0}/{inviteNumber}
@@ -74,9 +91,13 @@ const HostContestCard = ({ contests,activeTab }) => {
           })}
         </div>
 
-        {/* RIGHT COLUMN: Selected Contest Details */}
         <div className="col-span-3   ">
-           <HostContestDetails contestData={selectedContest} getProgressPercentage={getProgressPercentage} code={code} activeTab={activeTab} />
+          <HostContestDetails
+            contestData={selectedContest}
+            getProgressPercentage={getProgressPercentage}
+            code={code}
+            activeTab={activeTab}
+          />
         </div>
       </div>
     </div>
