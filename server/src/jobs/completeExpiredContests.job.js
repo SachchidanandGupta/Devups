@@ -2,6 +2,8 @@ const cron = require("node-cron");
 const contestModel = require("../models/contest.model");
 const { determineWinner } = require("../services/contest.service");
 const { awardContestXp } = require("../services/xp.service");
+const { createActivityLog } = require("../services/activityLog.service");
+
 async function startContestSync() {
   cron.schedule("*/15 * * * * ", async () => {
     try {
@@ -20,6 +22,24 @@ async function startContestSync() {
               winner: winnerId,
               status: "completed",
             });
+
+            if (winnerId) {
+              const winnerEntry = contest.scores.find(
+                (s) => String(s.userId) === String(winnerId),
+              );
+              await createActivityLog({
+                userId: winnerId,
+                type: "contest_ranked",
+                platform: "devups",
+                message: `won the contest ${contest.contestName}`,
+                contestId: contest._id,
+                metaData: {
+                  xpEarned: winnerEntry?.xpEarned || 0,
+                  solvedCount: winnerEntry?.solvedCount || 0,
+                },
+              });
+            }
+
             await Promise.all(
               contest.scores
                 .filter((c) => c.xpEarned > 0)
@@ -44,29 +64,29 @@ async function startContestSync() {
 }
 async function startActiveContestSync() {
   cron.schedule("* * * * *", async () => {
-  try {
-    const contests = await contestModel.find({
-      status: "pending",
-      startTime: { $lte: new Date() },
-    });
+    try {
+      const contests = await contestModel.find({
+        status: "pending",
+        startTime: { $lte: new Date() },
+      });
 
-    if (!contests.length) return;
+      if (!contests.length) return;
 
-    await contestModel.updateMany(
-      {
-        _id: { $in: contests.map(c => c._id) },
-      },
-      {
-        $set: { status: "active" },
-      }
-    );
-    console.log(`Activated ${contests.length} contests`);
-  } catch (err) {
-    console.error(err);
-  }
-});
+      await contestModel.updateMany(
+        {
+          _id: { $in: contests.map((c) => c._id) },
+        },
+        {
+          $set: { status: "active" },
+        },
+      );
+      console.log(`Activated ${contests.length} contests`);
+    } catch (err) {
+      console.error(err);
+    }
+  });
 }
 module.exports = {
   startContestSync,
-  startActiveContestSync
+  startActiveContestSync,
 };
