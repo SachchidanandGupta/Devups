@@ -1,20 +1,8 @@
 const cron = require("node-cron");
 const userModel = require("../models/user.model");
-const { awardXP } = require("../services/xp.service");
-const axios = require("axios");
+const { awardBatchedXP } = require("../services/xp.service");
+const { getGithubContributionStats } = require("../services/github.service");
 
-async function getGithub(username) {
-  const response = await axios.get(
-    `https://api.github.com/users/${username}/events/public?per_page=100`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        Accept: "application/vnd.github+json",
-      },
-    },
-  );
-  return response.data;
-}
 async function startGithubSync() {
   cron.schedule("0 */6 * * *", async function () {
     try {
@@ -28,37 +16,29 @@ async function startGithubSync() {
         if (users.length === 0) break;
         for (const user of users) {
           try {
-            const event = await getGithub(user.githubUsername);
-            const newEvent = event.filter(
-              (e) => new Date(e.created_at) > user.lastSolvedDate,
+            const stats = await getGithubContributionStats(user.githubUsername);
+            const newCommits = Math.max(
+              0,
+              stats.totalCommitContributions - user.githubSynced.commits,
             );
-            let hasNewSolve;
-            for (const e of newEvent) {
-              if (e.type === "PushEvent") {
-                const commits = e.payload.commits || [];
-                for (const commit of commits) {
-                  await awardXP(user._id, "github", "github_commit", {});
-                  hasNewSolve = true;
-                }
-              } else if (e.type === "PullRequestEvent") {
-                if (
-                  e.payload.action === "closed" &&
-                  e.payload.pull_request?.merged === true
-                ) {
-                  await awardXP(user._id, "github", "github_pr", {});
-                  hasNewSolve = true;
-                }
-              }
+            const newPRs = Math.max(
+              0,
+              stats.totalPullRequestContributions - user.githubSynced.pullRequests,
+            );
+
+            if (newCommits > 0) {
+              await awardBatchedXP(user._id, "github", "github_commit", newCommits);
             }
-            if (hasNewSolve) {
-              await userModel.findByIdAndUpdate(
-                user._id,
-                { lastSolvedDate: new Date() },
-                { returnDocument: "after", runValidators: true },
-              );
+            if (newPRs > 0) {
+              await awardBatchedXP(user._id, "github", "github_pr", newPRs);
             }
+
+            await userModel.findByIdAndUpdate(user._id, {
+              "githubSynced.commits": stats.totalCommitContributions,
+              "githubSynced.pullRequests": stats.totalPullRequestContributions,
+            });
           } catch (error) {
-            console.error(`failed to sync ${user.githubUsername}`);
+            console.error(`failed to sync ${user.githubUsername}`, error.message);
             continue;
           }
           await new Promise((resolve) => setTimeout(resolve, 500));

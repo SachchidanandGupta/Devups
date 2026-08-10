@@ -89,6 +89,7 @@ const contestSchema = new mongoose.Schema(
         },
         solvedCount: { type: Number, default: 0 },
         lastUpdatedAt: { type: Date, default: null },
+        solvedProblems: [{ type: String }],
       },
     ],
   },

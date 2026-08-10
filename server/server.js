@@ -6,6 +6,7 @@ const {startLeetcodeSync} = require("./src/jobs/syncLeetcode.job");
 const {startCodeforcesSync} = require("./src/jobs/syncCodeForces.job");
 const {startGithubSync} = require("./src/jobs/syncGithub.job");
 const {startContestSync ,startActiveContestSync} = require("./src/jobs/completeExpiredContests.job");
+const {startCodeforcesRatingSync} = require("./src/jobs/codeforcesRating.cron");
 const http = require("http");
 const {intializeSocket} = require("./src/config/socket");
 const server = http.createServer(app);
@@ -16,6 +17,7 @@ startCodeforcesSync();
 startGithubSync();
 startContestSync();
 startActiveContestSync()
+startCodeforcesRatingSync();
 intializeSocket(server);
 
 server.listen(3000,()=>{

@@ -15,9 +15,8 @@ const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
 const userModel = require("../models/user.model");
-const { determineWinner } = require("../services/contest.service");
-const { awardContestXp } = require("../services/xp.service");
-const { contestXpRewards } = require("../constants/xpRewards");
+const { contestXpRewards } = require("../constants/xpRewards")
+const { verifyAndCreditSolve, finalizeContest } = require("../services/contest.service");
 async function getCodeforcesContest() {
   const response = await axios.get(
     "https://codeforces.com/api/contest.list?gym=false",
@@ -214,39 +213,18 @@ const completeFriendContest = asyncHandler(async function (req, res) {
   if (!contest.scores.length) {
     throw new appError("no submission found", 400);
   }
-  if (contest.status === "completed") {
-    throw new appError("Contest already completed", 400);
-  }
 
-  const winnerId = determineWinner(contest);
+  const updatedContest = await finalizeContest(contestId);
 
-  const updateContest = await contestModel
-    .findByIdAndUpdate(
-      contestId,
-      {
-        winner: winnerId,
-        status: "completed",
-      },
-      {
-        returnDocument: "after",
-        runValidators: true,
-      },
-    )
-    .populate("winner", "username avatar ");
-  await Promise.all(
-    contest.scores
-      .filter((c) => c.xpEarned > 0)
-      .map((c) => awardContestXp(c.userId, c.xpEarned)),
-  );
   const socket = getIo();
   socket.emit("contest:reminder", {
-    contestName: contest.contestName || "Friend Contest",
-    winner: updateContest.winner.username,
+    contestName: updatedContest.contestName || "Friend Contest",
+    winner: updatedContest.winner.username,
   });
   return res.status(200).json({
     message: "Contest completed",
     status: "success",
-    winner: updateContest.winner,
+    winner: updatedContest.winner,
   });
 });
 
@@ -333,6 +311,24 @@ const getUserContestHistory = asyncHandler(async function (req, res) {
   });
 });
 
+const markProblemSolved = asyncHandler(async function (req, res) {
+  const userId = req.user.id;
+  const { contestId } = req.params;
+  const { titleSlug } = req.body;
+
+  if (!titleSlug) {
+    throw new appError("titleSlug is required", 400);
+  }
+
+  const entry = await verifyAndCreditSolve(userId, contestId, titleSlug);
+
+  return res.status(200).json({
+    message: "Problem marked as solved",
+    status: "success",
+    entry,
+  });
+});
+
 module.exports = {
   getContest,
   createContest,
@@ -342,4 +338,5 @@ module.exports = {
   rejectContestInvite,
   getUserContestHistory,
   deleteContest,
+  markProblemSolved
 };

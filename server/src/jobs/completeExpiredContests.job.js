@@ -1,11 +1,10 @@
 const cron = require("node-cron");
 const contestModel = require("../models/contest.model");
-const { determineWinner } = require("../services/contest.service");
-const { awardContestXp } = require("../services/xp.service");
+const {  finalizeContest } = require("../services/contest.service");
 const { createActivityLog } = require("../services/activityLog.service");
 
 async function startContestSync() {
-  cron.schedule("*/15 * * * * ", async () => {
+  cron.schedule("*/15 * * * *", async () => {
     try {
       let pages = 0;
       let batchSize = 100;
@@ -17,34 +16,7 @@ async function startContestSync() {
         if (contests.length === 0) break;
         for (const contest of contests) {
           try {
-            const winnerId = determineWinner(contest);
-            await contestModel.findByIdAndUpdate(contest._id, {
-              winner: winnerId,
-              status: "completed",
-            });
-
-            if (winnerId) {
-              const winnerEntry = contest.scores.find(
-                (s) => String(s.userId) === String(winnerId),
-              );
-              await createActivityLog({
-                userId: winnerId,
-                type: "contest_ranked",
-                platform: "devups",
-                message: `won the contest ${contest.contestName}`,
-                contestId: contest._id,
-                metaData: {
-                  xpEarned: winnerEntry?.xpEarned || 0,
-                  solvedCount: winnerEntry?.solvedCount || 0,
-                },
-              });
-            }
-
-            await Promise.all(
-              contest.scores
-                .filter((c) => c.xpEarned > 0)
-                .map((c) => awardContestXp(c.userId, c.xpEarned)),
-            );
+            await finalizeContest(contest._id);
             await new Promise((resolve) => setTimeout(resolve, 500));
           } catch (error) {
             console.error(

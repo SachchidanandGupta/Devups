@@ -86,6 +86,15 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    githubSynced: {
+      commits: { type: Number, default: 0 },
+      pullRequests: { type: Number, default: 0 },
+    },
+    codeforcesSynced: {
+      lastContestId: { type: Number, default: null },
+      rating: { type: Number, default: null },
+      lastSubmissionSyncAt: { type: Date, default: null },
+    },
   },
   {
     timestamps: true,

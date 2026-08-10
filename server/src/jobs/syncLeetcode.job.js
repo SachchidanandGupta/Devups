@@ -25,7 +25,6 @@ async function startLeetcodeSync() {
             let hasNewSolve = false;
             if (fetched.easy > user.leetcodeSolved.easy) {
               const newEasy = fetched.easy - user.leetcodeSolved.easy;
-              user.leetcodeSolved.easy = fetched.easy;
               hasNewSolve = true;
               for (let i = 0; i < newEasy; i++) {
                 await awardXP(user._id, "leetcode", "solve_easy", {});
@@ -33,7 +32,6 @@ async function startLeetcodeSync() {
             }
             if (fetched.medium > user.leetcodeSolved.medium) {
               const newMedium = fetched.medium - user.leetcodeSolved.medium;
-              user.leetcodeSolved.medium = fetched.medium;
               hasNewSolve = true;
               for (let i = 0; i < newMedium; i++) {
                 await awardXP(user._id, "leetcode", "solve_medium", {});
@@ -42,7 +40,6 @@ async function startLeetcodeSync() {
             if (fetched.hard > user.leetcodeSolved.hard) {
               const newHard = fetched.hard - user.leetcodeSolved.hard;
               hasNewSolve = true;
-              user.leetcodeSolved.hard = fetched.hard;
               for (let i = 0; i < newHard; i++) {
                 await awardXP(user._id, "leetcode", "solve_hard", {});
               }
@@ -71,7 +68,7 @@ async function startLeetcodeSync() {
                   user._id,
                   contestQuestion._id,
                   xpReward,
-                  newSub.titleSlug, 
+                  newSub.titleSlug,
                 );
               }
             }

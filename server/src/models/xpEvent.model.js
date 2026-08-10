@@ -25,6 +25,7 @@ const xpEventSchema = new mongoose.Schema(
         "github_pr",
         "daily_streak",
         "contest_completion",
+        "codeforces_amazing_rank",
       ],
       required: [true, "action is required"],
     },

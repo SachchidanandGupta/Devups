@@ -8,6 +8,7 @@ const XP_VALUES = {
   github_commit: 2,
   github_pr: 10,
   daily_streak: 5,
+  codeforces_amazing_rank: 100,
 };
 
 const xpEventModel = require("../models/xpEvent.model");
@@ -23,11 +24,7 @@ function resolveLevelData(xp) {
     cost = Math.floor(cost * 1.1);
     level++;
   }
-  return {
-    level,
-    threshold,
-    cost,
-  };
+  return { level, threshold, cost };
 }
 
 function calculateLevel(xp) {
@@ -42,12 +39,8 @@ function getLevelProgress(xp) {
     requiredXP: cost,
   };
 }
-async function awardXP(userId, source, action, metaData = {}) {
-  const amount = XP_VALUES[action];
-  if (!amount) {
-    throw new Error("InValid action" + action);
-  }
 
+async function applyXPGain(userId, source, action, amount, metaData = {}) {
   const xpEvent = await xpEventModel.create({
     userId,
     action,
@@ -76,51 +69,35 @@ async function awardXP(userId, source, action, metaData = {}) {
     currentXP,
     requiredXP,
   });
+
   return {
     xpEvent,
-    user: {
-      id: updatedUser._id,
-      xp: updatedUser.xp,
-      level: updatedUser.level,
-    },
+    user: { id: updatedUser._id, xp: updatedUser.xp, level: updatedUser.level },
   };
+}
+
+async function awardXP(userId, source, action, metaData = {}) {
+  const amount = XP_VALUES[action];
+  if (!amount) {
+    throw new Error("InValid action" + action);
+  }
+  return applyXPGain(userId, source, action, amount, metaData);
+}
+
+async function awardBatchedXP(userId, source, action, count, metaData = {}) {
+  const perUnit = XP_VALUES[action];
+  if (!perUnit) {
+    throw new Error("InValid action" + action);
+  }
+  if (!count || count <= 0) {
+    throw new Error("count must be a positive number");
+  }
+  const amount = perUnit * count;
+  return applyXPGain(userId, source, action, amount, { ...metaData, count });
 }
 
 async function awardContestXp(userId, amount) {
-  const xpEvent = await xpEventModel.create({
-    userId,
-    action: "contest_completion",
-    source: "contest",
-    amount,
-    metaData: {},
-  });
-
-  const updatedUser = await userModel.findByIdAndUpdate(
-    userId,
-    { $inc: { xp: amount } },
-    { returnDocument: "after" },
-  );
-
-  const { level, currentXP, requiredXP } = getLevelProgress(updatedUser.xp);
-  if (level !== updatedUser.level) {
-    await userModel.findByIdAndUpdate(userId, { level: level });
-    updatedUser.level = level;
-  }
-  emitXPUpdate(userId, {
-    xp: updatedUser.xp,
-    level: updatedUser.level,
-    action: "contest_completion",
-    amount,
-    currentXP,
-    requiredXP,
-  });
-  return {
-    xpEvent,
-    user: {
-      id: updatedUser._id,
-      xp: updatedUser.xp,
-      level: updatedUser.level,
-    },
-  };
+  return applyXPGain(userId, "contest", "contest_completion", amount, {});
 }
-module.exports = { awardXP, awardContestXp, getLevelProgress };
+
+module.exports = { awardXP, awardBatchedXP, awardContestXp, getLevelProgress };

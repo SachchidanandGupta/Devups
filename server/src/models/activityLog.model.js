@@ -15,6 +15,7 @@ const activityLogSchema = new mongoose.Schema(
         "contest_ranked",
         "contest_joined",
         "contest_declined",
+        "amazing_rank",
       ],
       required: true,
     },
@@ -45,7 +46,7 @@ const activityLogSchema = new mongoose.Schema(
 
 activityLogSchema.index({ createdAt: -1 });
 activityLogSchema.index({ contestId: 1, createdAt: -1 });
-activityLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
+
 const activityLogModel = mongoose.model("ActivityLog", activityLogSchema);
 
 module.exports = activityLogModel;

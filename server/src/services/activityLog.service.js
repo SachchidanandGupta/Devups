@@ -1,8 +1,14 @@
 const activityLogModel = require("../models/activityLog.model");
 const { emitGlobalActivity, emitContestProgress } = require("./socket.service");
 
-async function createActivityLog({ userId, type, platform, message, contestId, metaData }) {
-
+async function createActivityLog({
+  userId,
+  type,
+  platform,
+  message,
+  contestId,
+  metaData,
+}) {
   const activity = await activityLogModel.create({
     userId,
     type,
@@ -28,6 +34,9 @@ async function createActivityLog({ userId, type, platform, message, contestId, m
       break;
     case "contest_declined":
       if (contestId) emitContestProgress(contestId, activity);
+      break;
+    case "amazing_rank":
+      emitGlobalActivity(activity);
       break;
 
     default:
