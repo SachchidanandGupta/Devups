@@ -12,4 +12,5 @@ router.put("/complete/:contestId",authMiddleware.authUser,contestController.comp
 router.delete("/delete/:contestId",authMiddleware.authUser,contestController.deleteContest);
 router.put("/invite/accept/:contestId", authMiddleware.authUser, contestController.acceptContestInvite);
 router.put("/invite/reject/:contestId", authMiddleware.authUser, contestController.rejectContestInvite);
+router.post("/:contestId/mark-solved",authMiddleware.authUser,contestController.markProblemSolved);
 module.exports = router

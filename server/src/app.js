@@ -8,6 +8,7 @@ const contestRoutes = require("./routes/contest.routes");
 const responceNotificationRoutes = require("./routes/responseNotification.routes");
 const activityLogRoutes = require("./routes/activityLog.routes");
 const leetcodeRoutes = require("./routes/leetcode.routes");
+const xpRoutes = require("./routes/xp.routes");
 const {errorHandle} = require("./middlewares/error.middleware");
 const cors = require("cors");
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/contest",contestRoutes);
 app.use("/api/notifications",responceNotificationRoutes);
 app.use("/api/activity",activityLogRoutes);
 app.use("/api/leetcode",leetcodeRoutes);
+app.use("/api/xp",xpRoutes);
 app.use(errorHandle);
 
 
