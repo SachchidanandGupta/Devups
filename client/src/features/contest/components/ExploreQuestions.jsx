@@ -234,10 +234,10 @@ const ExploreQuestions = ({ selectedProblems, onAdd, onRemove, onClose }) => {
                               ? onRemove(items.titleSlug)
                               : onAdd(items)
                           }
-                          className={`w-full sm:w-auto uppercase border px-4 py-2 cursor-pointer text-xs sm:text-sm font-bold transition-colors ${
+                          className={`w-full sm:w-auto uppercase border px-4 py-2 cursor-pointer text-xs sm:text-sm font-bold transition-colors ease-in-out ${
                             isSelected
-                              ? "text-danger border-danger hover:bg-danger hover:text-text-primary"
-                              : "text-accent border-accent hover:bg-accent hover:text-black"
+                              ? "text-danger border-danger hover:bg-danger hover:text-text-primary active:scale-95"
+                              : "text-accent border-accent hover:bg-accent hover:text-black active:scale-95"
                           }`}
                         >
                           {isSelected ? "remove_node" : "add_node"}

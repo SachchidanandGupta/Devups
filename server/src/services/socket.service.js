@@ -58,6 +58,10 @@ function emitNotification(userId, data) {
   handleSocket(userId, data, "notification:new");
 }
 
+function emitContestActivated(userIds, data) {
+  handleSocket(userIds, data, "contest:activated");
+}
+
 module.exports = {
   emitXPUpdate,
   emitLeaderboardUpdate,
@@ -70,4 +74,5 @@ module.exports = {
   emitContestDeleted,
   emitContestProgress,
   emitContestInviteResponded,
+  emitContestActivated
 };

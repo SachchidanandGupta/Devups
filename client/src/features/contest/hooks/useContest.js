@@ -7,7 +7,8 @@ import {
   acceptContest,
   rejectContest,
   getUserContestHistory,
-  deleteContest
+  deleteContest,
+  markProblemSolved
 } from "../api/contest.api";
 
 const useContest = () => {

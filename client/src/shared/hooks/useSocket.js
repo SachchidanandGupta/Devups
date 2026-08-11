@@ -77,6 +77,10 @@ const useSocket = () => {
       await friendContest();
     });
 
+    socketInstance.on("contest:activated", async (data) => {
+      await friendContest();
+    });
+
     socketInstance.on("notification:new", async (data) => {
       prependNotification(data);
     });

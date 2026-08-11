@@ -2,6 +2,8 @@ const cron = require("node-cron");
 const contestModel = require("../models/contest.model");
 const {  finalizeContest } = require("../services/contest.service");
 const { createActivityLog } = require("../services/activityLog.service");
+const { createResponseNotification } = require("../services/responseNotification.service");
+const { emitContestActivated } = require("../services/socket.service");
 
 async function startContestSync() {
   cron.schedule("*/15 * * * *", async () => {
@@ -52,6 +54,24 @@ async function startActiveContestSync() {
           $set: { status: "active" },
         },
       );
+
+      for (const contest of contests) {
+        const participantIds = contest.participants.map((id) => id.toString());
+
+        emitContestActivated(participantIds, {
+          contestId: contest._id,
+          contestName: contest.contestName,
+        });
+
+        participantIds.forEach((userId) => {
+          createResponseNotification(
+            userId,
+            "contest_activated",
+            `${contest.contestName} is live — go go go`,
+          );
+        });
+      }
+
       console.log(`Activated ${contests.length} contests`);
     } catch (err) {
       console.error(err);

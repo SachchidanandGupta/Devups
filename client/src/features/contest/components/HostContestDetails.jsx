@@ -28,10 +28,12 @@ const HostContestDetails = ({
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const { user } = useAuth();
   const utc = useUtcTime();
-  const { abortContest, concludeContest } = useContest();
+  const { abortContest, concludeContest, markSolved } = useContest();
+  const [solvingSlug, setSolvingSlug] = useState(null);
+  const [problemErrors, setProblemErrors] = useState({});
   const [timeLeft, setTimeLeft] = useState("");
   const [timeRemaining, setTimeRemaining] = useState("");
-
+// console.log("problemErrors",problemErrors)
   useEffect(() => {
     const calc = () => {
       const diff = new Date(startTime) - new Date();
@@ -77,7 +79,23 @@ const HostContestDetails = ({
     contestData.startTime,
     contestData.endTime,
   );
+  const myScoreEntry = contestData.scores?.find(
+    (s) => String(s.userId?._id || s.userId) === String(user._id),
+  );
+  const solvedSlugs = new Set(myScoreEntry?.solvedProblems || []);
 
+  const handleMarkSolved = async (titleSlug) => {
+    setSolvingSlug(titleSlug);
+    setProblemErrors((prev) => ({ ...prev, [titleSlug]: null }));
+    try {
+      await markSolved(contestData.id, titleSlug, user._id);
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      setProblemErrors((prev) => ({ ...prev, [titleSlug]: message }));
+    } finally {
+      setSolvingSlug(null);
+    }
+  };
   function getContestDuration(startTime, endTime) {
     const duration =
       new Date(endTime).getTime() - new Date(startTime).getTime();
@@ -229,51 +247,104 @@ const HostContestDetails = ({
             </span>
           </div>
 
-          <div className="flex flex-col max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-            {problems.map((items, index) => {
-              let difficultyColor = "";
-              if (items.difficulty === "hard") {
-                difficultyColor = "text-danger";
-              } else if (items.difficulty === "easy") {
-                difficultyColor = "text-accent";
-              } else if (items.difficulty === "medium") {
-                difficultyColor = "text-warning";
-              }
-              return (
-                <div
-                  key={items.id || index}
-                  className="group flex justify-between items-center w-full mb-2 hover:bg-surface-2 hover:border-accent py-4 px-2 border border-border-white transition-colors"
-                >
-                  <div className="flex flex-col items-start w-full truncate">
-                    <span className="font-bold text-md group-hover:text-accent ">
-                      {changeSpace(items.title)}
-                    </span>
-                    <span className={`text-text-muted text-sm font-bold`}>
-                      Difficulty:{" "}
-                      <span className={`${difficultyColor}`}>
-                        {items.difficulty}
-                      </span>
-                    </span>
-                    <span className="text-text-muted text-sm font-bold">
-                      xp:{" "}
-                      <span className={`${difficultyColor}`}>
-                        {items.xpReward}
-                      </span>
-                    </span>
-                  </div>
+          {contestData?.status === "active" || "completed" ? (
+            <div className="flex flex-col max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {problems.map((items, index) => {
+                let difficultyColor = "";
+                if (items.difficulty === "hard") {
+                  difficultyColor = "text-danger";
+                } else if (items.difficulty === "easy") {
+                  difficultyColor = "text-accent";
+                } else if (items.difficulty === "medium") {
+                  difficultyColor = "text-warning";
+                }
 
-                  <a
-                    href={`${items.url}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="cursor-pointer text-text-primary border border-border font-bold hover:text-black hover:bg-accent p-2 text-xs transition-colors"
+                const problemNumber = `(#${String(index + 1).padStart(3, "0")})`;
+                const isSolved = solvedSlugs.has(items.titleSlug);
+                const isSolving = solvingSlug === items.titleSlug;
+                const errorMessage = problemErrors[items.titleSlug];
+
+                return (
+                  <div
+                    key={items.id || index}
+                    className="group flex flex-col w-full mb-2 hover:bg-surface-2 hover:border-accent py-4 px-2 border border-border-white transition-colors"
                   >
-                    visit_node
-                  </a>
-                </div>
-              );
-            })}
-          </div>
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex flex-col items-start flex-1 min-w-0 mr-4">
+                        <div className="flex items-center w-full min-w-0 gap-2">
+                          <span className="text-text-primary text-sm font-mono shrink-0">
+                            {problemNumber}
+                          </span>
+                          <span className="font-bold text-md group-hover:text-accent truncate">
+                            {changeSpace(items.title)}
+                          </span>
+                        </div>
+                        <span className={`text-text-primary text-sm font-bold`}>
+                          Difficulty:{" "}
+                          <span className={`${difficultyColor}`}>
+                            {items.difficulty}
+                          </span>
+                        </span>
+                        <span className="text-text-muted text-sm font-bold">
+                          xp:{" "}
+                          <span className={`${difficultyColor}`}>
+                            {items.xpReward}
+                          </span>
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() =>
+                            !isSolved &&
+                            !isSolving &&
+                            handleMarkSolved(items.titleSlug)
+                          }
+                          disabled={isSolved || isSolving}
+                          className={`cursor-pointer uppercase font-bold p-2 text-xs transition-colors border ${
+                            isSolved
+                              ? "text-accent border-accent bg-accent/10 cursor-default"
+                              : isSolving
+                                ? "text-text-muted border-border cursor-wait"
+                                : "text-text-primary border-border hover:text-black hover:bg-accent active:bg-danger active:text-text-primary active:border-danger"
+                          }`}
+                        >
+                          {isSolved
+                            ? "solved"
+                            : isSolving
+                              ? "verifying..."
+                              : "resolve_node"}
+                        </button>
+                        <a
+                          href={`${items.url}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="cursor-pointer text-text-primary border border-border font-bold hover:text-black hover:bg-accent p-2 text-xs transition-colors active:bg-danger active:text-text-primary active:border-danger"
+                        >
+                          visit_node
+                        </a>
+                      </div>
+                    </div>
+
+                    {errorMessage && (
+                      <span className="text-danger text-xs font-bold mt-2">
+                        // {errorMessage}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-8 border border-border bg-surface-2 text-center h-[200px] gap-2">
+              <span className="text-accent font-sans font-bold text-sm tracking-widest">
+                // MANIFEST_LOCKED
+              </span>
+              <p className="text-text-muted text-xs font-sans max-w-xs">
+                Contest challenges are encrypted until the contest goes live.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -341,8 +412,6 @@ const HostContestDetails = ({
           </div>
         </div>
       </div>
-     
-
 
       {confirmPopUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-1">
@@ -368,8 +437,7 @@ const HostContestDetails = ({
               <div className="flex gap-4">
                 <div className="flex flex-col justify-start">
                   <div className="text-accent border border-accent p-2">
-                    {" "}
-                    <TbExclamationMark size={26} />{" "}
+                    <TbExclamationMark size={26} />
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
@@ -392,7 +460,7 @@ const HostContestDetails = ({
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col  gap-4 border-t border-border pt-4">
+              <div className="flex flex-col gap-4 border-t border-border pt-4">
                 <div className="flex justify-between ">
                   <span className="text-text-muted text-xs">
                     integrity_check
