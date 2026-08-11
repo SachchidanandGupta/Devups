@@ -10,6 +10,8 @@ import { MdOutlineTerminal } from "react-icons/md";
 const Register = () => {
   const {
     register,
+    resend,
+    registrationEmail,
     user,
     isInitialized,
     isAuthenticated,
@@ -23,14 +25,20 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const isEmailValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email);
   const passwordsMatch = password === confirm;
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     await register(username, email, password);
+  };
+
+  const handleResend = async () => {
+    setResendCooldown(30);
+    await resend(registrationEmail);
   };
 
   useEffect(() => {
@@ -38,6 +46,64 @@ const Register = () => {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  if (registrationEmail) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4 gap-2 sm:gap-4 bg-black font-sans overflow-hidden relative">
+        <BinaryDesign />
+        <div className="max-w-lg w-full bg-surface border border-border z-10 flex flex-col p-6 sm:p-8 gap-4 text-center uppercase font-sans">
+          <h2 className="text-accent text-lg sm:text-xl font-bold tracking-widest">
+            CHECK_YOUR_INBOX
+          </h2>
+          <p className="text-text-secondary text-xs sm:text-sm">
+            A verification link has been sent to
+          </p>
+          <p className="text-text-primary font-bold text-sm sm:text-base break-all">
+            {registrationEmail}
+          </p>
+          <p className="text-text-secondary text-[10px] sm:text-xs mt-2">
+            Click the link to activate your account. The link expires in 1 hour.Please also check the spam
+          </p>
+
+          {error && (
+            <div className="bg-danger/10 p-2 border border-danger mt-1">
+              <p className="text-[10px] sm:text-xs text-danger font-bold text-center uppercase tracking-widest">
+                {error}
+              </p>
+            </div>
+          )}
+
+          <button
+            onClick={handleResend}
+            disabled={resendCooldown > 0 || isLoading}
+            className={`w-full py-2 sm:py-2.5 px-4 border border-accent text-xs sm:text-sm font-bold uppercase tracking-widest mt-2 transition-all ${
+              resendCooldown > 0 || isLoading
+                ? "opacity-50 cursor-not-allowed bg-surface-2 text-text-muted"
+                : "hover:bg-accent hover:text-black text-accent cursor-pointer"
+            }`}
+          >
+            {resendCooldown > 0 ? `RESEND_AVAILABLE_IN_${resendCooldown}S` : "RESEND_LINK"}
+          </button>
+
+          <Link
+            to="/login"
+            className="text-text-secondary text-[10px] sm:text-xs tracking-widest hover:text-accent transition-colors mt-2"
+          >
+            BACK_TO_LOGIN
+          </Link>
+        </div>
+        <AuthFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4 gap-2 sm:gap-4 bg-black font-sans overflow-hidden relative">

@@ -26,3 +26,18 @@ export const logOutUser = async () => {
   return response.data;
 };
 
+export const verifyEmail = async (token) => {
+        console.log("here it is")
+
+  const response = await axiosInstance.get(`/auth/verify-email`, {
+    params: { token },
+  });
+  return response.data;
+};
+
+export const resendVerification = async (identifier) => {
+  const response = await axiosInstance.post("/auth/resend-verification", {
+    identifier,
+  });
+  return response.data;
+};

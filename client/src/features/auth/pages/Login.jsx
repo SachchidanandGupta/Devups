@@ -10,6 +10,7 @@ import FormHeader from "../components/FormHeader";
 const Login = () => {
   const {
     login,
+    resend,
     user,
     isInitialized,
     isAuthenticated,
@@ -21,14 +22,36 @@ const Login = () => {
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendSent, setResendSent] = useState(false);
+
+  const isUnverifiedError =
+    typeof error === "string" && error.toLowerCase().includes("verify your email");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setResendSent(false);
     await login(identifier, password);
   };
+
+  const handleResend = async () => {
+    setResendCooldown(30);
+    const success = await resend(identifier);
+    if (success) setResendSent(true);
+  };
+
   useEffect(() => {
     if (isAuthenticated) navigate("/");
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 gap-8 bg-black font-sans overflow-hidden">
@@ -85,6 +108,31 @@ const Login = () => {
                   <p className="text-xs sm:text-sm text-danger font-bold text-center uppercase tracking-widest">
                     {error}
                   </p>
+                </div>
+              )}
+
+              {isUnverifiedError && (
+                <div className="flex flex-col items-center gap-2 -mt-2">
+                  {resendSent ? (
+                    <p className="text-accent text-[10px] sm:text-xs tracking-widest uppercase">
+                      VERIFICATION_LINK_SENT
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleResend}
+                      disabled={resendCooldown > 0 || isLoading}
+                      className={`text-[10px] sm:text-xs tracking-widest uppercase font-bold px-3 py-1.5 border transition-colors ${
+                        resendCooldown > 0 || isLoading
+                          ? "opacity-50 cursor-not-allowed border-border text-text-muted"
+                          : "border-accent text-accent hover:bg-accent hover:text-black cursor-pointer"
+                      }`}
+                    >
+                      {resendCooldown > 0
+                        ? `RESEND_AVAILABLE_IN_${resendCooldown}S`
+                        : "RESEND_VERIFICATION_LINK"}
+                    </button>
+                  )}
                 </div>
               )}
 

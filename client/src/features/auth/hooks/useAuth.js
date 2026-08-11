@@ -3,6 +3,8 @@ import {
   registerUser,
   getMeUser,
   logOutUser,
+  resendVerification,
+  verifyEmail,
 } from "../api/auth.api";
 import useAuthStore from "../store/authStore";
 
@@ -14,6 +16,7 @@ const useAuth = () => {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   const setError = useAuthStore((state) => state.setError);
   const setUser = useAuthStore((state) => state.setUser);
+  const registrationEmail = useAuthStore((state) => state.registrationEmail);
   const fetchMe = async () => {
     useAuthStore.getState().setIsLoading(true);
     try {
@@ -44,15 +47,49 @@ const useAuth = () => {
     }
   };
 
-  const register = async (username, email, password) => {
+ const register = async (username, email, password) => {
     useAuthStore.getState().setIsLoading(true);
     try {
       await registerUser(username, email, password);
-      await fetchMe();
+      useAuthStore.getState().setRegistrationEmail(email);
+      return true;
     } catch (error) {
       useAuthStore
         .getState()
         .setError(error.response?.data?.message || error.message);
+      return false;
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
+    }
+  };
+
+    const confirmEmail = async (token) => {
+    useAuthStore.getState().setIsLoading(true);
+    try {
+      await verifyEmail(token);
+      await fetchMe();
+      useAuthStore.getState().setRegistrationEmail(null);
+      return true;
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+      return false;
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
+    }
+  };
+
+   const resend = async (email) => {
+    useAuthStore.getState().setIsLoading(true);
+    try {
+      await resendVerification(email);
+      return true;
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+      return false;
     } finally {
       useAuthStore.getState().setIsLoading(false);
     }
@@ -72,9 +109,11 @@ const useAuth = () => {
     }
   };
 
-  return {
+ return {
     login,
     register,
+    confirmEmail,
+    resend,
     logout,
     fetchMe,
     user,
@@ -84,6 +123,7 @@ const useAuth = () => {
     error,
     setError,
     setUser,
+    registrationEmail, 
   };
 };
 export default useAuth;

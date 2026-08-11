@@ -3,6 +3,7 @@ const appError = require("../utils/appError");
 const userModel = require("../models/user.model");
 const { createActivityLog } = require("./activityLog.service");
 const { getRecentAcSubmission } = require("./leetcode.service");
+const { awardContestXp } = require("./xp.service");
 
 async function verifyAndCreditSolve(userId, contestId, titleSlug) {
   const contest = await contestModel.findById(contestId);
