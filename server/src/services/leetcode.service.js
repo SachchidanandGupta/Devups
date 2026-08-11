@@ -54,6 +54,31 @@ const getRecentAcSubmissionQuery = `query recentAcSubmissions($username: String!
   }
 }`;
 
+const checkUserExistsQuery = `query userExists($username: String!) {
+  matchedUser(username: $username) {
+    username
+  }
+}`;
+
+async function checkLeetcodeUserExists(username) {
+  try {
+    const { data } = await axios.post(
+      LEETCODE_URL,
+      { query: checkUserExistsQuery, variables: { username } },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+        },
+      },
+    );
+    return Boolean(data.data?.matchedUser);
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    throw error;
+  }
+}
+
 async function getUserSolved(username) {
   try {
     const { data } = await axios.post(
@@ -305,4 +330,5 @@ module.exports = {
   getQuestionsWithTags,
   getAllTopicTags,
   getExploreQuestions,
+  checkLeetcodeUserExists
 };

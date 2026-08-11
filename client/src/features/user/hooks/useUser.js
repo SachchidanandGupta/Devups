@@ -5,6 +5,7 @@ import {
   getHeatmap,
   updateProfile,
   searchUsers,
+  validateHandle,
 } from "../api/user.api";
 import useAuth from "../../auth/hooks/useAuth";
 const useUser = () => {
@@ -50,12 +51,26 @@ const useUser = () => {
       await fetchProfile(userId);
       useUserStore.getState().setUser(data.user);
       await fetchMe();
+      return data;
     } catch (err) {
       useUserStore
         .getState()
         .setError(err.response?.data?.message || err.message);
+      throw err;
     } finally {
       useUserStore.getState().setIsLoading(false);
+    }
+  };
+
+  const checkHandle = async (field, value) => {
+    try {
+      return await validateHandle(field, value);
+    } catch (err) {
+      return {
+        valid: false,
+        username: null,
+        reason: "Could not verify — try again",
+      };
     }
   };
 
@@ -108,6 +123,7 @@ const useUser = () => {
     userHeatMap,
     deleteUser,
     search,
+    checkHandle,
     user,
     searchResult,
     error,

@@ -1,26 +1,76 @@
 import React, { useState } from "react";
 import InputField from "../../auth/components/InputField";
+import useUser from "../../user/hooks/useUser";
+const PLATFORM_FIELDS = [
+  "githubUsername",
+  "leetcodeUsername",
+  "codeforcesHandle",
+];
 
 const EditPopupForm = ({ setIsEditPopUpOpen, userData, update, userID }) => {
+  const { checkHandle } = useUser();
   const [formData, setFormData] = useState({
-    avatar: userData.avatar,
-    username: userData.username,
-    codeforcesHandle: userData.codeforcesHandle,
-    leetcodeUsername: userData.leetcodeUsername,
-    githubUsername: userData.githubUsername,
+    avatar: userData.avatar || "",
+    username: userData.username || "",
+    codeforcesHandle: userData.codeforcesHandle || "",
+    leetcodeUsername: userData.leetcodeUsername || "",
+    githubUsername: userData.githubUsername || "",
   });
-  const handleChange = (e) => {
+  const [fieldStatus, setFieldStatus] = useState({});
+  const [fieldErrors, setFieldErrors] = useState({});
+
+ const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+  if (PLATFORM_FIELDS.includes(name)) {
+    setFieldStatus((prev) => ({ ...prev, [name]: null }));
+    setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+};
+
+  const handleBlur = async (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    if (!PLATFORM_FIELDS.includes(name)) return;
+    if (!value || value.trim() === "") return;
+
+    setFieldStatus((prev) => ({ ...prev, [name]: "checking" }));
+    const result = await checkHandle(name, value);
+    setFieldStatus((prev) => ({
       ...prev,
-      [name]: value.trim() === "" || null ? undefined : value,
+      [name]: result.valid ? "valid" : "invalid",
     }));
+    setFieldErrors((prev) => ({
+      ...prev,
+      [name]: result.valid ? undefined : result.reason,
+    }));
+    if (result.valid && result.username) {
+      setFormData((prev) => ({ ...prev, [name]: result.username }));
+    }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await update(userID, formData);
-    setIsEditPopUpOpen(false);
+    try {
+      const data = await update(userID, formData);
+      if (data?.failures && Object.keys(data.failures).length > 0) {
+        setFieldErrors((prev) => ({ ...prev, ...data.failures }));
+        return;
+      }
+      setIsEditPopUpOpen(false);
+    } catch (err) {
+      // global error already set in useUser — popup stays open so the user can retry
+    }
   };
+
+  const badgeFor = (field) => {
+    if (fieldStatus[field] === "checking") return "checking";
+    if (fieldStatus[field] === "valid") return "verified";
+    return null;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-surface-2/20 backdrop-blur-xs"></div>
@@ -78,6 +128,9 @@ const EditPopupForm = ({ setIsEditPopUpOpen, userData, update, userID }) => {
                 placeholder="github.com/alpha_arch"
                 value={formData.githubUsername}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                error={fieldErrors.githubUsername}
+                define={badgeFor("githubUsername")}
               />
 
               <InputField
@@ -88,6 +141,9 @@ const EditPopupForm = ({ setIsEditPopUpOpen, userData, update, userID }) => {
                 placeholder="leetcode.com/u/alpha"
                 value={formData.leetcodeUsername}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                error={fieldErrors.leetcodeUsername}
+                define={badgeFor("leetcodeUsername")}
               />
 
               <InputField
@@ -98,6 +154,9 @@ const EditPopupForm = ({ setIsEditPopUpOpen, userData, update, userID }) => {
                 placeholder="codeforces/profile/alpha"
                 value={formData.codeforcesHandle}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                error={fieldErrors.codeforcesHandle}
+                define={badgeFor("codeforcesHandle")}
               />
             </form>
             <div className="grid grid-cols-3 gap-4">

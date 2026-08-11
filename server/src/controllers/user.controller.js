@@ -7,6 +7,26 @@ const {
   getUserCalender,
 } = require("../services/leetcode.service");
 const { getLevelProgress } = require("../services/xp.service");
+const { validateHandle } = require("../services/platformValidation.service");
+
+const PLATFORM_FIELD_MAP = {
+  githubUsername: "github",
+  leetcodeUsername: "leetcode",
+  codeforcesHandle: "codeforces",
+};
+
+const validateHandleEndpoint = asyncHandler(async function (req, res) {
+  const { field, value } = req.body;
+  const platform = PLATFORM_FIELD_MAP[field];
+  if (!platform) {
+    throw new appError("Invalid field", 400);
+  }
+  const result = await validateHandle(platform, value);
+  return res.status(200).json({
+    status: "success",
+    ...result,
+  });
+});
 
 const getProfile = asyncHandler(async function (req, res) {
   const userId = req.params.userId;
@@ -34,12 +54,28 @@ const updateProfile = asyncHandler(async function (req, res) {
     "codeforcesHandle",
   ];
   const updates = {};
-  allowedFields.forEach((field) => {
-    if (req.body[field] !== undefined) updates[field] = req.body[field];
-  });
+  const failures = {};
+
+  for (const field of allowedFields) {
+    if (req.body[field] === undefined) continue;
+
+    if (PLATFORM_FIELD_MAP[field]) {
+      const platform = PLATFORM_FIELD_MAP[field];
+      const result = await validateHandle(platform, req.body[field]);
+      if (result.valid) {
+        updates[field] = result.username;
+      } else {
+        failures[field] = result.reason;
+      }
+    } else {
+      updates[field] = req.body[field];
+    }
+  }
+
   if (Object.keys(updates).length === 0) {
     throw new appError("No valid fields provided to update", 400);
   }
+
   const updatedUser = await userModel
     .findByIdAndUpdate(req.user.id, updates, {
       returnDocument: "after",
@@ -50,10 +86,14 @@ const updateProfile = asyncHandler(async function (req, res) {
     throw new appError("user not founded", 404);
   }
   return res.status(200).json({
-    message: "User data updated",
+    message:
+      Object.keys(failures).length > 0
+        ? "User data partially updated"
+        : "User data updated",
     data: {
       user: updatedUser,
     },
+    failures,
   });
 });
 
@@ -138,4 +178,5 @@ module.exports = {
   searchUser,
   getLeetcodeStats,
   getLeetCalander,
+  validateHandleEndpoint,
 };

@@ -37,3 +37,11 @@ export async function searchUsers(q) {
   const response = await axiosInstance.get(`/user/search?q=${q}`);
   return response.data;
 }
+
+export async function validateHandle(field, value) {
+  const response = await axiosInstance.post("/user/validate-handle", {
+    field,
+    value,
+  });
+  return response.data;
+}

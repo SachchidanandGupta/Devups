@@ -495,7 +495,6 @@ const HostContestDetails = ({
           </div>
         </div>
       )}
-
       {leaderboardOpen && (
         <ContestRanks
           contest={contestData}

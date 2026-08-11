@@ -11,5 +11,6 @@ router.get("/:userId/leet-calander",authMiddleware.authUser,userController.getLe
 router.get("/:userId", userController.getProfile);
 router.put("/update", authMiddleware.authUser, userController.updateProfile);
 router.delete("/delete", authMiddleware.authUser, userController.deleteProfile);
+router.post("/validate-handle", authMiddleware.authUser, userController.validateHandleEndpoint);
 
 module.exports = router;

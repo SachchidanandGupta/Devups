@@ -7,6 +7,7 @@ const InputField = ({
   placeholder,
   value,
   onChange,
+  onBlur,
   error,
   define = null,
   name = null,
@@ -36,6 +37,7 @@ const InputField = ({
           value={value}
           name={name}
           onChange={onChange}
+          onBlur={onBlur}
           className={`block w-full pl-8 py-3 border text-accent placeholder-text-secondary focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 sm:text-sm    [&:-webkit-autofill]:border-accent
                 [&:-webkit-autofill]:ring-2
               [&:-webkit-autofill]:ring-accent

@@ -23,10 +23,19 @@ async function verifyAndCreditSolve(userId, contestId, titleSlug) {
   const recent = await getRecentAcSubmission(user.leetcodeUsername, 20);
   const solved = recent.some((s) => s.titleSlug === titleSlug);
   if (!solved) {
-    throw new appError("No accepted submission found for this problem yet", 404);
+    throw new appError(
+      "No accepted submission found for this problem yet",
+      404,
+    );
   }
 
-  return updateContestScores(userId, contestId, problem.xpReward, titleSlug);
+  return updateContestScores(
+    userId,
+    contestId,
+    problem.xpReward,
+    titleSlug,
+    user.username,
+  );
 }
 
 async function reconcileContestSolves(contest) {
@@ -49,8 +58,17 @@ async function reconcileContestSolves(contest) {
     );
     const alreadySolved = new Set(entry?.solvedProblems || []);
     for (const problem of contest.problems) {
-      if (solvedSlugs.has(problem.titleSlug) && !alreadySolved.has(problem.titleSlug)) {
-        await updateContestScores(user._id, contest._id, problem.xpReward, problem.titleSlug);
+      if (
+        solvedSlugs.has(problem.titleSlug) &&
+        !alreadySolved.has(problem.titleSlug)
+      ) {
+        await updateContestScores(
+          user._id,
+          contest._id,
+          problem.xpReward,
+          problem.titleSlug,
+          user.username,
+        );
       }
     }
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -105,9 +123,13 @@ async function finalizeContest(contestId) {
   return updatedContest;
 }
 
-
-
-async function updateContestScores(userId, contestId, xpReward, titleSlug) {
+async function updateContestScores(
+  userId,
+  contestId,
+  xpReward,
+  titleSlug,
+  username,
+) {
   const contest = await contestModel.findById(contestId);
   if (!contest || contest.status != "active") {
     return;
@@ -145,7 +167,7 @@ async function updateContestScores(userId, contestId, xpReward, titleSlug) {
   await contest.save();
 
   const problem = contest.problems.find((p) => p.titleSlug === titleSlug);
-  const message = `solved ${problem ? problem.title : titleSlug} in ${contest.contestName}`;
+  const message = `${username} solved ${problem ? problem.title : titleSlug} in ${contest.contestName}`;
 
   await createActivityLog({
     userId,
@@ -162,7 +184,6 @@ async function updateContestScores(userId, contestId, xpReward, titleSlug) {
 
   return entry;
 }
-
 
 function determineWinner(contest) {
   const { computedTarget, scores } = contest || {};
@@ -197,4 +218,3 @@ module.exports = {
   verifyAndCreditSolve,
   finalizeContest,
 };
-
