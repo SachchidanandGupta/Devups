@@ -145,6 +145,20 @@ const useContest = () => {
     }
   };
 
+const markSolved = async (contestId, titleSlug, userId) => {
+  try {
+    const data = await markProblemSolved(contestId, titleSlug);
+    useContestStore
+      .getState()
+      .markProblemSolvedLocally(contestId, userId, titleSlug);
+    return data.entry;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    useContestStore.getState().setError(message);
+    throw error;
+  }
+};
+
   return {
     contest,
     friendContest,
@@ -154,6 +168,7 @@ const useContest = () => {
     rejectInvite,
     userContestHistory,
     abortContest,
+    markSolved,
     platformContests,
     activeContests,
     error,

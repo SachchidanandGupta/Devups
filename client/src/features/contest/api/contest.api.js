@@ -52,3 +52,10 @@ export async function rejectContest(contestId) {
   );
   return response.data;
 }
+
+export async function markProblemSolved(contestId, titleSlug) {
+  const response = await axiosInstance.post(`/contest/${contestId}/mark-solved`, {
+    titleSlug,
+  });
+  return response.data;
+}

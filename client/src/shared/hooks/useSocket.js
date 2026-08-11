@@ -40,13 +40,19 @@ const useSocket = () => {
 
     socketInstance.on(
       "xp:updated",
-      ({ xp, level, amount, source, currentXP, requiredXP }) => {
+      ({ xp, level, action, amount, currentXP, requiredXP }) => {
         setUser({
           ...useAuthStore.getState().user,
           xp,
           level,
           currentXP,
           requiredXP,
+        });
+        useXpStore.getState().prependXpEvent({
+          _id: `live-${Date.now()}`,
+          action,
+          amount,
+          createdAt: new Date().toISOString(),
         });
       },
     );
