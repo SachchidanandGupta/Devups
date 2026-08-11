@@ -9,14 +9,18 @@ const {
   emitContestInvite,
   emitContestDeleted,
   emitNotification,
+  emitContestInviteResponded,
 } = require("../services/socket.service");
 const { createActivityLog } = require("../services/activityLog.service");
 const {
   createResponseNotification,
 } = require("../services/responseNotification.service");
 const userModel = require("../models/user.model");
-const { contestXpRewards } = require("../constants/xpRewards")
-const { verifyAndCreditSolve, finalizeContest } = require("../services/contest.service");
+const { contestXpRewards } = require("../constants/xpRewards");
+const {
+  verifyAndCreditSolve,
+  finalizeContest,
+} = require("../services/contest.service");
 async function getCodeforcesContest() {
   const response = await axios.get(
     "https://codeforces.com/api/contest.list?gym=false",
@@ -248,6 +252,22 @@ const acceptContestInvite = asyncHandler(async function (req, res) {
     `${req.user.username} accepted your invite to ${contest.contestName}`,
   );
 
+  const participantIds = contest.participants.map((id) => id.toString());
+  emitContestInviteResponded(participantIds, {
+    contestId: contest._id,
+    status: "accepted",
+    username: req.user.username,
+  });
+
+  await createActivityLog({
+    userId: req.user.id,
+    type: "contest_joined",
+    platform: "devups",
+    message: `${req.user.username} joined the battle`,
+    contestId: contest._id,
+    metaData: {},
+  });
+
   return res.status(200).json({
     message: "Contest invitation accepted",
     status: "success",
@@ -270,6 +290,23 @@ const rejectContestInvite = asyncHandler(async function (req, res) {
     "contest_invite_rejected",
     `${req.user.username} rejected your invite to ${contest.contestName}`,
   );
+
+  const participantIds = contest.participants.map((id) => id.toString());
+  emitContestInviteResponded(participantIds, {
+    contestId: contest._id,
+    status: "rejected",
+    username: req.user.username,
+  });
+
+  await createActivityLog({
+    userId: req.user.id,
+    type: "contest_declined",
+    platform: "devups",
+    message: `${req.user.username} chickened out`,
+    contestId: contest._id,
+    metaData: {},
+  });
+
   return res.status(200).json({
     message: "Contest invitation rejected",
     status: "success",
@@ -338,5 +375,5 @@ module.exports = {
   rejectContestInvite,
   getUserContestHistory,
   deleteContest,
-  markProblemSolved
+  markProblemSolved,
 };

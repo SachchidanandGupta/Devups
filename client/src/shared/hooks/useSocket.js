@@ -67,6 +67,10 @@ const useSocket = () => {
       await friendContest();
     });
 
+    socketInstance.on("contest:invite_responded", async (data) => {
+      await friendContest();
+    });
+
     socketInstance.on("notification:new", async (data) => {
       prependNotification(data);
     });
@@ -90,7 +94,6 @@ const useSocket = () => {
     socketInstance.on("contest:progress", (activity) => {
       useActivityLogStore.getState().prependContestActivity(activity);
     });
-
 
     initialized.current = true;
 

@@ -38,6 +38,10 @@ function emitContestProgress(contestId, data) {
   handleSocket(`contest:${contestId}`, data, "contest:progress");
 }
 
+function emitContestInviteResponded(userId, data) {
+  handleSocket(userId, data, "contest:invite_responded");
+}
+
 function emitFriendActivity(userId, data) {
   handleSocket(userId, data, "friend:activity");
 }
@@ -65,4 +69,5 @@ module.exports = {
   emitContestInvite,
   emitContestDeleted,
   emitContestProgress,
+  emitContestInviteResponded,
 };
