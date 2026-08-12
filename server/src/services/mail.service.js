@@ -1,21 +1,10 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // STARTTLS, not implicit TLS
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendVerificationEmail(email, username, link) {
-  await transporter.sendMail({
-    from: `"DevUps" <${process.env.GMAIL_USER}>`,
+  const { error } = await resend.emails.send({
+    from: process.env.MAIL_FROM || "DevUps <onboarding@resend.dev>",
     to: email,
     subject: "Verify your DevUps account",
     html: `
@@ -29,6 +18,10 @@ async function sendVerificationEmail(email, username, link) {
       </div>
     `,
   });
+
+  if (error) {
+    throw new Error(error.message || "Failed to send verification email");
+  }
 }
 
 module.exports = { sendVerificationEmail };
