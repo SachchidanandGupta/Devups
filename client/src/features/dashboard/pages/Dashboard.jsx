@@ -9,14 +9,12 @@ import { DashboardSkeleton } from "../../../shared/ui/Skeleton";
 import useFriend from "../../friends/hooks/useFriend";
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
-  const {fetchFriends } = useFriend();
-  useEffect(()=>{
-     fetchFriends();
-  },[])
+  const { fetchFriends } = useFriend();
+  useEffect(() => {
+    fetchFriends();
+  }, []);
   return (
     <div>
-      
-
       {isLoading ? (
         <DashboardSkeleton />
       ) : (
