@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router";
-import { Link } from "react-router";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 import { CiBellOn } from "react-icons/ci";
+import { MdOutlineTerminal } from "react-icons/md";
+import { HiMenuAlt3 } from "react-icons/hi";
 import useAuth from "../../features/auth/hooks/useAuth";
 import useUser from "../../features/user/hooks/useUser";
 import useContest from "../../features/contest/hooks/useContest";
@@ -10,8 +12,8 @@ import useNotification from "../../features/notifications/hooks/useNotification"
 import Dropdown from "./Dropdown";
 import Avatar from "./Avatar";
 import BellDropdown from "./BellDropdown";
-import { MdOutlineTerminal } from "react-icons/md";
 import Terminal from "./Terminal";
+
 const pageFields = [
   { path: "/contest/create", pageField: "create_session" },
   { path: "/contest", pageField: "contest_terminal" },
@@ -20,26 +22,29 @@ const pageFields = [
   { path: "/friends", pageField: "friend_terminal" },
   { path: "/", pageField: "Dashboard" },
 ];
-const TopBar = () => {
+
+const TopBar = ({ onToggleMenu }) => {
   const { user } = useAuth();
   const { search, searchResult, setSearchResult } = useUser();
   const { friendContest, incomingContests } = useContest();
   const { requestsPending, pendingFriendRequests } = useFriend();
-  const { clearNotifications, notifications, fetchNotifications, read } =
-    useNotification();
+  const { clearNotifications, notifications, fetchNotifications, read } = useNotification();
+
   const searchUsers = searchResult;
   const pendingRequests = pendingFriendRequests;
   const location = useLocation();
+
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isBellOpen, setIsBellOpen] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+
   const dropdownRef = useRef(null);
   const bellDropRef = useRef(null);
   const prevBellState = useRef(false);
-  const [isBellOpen, setIsBellOpen] = useState(false);
-  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-   const activeNotifications = notifications.filter(
-    (s) => s.status === "unread",
-  );
+
+  const activeNotifications = notifications.filter((s) => s.status === "unread");
+
   useEffect(() => {
     requestsPending();
     friendContest();
@@ -62,51 +67,57 @@ const TopBar = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target))
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
+      }
+      if (bellDropRef.current && !bellDropRef.current.contains(event.target)) {
+        setIsBellOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
-    function handleClickBellOutside(event) {
-      if (bellDropRef.current && !bellDropRef.current.contains(event.target))
-        setIsBellOpen(false);
-    }
-    document.addEventListener("mousedown", handleClickBellOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickBellOutside);
-  }, []);
-
-  useEffect(() => {
     async function updateRead() {
-      if ((prevBellState.current && !isBellOpen) && activeNotifications?.length > 0) {
+      if (prevBellState.current && !isBellOpen && activeNotifications?.length > 0) {
         await read();
       }
       prevBellState.current = isBellOpen;
     }
     updateRead();
   }, [isBellOpen]);
- 
+
   const matchedItem = pageFields.find((item) => {
     const currentPath = location.pathname;
     if (currentPath === item.path) return true;
-    if (item.path !== "/" && currentPath.startsWith(`${item.path}/`))
-      return true;
+    if (item.path !== "/" && currentPath.startsWith(`${item.path}/`)) return true;
     return false;
   });
+
   return (
-    <div className="  flex flex-col sm:flex-row sm:items-center justify-between p-4  border-b border-border-white">
-      <div className="flex items-center gap-4 ">
+    <header className="flex flex-wrap items-center justify-between p-3 sm:p-4 border-b border-border-white bg-black gap-3">
+      {/* Title & Hamburger Button */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleMenu}
+          className="lg:hidden text-text-primary hover:text-accent p-1 cursor-pointer focus:outline-none"
+          aria-label="Toggle Navigation Menu"
+        >
+          <HiMenuAlt3 size={28} />
+        </button>
+
         {matchedItem && (
-          <h2 className="text-2xl font-semibold sm:text-2xl font-sans text-accent uppercase">
+          <h2 className="text-lg sm:text-2xl font-semibold font-sans text-accent uppercase tracking-wider">
             {matchedItem.pageField}
           </h2>
         )}
       </div>
-      <div className="flex items-center gap-4">
-        <div className="relative">
+
+      {/* Right Actions / Tools */}
+      <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-end sm:flex-initial">
+        {/* Search Bar */}
+        <div className="relative flex-1 sm:flex-initial max-w-[200px] sm:max-w-xs" ref={dropdownRef}>
           <input
             onChange={(e) => {
               setIsBellOpen(false);
@@ -114,8 +125,8 @@ const TopBar = () => {
             }}
             value={query}
             type="text"
-            placeholder="SEARCH_TERMINAL..."
-            className=" text-sm text-text-primary bg-surface-2 pl-2 pr-6 py-2 border border-border-bright focus:outline-none focus:border-accent"
+            placeholder="SEARCH..."
+            className="w-full text-xs sm:text-sm text-text-primary bg-surface-2 px-2.5 py-1.5 sm:py-2 border border-border-bright focus:outline-none focus:border-accent"
           />
 
           {isOpen && searchUsers && (
@@ -128,27 +139,30 @@ const TopBar = () => {
           )}
         </div>
 
+        {/* Notifications Icon */}
         <div className="relative" ref={bellDropRef}>
-          <CiBellOn
-            size={36}
+          <button
             onClick={() => {
               setIsOpen(false);
               setIsBellOpen(!isBellOpen);
             }}
-            className={`cursor-pointer p-2 rounded-full transition-colors hover:bg-accent-dim hover:text-accent ${isBellOpen ? "text-accent bg-accent-dim" : "text-text-primary"}`}
-          />
+            className={`p-1.5 sm:p-2 rounded-full transition-colors hover:bg-accent-dim hover:text-accent focus:outline-none ${
+              isBellOpen ? "text-accent bg-accent-dim" : "text-text-primary"
+            }`}
+            aria-label="Notifications"
+          >
+            <CiBellOn size={26} className="sm:w-[30px] sm:h-[30px]" />
+          </button>
 
-          {incomingContests?.length +
-            pendingRequests?.length +
-            activeNotifications?.length >
-          0 ? (
-            <div className="absolute top-0 right-0 h-2 w-2 m-1 text-sm rounded-full bg-accent  text-text-primary"></div>
-          ) : (
-            ""
+          {(incomingContests?.length || 0) +
+            (pendingRequests?.length || 0) +
+            (activeNotifications?.length || 0) > 0 && (
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-accent animate-pulse" />
           )}
+
           {isBellOpen && (
             <BellDropdown
-             clearAll={clearNotifications}
+              clearAll={clearNotifications}
               setIsBellOpen={setIsBellOpen}
               ref={bellDropRef}
               contest={incomingContests}
@@ -157,19 +171,26 @@ const TopBar = () => {
             />
           )}
         </div>
+
+        {/* Terminal Toggle Button */}
         <div>
-          <MdOutlineTerminal
+          <button
             onClick={() => setIsTerminalOpen(!isTerminalOpen)}
-            size={24}
-            className="hover:text-accent cursor-pointer"
-          />
+            className="p-1.5 text-text-primary hover:text-accent transition-colors focus:outline-none"
+            aria-label="Toggle Terminal"
+          >
+            <MdOutlineTerminal size={26} className="sm:w-[28px] sm:h-[28px]" />
+          </button>
         </div>
+
         {isTerminalOpen && <Terminal />}
-        <Link to={`/profile/${user._id}`}>
-          <Avatar data={user} style={"border-accent"} />
+
+        {/* User Profile Avatar */}
+        <Link to={`/profile/${user?._id}`}>
+          <Avatar data={user} style="border-accent hover:opacity-80 transition-opacity" />
         </Link>
       </div>
-    </div>
+    </header>
   );
 };
 

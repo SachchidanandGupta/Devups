@@ -13,7 +13,6 @@ const FriendCard = ({ friend, onUnfriend, onBlock }) => {
     requiredXP,
     onlineStatus,
   } = friend || {};
-  // console.log(friend)
 
   const progressPercentage = Math.floor((currentXP / requiredXP) * 100);
 
