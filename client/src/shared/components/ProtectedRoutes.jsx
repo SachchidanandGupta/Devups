@@ -1,11 +1,12 @@
 import React from 'react'
 import useAuth from '../../features/auth/hooks/useAuth'
 import {Navigate} from 'react-router'
+import DevUpsInitializer from './DevUpsInitializer';
 
 const ProtectedRoutes = ({children}) => {
   const {isAuthenticated,isLoading,isInitialized} = useAuth();
   if(!isInitialized){
-    return <h1>Initializing...</h1>
+    return <DevUpsInitializer/>
   }
   if(isLoading){
     return <h1>Loading...</h1>
