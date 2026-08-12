@@ -49,10 +49,13 @@ const registerUser = asyncHandler(async function (req, res) {
     isUserExists.passwordHash = password;
     await isUserExists.save();
 
-    await dispatchVerificationEmail(isUserExists);
+    dispatchVerificationEmail(isUserExists).catch((err) =>
+      console.error("Failed to send verification email:", err.message),
+    );
 
     return res.status(201).json({
-      message: "Registration successful — check your email to verify your account.",
+      message:
+        "Registration successful — check your email to verify your account.",
       status: "success",
       user: {
         id: isUserExists._id,
@@ -68,10 +71,13 @@ const registerUser = asyncHandler(async function (req, res) {
     passwordHash: password,
   });
 
-  await dispatchVerificationEmail(user);
+  dispatchVerificationEmail(user).catch((err) =>
+    console.error("Failed to send verification email:", err.message),
+  );
 
   res.status(201).json({
-    message: "Registration successful — check your email to verify your account.",
+    message:
+      "Registration successful — check your email to verify your account.",
     status: "success",
     user: {
       id: user._id,
@@ -171,7 +177,9 @@ const resendVerification = asyncHandler(async function (req, res) {
     throw new appError("This email is already verified", 400);
   }
 
-  await dispatchVerificationEmail(user);
+  dispatchVerificationEmail(user).catch((err) =>
+    console.error("Failed to send verification email:", err.message),
+  );
   res.status(200).json({
     message: "If that account exists, a verification link has been sent.",
     status: "success",
