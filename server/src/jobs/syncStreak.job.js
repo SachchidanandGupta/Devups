@@ -33,7 +33,12 @@ function startStreakSync() {
 
         for (const user of users) {
           const lastSolvedDate = user.lastSolvedDate;
+
           if (isSameDate(lastSolvedDate, today)) {
+            continue;
+          }
+
+          if (isYesterdaySolved(lastSolvedDate)) {
             const newStreak = (user.streak || 0) + 1;
             if (newStreak > (user.maxStreak || 0)) {
               user.maxStreak = newStreak;
@@ -43,8 +48,6 @@ function startStreakSync() {
             await awardXP(user._id, "streak", "daily_streak", {
               streak: newStreak,
             });
-          } else if (isYesterdaySolved(lastSolvedDate)) {
-            continue;
           } else {
             if (user.streak !== 0) {
               user.streak = 0;

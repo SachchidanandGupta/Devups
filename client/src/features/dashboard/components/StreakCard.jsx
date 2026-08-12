@@ -2,8 +2,7 @@ import React from "react";
 import useDashboard from "../hooks/useDashboard";
 
 const StreakCard = () => {
-  const { streak = 0 } = useDashboard();
-
+  const { streak = 0  } = useDashboard();
   const totalBoxes = Math.min(streak + 1, 5);
   const filledBoxes = Math.min(streak, 4);
 
@@ -12,7 +11,7 @@ const StreakCard = () => {
   
   <div className="flex flex-col min-w-0">
     <span className="text-xs text-text-secondary uppercase tracking-widest truncate">
-      streak_persistence
+      streak_leetcode
     </span>
     <span className="text-accent text-xl font-bold mt-0.5">
       {streak} <span className="text-xs text-text-primary tracking-widest ml-1">DAYS</span>

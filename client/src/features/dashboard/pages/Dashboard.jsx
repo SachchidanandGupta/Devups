@@ -7,6 +7,7 @@ import DailyProblem from "../components/DailyProblem";
 import { FaGithub } from "react-icons/fa";
 import { DashboardSkeleton } from "../../../shared/ui/Skeleton";
 import useFriend from "../../friends/hooks/useFriend";
+import NoticeBar from "../components/NoticeBar";
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
   const { fetchFriends } = useFriend();
@@ -19,6 +20,7 @@ const Dashboard = () => {
         <DashboardSkeleton />
       ) : (
         <div className="p-4 flex flex-col gap-4">
+          <NoticeBar/>
           {user?.githubUsername ? (
             <div className="w-full overflow-hidden bg-black border border-border">
               {user._id && <GithubHeatmap userId={user._id} />}

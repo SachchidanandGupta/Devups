@@ -16,13 +16,13 @@ const DailyProblem = () => {
   let reward = 0;
   if (difficulty === "Easy") {
     design = " border-accent bg-accent-dim text-accent";
-    reward = 5;
+    reward = 10;
   } else if (difficulty === "Medium") {
     design = " border-warning bg-warning-dim text-warning";
-    reward = 15;
+    reward = 25;
   } else if (difficulty === "Hard") {
     design = " border-danger bg-danger-dim text-danger";
-    reward = 35;
+    reward = 50;
   }
 
   function changeString(str) {
