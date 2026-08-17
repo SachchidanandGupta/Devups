@@ -24,9 +24,9 @@ const useAuth = () => {
       useAuthStore.getState().setUser(data.user);
       useAuthStore.getState().setAuthenticated(true);
     } catch (error) { 
-      useAuthStore
-        .getState()
-        .setError(error.response?.data?.message || error.message);
+      // useAuthStore
+      //   .getState()
+      //   .setError(error.response?.data?.message || error.message);
     } finally {
       useAuthStore.getState().setIsLoading(false);
       useAuthStore.getState().setInitialized(true);
