@@ -23,7 +23,7 @@ const useAuth = () => {
       const data = await getMeUser();
       useAuthStore.getState().setUser(data.user);
       useAuthStore.getState().setAuthenticated(true);
-    } catch (error) {
+    } catch (error) { 
       useAuthStore
         .getState()
         .setError(error.response?.data?.message || error.message);
