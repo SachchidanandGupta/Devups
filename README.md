@@ -1,120 +1,115 @@
-<div align="center">
+# DevUps
 
-# 🚀 DevUps
+**Gamified developer productivity — track, compete, and grow.**
 
-**Gamified coding productivity — track, compete, and grow.**
+DevUps is a MERN-stack web platform that unifies your LeetCode, Codeforces, and GitHub activity into one gamified dashboard — XP scoring, real-time leaderboards, streaks, and friend-vs-friend coding contests.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/yourusername/devups/pulls)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green.svg)](https://www.mongodb.com/)
+Live: [devups.vercel.app](https://devups.vercel.app)
 
-DevUps is a MERN-stack browser extension that unifies your LeetCode, Codeforces, and GitHub activity into one gamified dashboard — complete with XP scoring, real-time leaderboards, streak tracking, and friend challenges.
-
-[Features](#features) · [Tech Stack](#tech-stack) · [Getting Started](#getting-started) · [Architecture](#architecture) · [API Docs](#api-reference) · [Contributing](#contributing)
-
-</div>
+[Features](#features) · [Tech Stack](#tech-stack) · [Getting Started](#getting-started) · [Project Structure](#project-structure) · [Roadmap](#roadmap)
 
 ---
 
-## ✨ Features
+## Features
 
-- **Daily Coding Dashboard** — fetch today's LeetCode challenge, track your streak, and monitor solved problem history at a glance
-- **XP Scoring Engine** — earn XP for every problem solved, contest participated in, and GitHub commit pushed
-- **Friend Competitions** — create weekly or monthly challenges, compare XP scores, and settle who's the better coder
-- **Contest Tracker** — upcoming and live contests from LeetCode and Codeforces with countdowns and rating history
-- **GitHub Analytics** — contribution heatmaps, commit graphs, language breakdowns, and repo activity unified with your DSA progress
-- **Real-Time Leaderboards** — live rankings powered by Socket.io that update the moment anyone earns XP
-- **Achievement Badges** — milestone rewards for streaks, contest ranks, and contribution goals
-- **Chrome Extension** — a lightweight popup giving you stats and reminders without leaving your current tab
-
----
-
-## 🧠 XP System
-
-| Action | XP Earned |
-|---|---|
-| Solve Easy problem | +5 XP |
-| Solve Medium problem | +15 XP |
-| Solve Hard problem | +35 XP |
-| Contest participation | +10 XP |
-| Top 10% contest rank | +50 XP |
-| Daily streak bonus | +5 XP/day |
-| GitHub contribution | +2 XP/commit |
+- **Dashboard** — daily LeetCode challenge, streak tracking, and solved-problem history at a glance
+- **XP Engine** — earn XP for solving problems, contest performance, GitHub activity, and daily streaks — with a level system that scales cost per level
+- **Friend Contests** — invite friends to a timed contest with a shared problem set; scores are tracked by target-crossing time, total XP, solve count, and last-update time (in that tiebreak order) to determine a winner
+- **Explore by Topic** — browse a self-hosted database of ~3000 LeetCode problems by tag, difficulty, and title/number search — used when building a contest's problem set
+- **Real-Time Activity Terminal** — a live, Socket.io-powered feed of what's happening: globally, for you, for your friends, or scoped to a specific contest — styled as a terminal log
+- **Live Leaderboard** — global rankings that update the moment anyone earns XP
+- **Friend System** — mutual friend requests, online/offline presence, and a searchable friends list
+- **Profile Pages** — GitHub contribution heatmap, XP history ledger, contest history with rank, and per-platform stats
+- **Auto-Sync Crons** — background jobs sync LeetCode solves, Codeforces submissions and rating changes, and GitHub commits/PRs on a schedule, and award XP automatically
+- **Email Verification & Password Reset** — link-based flows (not OTP), sent via the Gmail API over HTTPS
 
 ---
 
-## 🛠 Tech Stack
+## XP System
+
+| Action                     | XP Earned |
+| --------------------------- | --------- |
+| Solve Easy problem          | +10 XP    |
+| Solve Medium problem        | +25 XP    |
+| Solve Hard problem          | +50 XP    |
+| Top 10% external contest rank| +60 XP   |
+| Top 25% external contest rank| +30 XP   |
+| Daily streak bonus          | +10 XP/day|
+| GitHub commit                | +3 XP    |
+| GitHub pull request          | +15 XP   |
+| Codeforces "amazing" rating jump | +120 XP |
+
+XP requirements increase 10% per level.
+
+---
+
+## Tech Stack
 
 **Frontend**
-- React.js (Vite)
-- Tailwind CSS
+- React + Vite
 - Zustand (state management)
-- Recharts (data visualization)
 - Socket.io client
+- Strict 4-layer architecture: `api → store → hook → component`
+- Brutalist terminal design system — pure black background, electric green (`#00ff88`) sole accent, JetBrains Mono, zero border-radius
 
 **Backend**
-- Node.js + Express.js
+- Node.js + Express (CommonJS)
 - MongoDB + Mongoose
 - Socket.io
-- JWT Authentication
-- GitHub OAuth 2.0
-- node-cron (background sync jobs)
+- JWT authentication with httpOnly cookies
+- node-cron background sync jobs
+- Gmail API (via `googleapis`, OAuth2) for transactional email
 
-**Browser Extension**
-- Chrome Extension API (Manifest V3)
-- React popup
+**External APIs / Data Sources**
+- LeetCode (custom GraphQL calls; problem catalog self-hosted from a seeded dataset since LeetCode's search query was blocked)
+- Codeforces official REST API (`user.rating`, submissions)
+- GitHub GraphQL API (contributions, commits, PRs)
 
-**External APIs**
-- LeetCode GraphQL API
-- Codeforces REST API
-- GitHub REST API
+**Deployment**
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 devups/
 ├── client/                  # React frontend
 │   └── src/
-│       ├── components/      # L1 — UI components
-│       ├── hooks/           # L2 — custom hooks
-│       ├── store/           # L3 — Zustand stores
-│       ├── api/             # L4 — Axios API layer
-│       ├── pages/           # Route-level pages
-│       └── utils/           # XP calculator, helpers
+│       ├── components/      # UI components
+│       ├── hooks/           # custom hooks (layer 2)
+│       ├── store/           # Zustand stores (layer 3)
+│       ├── api/              # Axios API layer (layer 4)
+│       ├── pages/            # route-level pages
+│       └── utils/
 │
-├── server/                  # Express backend
-│   └── src/
-│       ├── controllers/     # Request handlers
-│       ├── routes/          # API route definitions
-│       ├── models/          # Mongoose schemas
-│       ├── middleware/       # Auth, rate limit, validation
-│       ├── services/        # LeetCode, GitHub, CF, XP logic
-│       └── jobs/            # Cron sync jobs
-│
-└── extension/               # Chrome extension (MV3)
-    ├── popup/               # React popup UI
-    ├── background/          # Service worker
-    └── content/             # LeetCode page injection
+└── server/                  # Express backend
+    └── src/
+        ├── controllers/      # request handlers
+        ├── routes/           # API route definitions
+        ├── models/           # Mongoose schemas
+        ├── middleware/        # auth, validation
+        ├── services/          # LeetCode / GitHub / Codeforces / XP / mail logic
+        └── jobs/              # cron sync jobs
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
 - MongoDB (local or Atlas)
-- A GitHub OAuth App ([create one here](https://github.com/settings/developers))
+- A Google Cloud project with the Gmail API enabled (for sending verification/reset emails via OAuth2)
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/devups.git
-cd devups
+git clone https://github.com/SachchidanandGupta/Devups.git
+cd Devups
 ```
 
 ### 2. Set up the backend
@@ -122,18 +117,23 @@ cd devups
 ```bash
 cd server
 npm install
-cp .env.example .env
 ```
 
-Fill in your `.env`:
+Create a `.env` file:
 
 ```env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/devups
-JWT_SECRET=your_jwt_secret_here
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+NODE_ENV=development
 CLIENT_URL=http://localhost:5173
+
+GITHUB_TOKEN=your_github_token
+
+GMAIL_USER=your_gmail_address
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GOOGLE_REFRESH_TOKEN=your_google_oauth_refresh_token
 ```
 
 ```bash
@@ -145,155 +145,44 @@ npm run dev
 ```bash
 cd client
 npm install
-cp .env.example .env
 ```
+
+Create a `.env` file:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
-VITE_SOCKET_URL=http://localhost:5000
 ```
 
 ```bash
 npm run dev
 ```
 
-### 4. Load the Chrome extension
+---
 
-1. Open Chrome and navigate to `chrome://extensions`
-2. Enable **Developer mode** (top right toggle)
-3. Click **Load unpacked**
-4. Select the `extension/` folder from this repo
+## Roadmap
+
+- [ ] Browser extension (lightweight popup for stats without leaving the current tab)
+- [ ] Achievement badges
+- [ ] LeetCode contest achievement tracking (currently Codeforces-only, since LeetCode's equivalent API is unofficial)
+- [ ] Global/season contests open to all users, not just invited friends
 
 ---
 
-## 🔌 API Reference
+## Contributing
 
-### Auth
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Register with username + password |
-| POST | `/api/auth/login` | Login, returns JWT |
-| GET | `/api/auth/github` | Initiate GitHub OAuth |
-| GET | `/api/auth/github/callback` | GitHub OAuth callback |
-
-### User
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/user/profile` | Get current user profile |
-| PUT | `/api/user/profile` | Update LeetCode / GitHub username |
-| GET | `/api/user/:id` | Get public profile by ID |
-
-### XP & Leaderboard
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/xp/history` | XP event log for current user |
-| GET | `/api/leaderboard/global` | Top 100 users by XP |
-| GET | `/api/leaderboard/friends` | Leaderboard filtered to friends |
-
-### Contests
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/contests/upcoming` | Upcoming LeetCode + CF contests |
-| GET | `/api/contests/history` | User's contest participation history |
-
-### Challenges
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/challenges` | Create a friend challenge |
-| GET | `/api/challenges/:id` | Get challenge details + rankings |
-| GET | `/api/challenges/active` | All active challenges for current user |
-
----
-
-## ⚡ Socket Events
-
-| Event | Direction | Payload |
-|---|---|---|
-| `xp:updated` | Server → Client | `{ userId, newXP, source }` |
-| `leaderboard:refresh` | Server → Client | Updated top-N list |
-| `contest:reminder` | Server → Client | `{ contestName, startsIn }` |
-| `challenge:score` | Server → Client | `{ challengeId, rankings }` |
-| `friend:activity` | Server → Client | `{ userId, action }` |
-
----
-
-## 🗄 Data Models
-
-### User
-```js
-{
-  username: String,
-  email: String,
-  passwordHash: String,
-  leetcodeUsername: String,
-  githubUsername: String,
-  codeforcesHandle: String,
-  xp: Number,
-  streak: Number,
-  lastActiveDate: Date,
-  friends: [ObjectId],
-  badges: [String]
-}
-```
-
-### XPEvent
-```js
-{
-  userId: ObjectId,
-  source: String,       // 'leetcode' | 'github' | 'codeforces' | 'streak'
-  action: String,       // 'solve_easy' | 'contest_participation' | ...
-  amount: Number,
-  metadata: Object,
-  createdAt: Date
-}
-```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
+Contributions are welcome.
 
 1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'feat: add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes
+4. Push and open a Pull Request
 
 ---
 
-## 📋 Roadmap
+## License
 
-- [ ] LeetCode daily challenge sync
-- [ ] GitHub contribution heatmap
-- [ ] XP scoring engine
-- [ ] Friend system + challenges
-- [ ] Real-time leaderboard (Socket.io)
-- [ ] Chrome extension popup
-- [ ] Codeforces contest tracker
-- [ ] Achievement badge system
-- [ ] Mobile-responsive dashboard
-- [ ] Email / push notifications
+*(add your license here)*
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-Built with ❤️ for competitive programmers and DSA grinders everywhere.
-
-⭐ Star this repo if DevUps helps your coding journey!
-
-</div>
+Built for developers who'd rather compete than just grind alone.
