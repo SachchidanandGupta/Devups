@@ -1,11 +1,18 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+const { promisify } = require("util");
+const resolve4 = promisify(dns.resolve4);
 
-function createTransporter() {
+async function createTransporter() {
+  const [ipv4Address] = await resolve4("smtp.gmail.com");
+
   return nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: ipv4Address,
     port: 465,
     secure: true,
-    family: 4,
+    tls: {
+      servername: "smtp.gmail.com", // required: TLS cert validation needs the real hostname since we're connecting via raw IP
+    },
     auth: {
       type: "OAuth2",
       user: process.env.GMAIL_USER,
@@ -16,7 +23,7 @@ function createTransporter() {
   });
 }
 async function sendVerificationEmail(email, username, link) {
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
 
   const html = `
     <div style="font-family: monospace; background: #000; color: #00ff88; padding: 24px;">
@@ -60,4 +67,3 @@ async function sendPasswordResetEmail(email, username, link) {
 }
 
 module.exports = { sendVerificationEmail, sendPasswordResetEmail };
-
