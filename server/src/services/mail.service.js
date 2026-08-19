@@ -5,6 +5,7 @@ function createTransporter() {
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
+    family: 4,
     auth: {
       type: "OAuth2",
       user: process.env.GMAIL_USER,
@@ -14,7 +15,6 @@ function createTransporter() {
     },
   });
 }
-
 async function sendVerificationEmail(email, username, link) {
   const transporter = createTransporter();
 

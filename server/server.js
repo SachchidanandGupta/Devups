@@ -1,6 +1,6 @@
-require("dotenv").config();
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv4first");
+require("dotenv").config();
 const app = require("./src/app");
 const connectToDB = require("./src/config/db");
 const { startStreakSync } = require("./src/jobs/syncStreak.job");
