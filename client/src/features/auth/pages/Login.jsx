@@ -26,7 +26,8 @@ const Login = () => {
   const [resendSent, setResendSent] = useState(false);
 
   const isUnverifiedError =
-    typeof error === "string" && error.toLowerCase().includes("verify your email");
+    typeof error === "string" &&
+    error.toLowerCase().includes("verify your email");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +56,7 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 gap-8 bg-black font-sans overflow-hidden">
-      <BinaryDesign/>
+      <BinaryDesign />
       <div className="w-full flex flex-col items-center justify-center text-center z-10 px-4">
         <h1 className="text-accent text-2xl sm:text-3xl font-bold tracking-tight">
           DEVUPS_TERMINAL
@@ -66,7 +67,7 @@ const Login = () => {
       </div>
 
       <div className="max-w-lg w-full bg-surface border border-border z-10 ">
-        <FormHeader/>
+        <FormHeader />
         <div className="p-6 sm:p-8">
           <div className="flex flex-col border-b border-border pb-6">
             <div className="relative pl-4">
@@ -101,6 +102,14 @@ const Login = () => {
                   define={"encrypted"}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <div className="flex justify-end -mt-2">
+                  <Link
+                    to="/forgot-password"
+                    className="text-text-muted text-[10px] sm:text-xs tracking-widest hover:text-accent transition-colors"
+                  >
+                    FORGOT_PASSWORD?
+                  </Link>
+                </div>
               </div>
 
               {error && (
@@ -189,7 +198,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <AuthFooter/>
+      <AuthFooter />
     </div>
   );
 };

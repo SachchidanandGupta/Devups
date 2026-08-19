@@ -3,7 +3,10 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("../utils/asyncHandler");
 const appError = require("../utils/appError");
 const { getLevelProgress } = require("../services/xp.service");
-const { sendVerificationEmail } = require("../services/mail.service");
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} = require("../services/mail.service");
 
 function issueAuthCookie(res, user) {
   const token = jwt.sign(
@@ -188,10 +191,10 @@ const resendVerification = asyncHandler(async function (req, res) {
 
 const getMeUser = asyncHandler(async function (req, res) {
   const user = await userModel.findById(req.user.id);
-  const { currentXP, requiredXP, level } = getLevelProgress(user.xp);
   if (!user) {
     throw new appError("User not found", 404);
   }
+  const { currentXP, requiredXP, level } = getLevelProgress(user.xp);
   return res.status(200).json({
     message: "user data fetched successfully",
     user: {
@@ -218,6 +221,69 @@ const logOutUser = asyncHandler(async function (req, res) {
   });
 });
 
+function issuePasswordResetToken(userId) {
+  return jwt.sign(
+    { id: userId, purpose: "password_reset" },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" },
+  );
+}
+
+const forgotPassword = asyncHandler(async function (req, res) {
+  const { email } = req.body;
+  if (!email) {
+    throw new appError("Email is required", 400);
+  }
+
+  const user = await userModel.findOne({ email });
+
+  if (user) {
+    const resetToken = issuePasswordResetToken(user._id);
+    const link = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+    sendPasswordResetEmail(user.email, user.username, link).catch((err) =>
+      console.error("Failed to send password reset email:", err.message),
+    );
+  }
+
+  res.status(200).json({
+    message: "If that account exists, a password reset link has been sent.",
+    status: "success",
+  });
+});
+
+const resetPassword = asyncHandler(async function (req, res) {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) {
+    throw new appError("Token and new password are required", 400);
+  }
+  if (newPassword.length < 6) {
+    throw new appError("Password must be at least 6 characters", 400);
+  }
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    throw new appError("Reset link is invalid or has expired", 400);
+  }
+
+  if (decoded.purpose !== "password_reset") {
+    throw new appError("Invalid reset token", 400);
+  }
+
+  const user = await userModel.findById(decoded.id);
+  if (!user) {
+    throw new appError("User not found", 404);
+  }
+
+  user.passwordHash = newPassword;
+  await user.save();
+
+  res.status(200).json({
+    message: "Password reset successful. You can now log in.",
+    status: "success",
+  });
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -225,4 +291,6 @@ module.exports = {
   resendVerification,
   getMeUser,
   logOutUser,
+  forgotPassword,
+  resetPassword,
 };

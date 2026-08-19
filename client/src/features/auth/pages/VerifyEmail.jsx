@@ -8,7 +8,7 @@ const VerifyEmail = () => {
   const { confirmEmail, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [status, setStatus] = useState("verifying"); // "verifying" | "success" | "failed"
+  const [status, setStatus] = useState("verifying"); 
   const [failReason, setFailReason] = useState("");
   const attempted = useRef(false);
 

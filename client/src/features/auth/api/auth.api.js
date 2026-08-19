@@ -1,4 +1,4 @@
-import axiosInstance from '../../../api/axiosInstance';
+import axiosInstance from "../../../api/axiosInstance";
 
 export const registerUser = async (username, email, password) => {
   const response = await axiosInstance.post("/auth/register", {
@@ -8,6 +8,7 @@ export const registerUser = async (username, email, password) => {
   });
   return response.data;
 };
+
 export const loginUser = async (identifier, password) => {
   const response = await axiosInstance.post("/auth/login", {
     identifier,
@@ -27,7 +28,7 @@ export const logOutUser = async () => {
 };
 
 export const verifyEmail = async (token) => {
-        console.log("here it is")
+  console.log("here it is");
 
   const response = await axiosInstance.get(`/auth/verify-email`, {
     params: { token },
@@ -38,6 +39,21 @@ export const verifyEmail = async (token) => {
 export const resendVerification = async (identifier) => {
   const response = await axiosInstance.post("/auth/resend-verification", {
     identifier,
+  });
+  return response.data;
+};
+
+export const forgotPassword = async (email) => {
+  const response = await axiosInstance.post("/auth/forgot-password", {
+    email,
+  });
+  return response.data;
+};
+
+export const resetPassword = async (token, newPassword) => {
+  const response = await axiosInstance.post("/auth/reset-password", {
+    token,
+    newPassword,
   });
   return response.data;
 };

@@ -13,6 +13,8 @@ import Contest from "./features/contest/pages/Contest";
 import Profile from "./features/profile/pages/Profile";
 import CreateContest from "./features/contest/pages/CreateContest";
 import ScrollToTop from "./shared/components/ScrollToTop";
+import ForgotPassword from "./features/auth/pages/ForgotPassword";
+import ResetPassword from "./features/auth/pages/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +38,14 @@ export const router = createBrowserRouter([
   {
     path: "/verify-email",
     element: <VerifyEmail />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
   {
     path: "/leaderboard",
@@ -66,25 +76,26 @@ export const router = createBrowserRouter([
         </Layout>
       </ProtectedRoutes>
     ),
-  },{
-    path:"/profile/:userId",
-    element:(
-      <ProtectedRoutes>
-        <Layout>
-            <Profile/>
-        </Layout>
-      </ProtectedRoutes>
-    )
-  },{
-    path:"/contest/create",
-    element:(
-      <ProtectedRoutes>
-        <ScrollToTop/> 
-        <Layout>
-          <CreateContest/>
-        </Layout>
-      </ProtectedRoutes>
-    )
   },
-  
+  {
+    path: "/profile/:userId",
+    element: (
+      <ProtectedRoutes>
+        <Layout>
+          <Profile />
+        </Layout>
+      </ProtectedRoutes>
+    ),
+  },
+  {
+    path: "/contest/create",
+    element: (
+      <ProtectedRoutes>
+        <ScrollToTop />
+        <Layout>
+          <CreateContest />
+        </Layout>
+      </ProtectedRoutes>
+    ),
+  },
 ]);

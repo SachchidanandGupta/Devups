@@ -5,6 +5,8 @@ import {
   logOutUser,
   resendVerification,
   verifyEmail,
+  forgotPassword,
+  resetPassword,
 } from "../api/auth.api";
 import useAuthStore from "../store/authStore";
 
@@ -23,7 +25,7 @@ const useAuth = () => {
       const data = await getMeUser();
       useAuthStore.getState().setUser(data.user);
       useAuthStore.getState().setAuthenticated(true);
-    } catch (error) { 
+    } catch (error) {
       // useAuthStore
       //   .getState()
       //   .setError(error.response?.data?.message || error.message);
@@ -47,7 +49,7 @@ const useAuth = () => {
     }
   };
 
- const register = async (username, email, password) => {
+  const register = async (username, email, password) => {
     useAuthStore.getState().setIsLoading(true);
     try {
       await registerUser(username, email, password);
@@ -63,7 +65,7 @@ const useAuth = () => {
     }
   };
 
-    const confirmEmail = async (token) => {
+  const confirmEmail = async (token) => {
     useAuthStore.getState().setIsLoading(true);
     try {
       await verifyEmail(token);
@@ -80,7 +82,7 @@ const useAuth = () => {
     }
   };
 
-   const resend = async (email) => {
+  const resend = async (email) => {
     useAuthStore.getState().setIsLoading(true);
     try {
       await resendVerification(email);
@@ -109,13 +111,45 @@ const useAuth = () => {
     }
   };
 
- return {
+  const forgotPasswordRequest = async (email) => {
+    useAuthStore.getState().setIsLoading(true);
+    try {
+      await forgotPassword(email);
+      return true;
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+      return false;
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
+    }
+  };
+
+  const resetPasswordRequest = async (token, newPassword) => {
+    useAuthStore.getState().setIsLoading(true);
+    try {
+      await resetPassword(token, newPassword);
+      return true;
+    } catch (error) {
+      useAuthStore
+        .getState()
+        .setError(error.response?.data?.message || error.message);
+      return false;
+    } finally {
+      useAuthStore.getState().setIsLoading(false);
+    }
+  };
+
+   return {
     login,
     register,
     confirmEmail,
     resend,
     logout,
     fetchMe,
+    forgotPasswordRequest,
+    resetPasswordRequest,
     user,
     isInitialized,
     isAuthenticated,
