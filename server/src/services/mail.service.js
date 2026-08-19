@@ -1,30 +1,49 @@
-const nodemailer = require("nodemailer");
-const dns = require("dns");
-const { promisify } = require("util");
-const resolve4 = promisify(dns.resolve4);
+const { google } = require("googleapis");
 
-async function createTransporter() {
-  const [ipv4Address] = await resolve4("smtp.gmail.com");
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+);
+oAuth2Client.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+});
 
-  return nodemailer.createTransport({
-    host: ipv4Address,
-    port: 465,
-    secure: true,
-    tls: {
-      servername: "smtp.gmail.com", // required: TLS cert validation needs the real hostname since we're connecting via raw IP
-    },
-    auth: {
-      type: "OAuth2",
-      user: process.env.GMAIL_USER,
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-    },
+function buildRawMessage({ to, from, subject, html }) {
+  const messageParts = [
+    `From: ${from}`,
+    `To: ${to}`,
+    `Content-Type: text/html; charset=utf-8`,
+    `MIME-Version: 1.0`,
+    `Subject: ${subject}`,
+    "",
+    html,
+  ];
+  const message = messageParts.join("\n");
+
+  return Buffer.from(message)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function sendMail({ to, subject, html }) {
+  const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+
+  const raw = buildRawMessage({
+    to,
+    from: `DevUps <${process.env.GMAIL_USER}>`,
+    subject,
+    html,
+  });
+
+  await gmail.users.messages.send({
+    userId: "me",
+    requestBody: { raw },
   });
 }
-async function sendVerificationEmail(email, username, link) {
-  const transporter = await createTransporter();
 
+async function sendVerificationEmail(email, username, link) {
   const html = `
     <div style="font-family: monospace; background: #000; color: #00ff88; padding: 24px;">
       <h2>WELCOME, ${username.toUpperCase()}</h2>
@@ -36,8 +55,7 @@ async function sendVerificationEmail(email, username, link) {
     </div>
   `;
 
-  await transporter.sendMail({
-    from: `DevUps <${process.env.GMAIL_USER}>`,
+  await sendMail({
     to: email,
     subject: "Verify your DevUps account",
     html,
@@ -45,8 +63,6 @@ async function sendVerificationEmail(email, username, link) {
 }
 
 async function sendPasswordResetEmail(email, username, link) {
-  const transporter = createTransporter();
-
   const html = `
     <div style="font-family: monospace; background: #000; color: #00ff88; padding: 24px;">
       <h2>RESET_PASSWORD // ${username.toUpperCase()}</h2>
@@ -58,8 +74,7 @@ async function sendPasswordResetEmail(email, username, link) {
     </div>
   `;
 
-  await transporter.sendMail({
-    from: `DevUps <${process.env.GMAIL_USER}>`,
+  await sendMail({
     to: email,
     subject: "Reset your DevUps password",
     html,
